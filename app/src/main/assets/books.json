@@ -1,0 +1,2312 @@
+[
+  {
+    "BAŞLIK": "C ile Programlama Başlangıçtan İleri Seviyeye",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-625-417-956-3",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Alev Gözübüyük-Evrim Korkmaz-Sezai Özden",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yazılım Mühendisliğinde Modern Yaklaşımlar",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-7928-99-3",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Onur Uysal",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Clean Code",
+    "YAZAR": "Robert C. Martin",
+    "ISBN NUMARASI": "0-13-235088-2",
+    "YAYINEVİ": "PRENTICE HALL",
+    "EDİTÖR": "James O.Coplien",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yazılım Mühendisliği",
+    "YAZAR": "Ian Sommerville",
+    "ISBN NUMARASI": "978-605-320-817-4",
+    "YAYINEVİ": "Pearson-Nobel",
+    "EDİTÖR": "N.Yasemin Topaloğlu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Android Programlama",
+    "YAZAR": "Muharrem Taç",
+    "ISBN NUMARASI": "978-605-61677-7-5",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "Cemile Kural-Rükiye Ege",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Python ile Veri Yapıları ve Algoritma Analizi",
+    "YAZAR": "Yılmaz Kaya",
+    "ISBN NUMARASI": "978-625-397-166-3",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Leyla Kurt-Seda Polat-Sezai Özden",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Teori ve Uygulamada Veri Madenciliği",
+    "YAZAR": "Hidayet Takcı",
+    "ISBN NUMARASI": "978-625-439-008-1",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Buse Gamze Çeliktaş",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Nesnelerin İnterneti Kuramdan Uygulamaya",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-625-417-165-9",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Hüseyin Çakır-Çelebi Uluyol",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Uygulamalar ile Python ve Yapay Zekâ",
+    "YAZAR": "Emrah Aydemir",
+    "ISBN NUMARASI": "978-625-439-682-3",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Buse Gamze Çeliktaş-Ahmet Baydar-Lale Yalçın",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Bilgisayar Bilimine Giriş",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-320-361-2",
+    "YAYINEVİ": "Pearson-Nobel",
+    "EDİTÖR": "Birim Balcı",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Python ile Programlamaya Giriş",
+    "YAZAR": "Olcay Taner Yıldız",
+    "ISBN NUMARASI": "978-975-02-9422-8",
+    "YAYINEVİ": "Seçkin",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Temel Matlab",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-320-540-1",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "İbrahim Karatay",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Veri Analitiği Dünyasında Veri Okuryazarlığı Analizi ve Görselleştirme",
+    "YAZAR": "Ruhver Barengi",
+    "ISBN NUMARASI": "978-625-371-742-1",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Bahar Yanbolulu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C ile Kodlama",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-033-055-7",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Evrim Korkmaz",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Comparative Basic Practices For C and Java",
+    "YAZAR": "Yakup Çelikbilek",
+    "ISBN NUMARASI": "978-625-371-268-6",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Muhlis Özdemir-Nevzat Argun",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  
+  {
+    "BAŞLIK": "Bilgi Sistemleri Güvenliğinin Temelleri",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-033-000-7",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Özgü Can-Begüm Akcaoğlu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay Zekâ Etiği ve İletişim",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-625-393-760-7",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Burak Çeber-Damla Ertürk",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Üretken Yapay Zekâ ve Prompt Mühendisliği",
+    "YAZAR": "Ezgi Avcı",
+    "ISBN NUMARASI": "978-975-02-9322-1",
+    "YAYINEVİ": "Seçkin",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Concepts of Computer Architecture",
+    "YAZAR": "Tolga Ayav",
+    "ISBN NUMARASI": "978-625-427-263-9",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Algoritma Tasarımı ve Geliştirme",
+    "YAZAR": "Selami Eryılmaz",
+    "ISBN NUMARASI": "978-625-402-011-7",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yeni Başlayanlar İçin Arduino",
+    "YAZAR": "Fahrettin Erdinç",
+    "ISBN NUMARASI": "978-605-83593-0-7",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Algoritmalar",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-320-972-0",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Şadi Evren Şeker",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Bilgisayar Mimarisi ve Tasarım",
+    "YAZAR": "",
+    "ISBN NUMARASI": "678-625-439-725-7",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Hasan Dağ",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  
+  {
+    "BAŞLIK": "Yapay Sinir Ağları",
+    "YAZAR": "Fatma Sönmez Çakır",
+    "ISBN NUMARASI": "978-605-7928-12-2",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Nilay Balin",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "HIZLI VE KOLAY WEB TASARIM (Set)",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Web Tasarım Kılavuzu",
+    "YAZAR": "Tahsin Berk Ceylan",
+    "ISBN NUMARASI": "978-605-2118-55-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "CSS 3",
+    "YAZAR": "Çağlar Sarıbıyık",
+    "ISBN NUMARASI": "978-605-9118-78-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "Çocuklar için Web Tasarım Rehberi",
+    "YAZAR": "Avcı Ufuk Yılmaz",
+    "ISBN NUMARASI": "978-605-2118-21-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu-Gizem Aksan",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Beyaz Şapkalı SEO",
+    "YAZAR": "Nauman Zia Butt",
+    "ISBN NUMARASI": "978-605-2118-54-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Uygulamalı Siber Güvenlik ve Hacking",
+    "YAZAR": "Mustafa Altınkaynak",
+    "ISBN NUMARASI": "978-605-9129-68-8",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "Blockchain Teknolojisi Şirketleri",
+    "YAZAR": "Elanur Altıntop",
+    "ISBN NUMARASI": "978-625-7407-02-1",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Veri Bilimi için Python",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-625-7440-18-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Adım Adım Bigdata ve Uygulamaları",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2359-65-5",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "Derya Karakoyun",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },
+  {
+    "BAŞLIK": "Ağ Teknolojileri ve Telekomünikasyon",
+    "YAZAR": "Cebrail Taşkın",
+    "ISBN NUMARASI": "978-605-2359-35-8",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "İnternette Reklamcılık",
+    "YAZAR": "Aytaç Mestçi",
+    "ISBN NUMARASI": "978-605-2359-26-6",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Internet Information Services",
+    "YAZAR": "Murat Yıldırımoğlu",
+    "ISBN NUMARASI": "978-605-2359-61-7",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Intel Edison ile Nesnelerin İnterneti",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-83098-1-4",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Siber Güvenlik",
+    "YAZAR": "İlker Ertuğrul",
+    "ISBN NUMARASI": "978-605-4898-79-4",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "Rahmi Dalıcı",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "UML ile Nesneye Yönelik Sistem Analizi ve Tasarımı",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2263-89-1",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C/C++ ve Java Dilleriyle Algoritma ve Programlama",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-605-9129-38-1",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "Fatih Çelik",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Ethical Offensive&Defensive Hacking",
+    "YAZAR": "Ömer Çıtak",
+    "ISBN NUMARASI": "978-605-2263-17-4",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "Ziyahan Albeniz",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Oyun Programlama (Set)",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Unity 3D ile Temel Seviye Vr Oyun Geliştirme",
+    "YAZAR": "Çağlayan Karagözler",
+    "ISBN NUMARASI": "978-605-2118-64-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Unity 3D ile Oyun Programlama",
+    "YAZAR": "Timuçin Hatipoğlu",
+    "ISBN NUMARASI": "978-605-9118-77-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "3DS MAX ile Karakter Modelleme ve Dokulandırma",
+    "YAZAR": "Ali Murat Sümen",
+    "ISBN NUMARASI": "978-605-4205-90-5",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "ASP.NET CORE ile Proje Geliştirmek",
+    "YAZAR": "Ahmet Bilgiç",
+    "ISBN NUMARASI": "978-625-7440-40-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "Java ile Programlama ve Veri Yapıları",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-605-2359-84-6",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "JSP",
+    "YAZAR": "Numan Pekgöz",
+    "ISBN NUMARASI": "978-605-5106-04-1",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "Haldun Erim",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Java Me",
+    "YAZAR": "Murat Balkan",
+    "ISBN NUMARASI": "978-9944-711-60-9",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "Evren Kutar",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino Eğitim Seti",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino Projeleri",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-8060-73-9",
+    "YAYINEVİ": "SıfırBir",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Mikrodenetleyiciler ile Seri İletişim",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-9118-44-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C++ Eğitim Seti",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-4205-73-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  {
+    "BAŞLIK": "Elektronik Devre Elemanları",
+    "YAZAR": "Erdal Delebe",
+    "ISBN NUMARASI": "978-605-5201-17-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino ve Android ile Uzaktan Kontrol Sistemleri",
+    "YAZAR": "Ahmet Raşit Petekçi",
+    "ISBN NUMARASI": "978-605-9118-45-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "SÜPER PYTHON SETİ 3",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Python Projeler ve Popüler Kütüphaneler",
+    "YAZAR": "Burak Yıldız",
+    "ISBN NUMARASI": "978-605-2118-61-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "Her Yönüyle Python",
+    "YAZAR": "Fırat Özgül",
+    "ISBN NUMARASI": "978-605-2118-50-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "Veri Bilimi İçin Python",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-625-7440-18-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Python ile Veri Madenciliği",
+    "YAZAR": "Caner Erden",
+    "ISBN NUMARASI": "978-625-7440-17-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "Python3",
+    "YAZAR": "Onur Sevli",
+    "ISBN NUMARASI": "978-605-2118-06-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 9
+  },
+  {
+    "BAŞLIK": "Projeler ile Python",
+    "YAZAR": "Mustafa Aydemir",
+    "ISBN NUMARASI": "978-605-9118-75-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  {
+    "BAŞLIK": "Python Öğreniyorum",
+    "YAZAR": "Gökhan Su",
+    "ISBN NUMARASI": "978-605-2118-20-7",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  
+  {
+    "BAŞLIK": "Hacking Interface",
+    "YAZAR": "Hamza Elbahadır",
+    "ISBN NUMARASI": "978-605-4205-27-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  {
+    "BAŞLIK": "Python ile Algoritma ve Programlama",
+    "YAZAR": "Kubilay Erkeç",
+    "ISBN NUMARASI": "978-625-7440-54-7",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "Nazlı Soluk",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay Zekâ ile Modern Web Tasarımı",
+    "YAZAR": "Tahsin Berk Ceylan",
+    "ISBN NUMARASI": "978-625-6677-18-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Derinine JavaScript",
+    "YAZAR": "Mert Ertuğrul Altay",
+    "ISBN NUMARASI": "978-605-249-692-3",
+    "YAYINEVİ": "Dorlion",
+    "EDİTÖR": "Aslı Üstün",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "SÜPER PYTHON SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Programlama Eğitim Seti",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Java17 Yeni Başlayanlar İçin",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-5201-10-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },
+  {
+    "BAŞLIK": "Her Yönüyle C# 10",
+    "YAZAR": "Volkan Aktaş",
+    "ISBN NUMARASI": "978-605-9118-87-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Sıfırdan İleri Seviyeye PHP Web Programlama",
+    "YAZAR": "Emrah Yüksel",
+    "ISBN NUMARASI": "978-605-2118-29-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "PYTHON ÖĞRENİYORUM SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  
+  {
+    "BAŞLIK": "Python Tabanlı Algoritma",
+    "YAZAR": "Kadir Çamoğlu",
+    "ISBN NUMARASI": "978-625-7440-50-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },
+  
+  {
+    "BAŞLIK": "SİBER GÜVENLİK EĞİTİM SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "KALI LINUX",
+    "YAZAR": "Abdulaziz Altıntaş",
+    "ISBN NUMARASI": "978-605-9118-55-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  
+  {
+    "BAŞLIK": "A'dan Z'ye Siber Güvenlik",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-625-7440-82-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  
+  {
+    "BAŞLIK": "Metasploit ve Penetrasyon Testleri",
+    "YAZAR": "Abdulaziz Altıntaş",
+    "ISBN NUMARASI": "978-605-9118-52-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  {
+    "BAŞLIK": "Ağ ve Yazılım Güvenliği",
+    "YAZAR": "Furkan Çontar",
+    "ISBN NUMARASI": "978-605-5201-16-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },
+  
+  {
+    "BAŞLIK": "JAVA EĞİTİM SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Algoritma ve Programlama Mantığı",
+    "YAZAR": "H.Burak Tungut",
+    "ISBN NUMARASI": "978-605-5201-24-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },
+  
+  {
+    "BAŞLIK": "PYTHON EĞİTİM SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },{
+    "BAŞLIK": "Modüler Sisteme Göre Temel Bilgi Teknolojileri",
+    "YAZAR": "Ayşegül Koç",
+    "ISBN NUMARASI": "978-605-9118-54-5",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "GLOBAL HACKING VE GÜVENLİK SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Kendi Siteni Kendin Koru",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-09-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },{
+    "BAŞLIK": "Yazılımcılar İçin İş Başvuru Zamanı",
+    "YAZAR": "Gayle Laakman McDowell",
+    "ISBN NUMARASI": "978-605-2118-68-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "ARDUINO PROGRAMLAMA EĞİTİM SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Herkes İçin Arduino",
+    "YAZAR": "Gökhan Su",
+    "ISBN NUMARASI": "978-605-2118-38-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino Projeleri",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-8060-73-9",
+    "YAYINEVİ": "Sıfırbir",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "APP Inventor ile Robotik Kodlama",
+    "YAZAR": "Devrim Uzuner",
+    "ISBN NUMARASI": "978-605-696540-1",
+    "YAYINEVİ": "Sıfırbir",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "mBlock 5 ile Arduino Projeleri",
+    "YAZAR": "Ahmet Caba",
+    "ISBN NUMARASI": "978-625-6677-05-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino ve Android ile Uzaktan Kontrol Sistemleri",
+    "YAZAR": "Ahmet Raşit Petekçi",
+    "ISBN NUMARASI": "978-605-9118-45-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino Atölyesi",
+    "YAZAR": "Erdal Delebe",
+    "ISBN NUMARASI": "978-605-2118-36-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "ARDUİNO ATÖYLE SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Herkes İçin Arduino",
+    "YAZAR": "Gökhan Su",
+    "ISBN NUMARASI": "978-605-2118-38-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino Projeleri",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-8060-73-9",
+    "YAYINEVİ": "Sıfırbir",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino ve Android ile Uzaktan Kontrol Sistemleri",
+    "YAZAR": "Ahmet Raşit Petekçi",
+    "ISBN NUMARASI": "978-605-9118-45-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino Atölyesi",
+    "YAZAR": "Erdal Delebe",
+    "ISBN NUMARASI": "978-605-2118-36-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "WEB PROGRAMLAMA SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Her Yönüyle HTML",
+    "YAZAR": "Erol Mesut Gün",
+    "ISBN NUMARASI": "978-605-9118-86-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  
+  {
+    "BAŞLIK": "Sıfırdan İleri Seviyeye PHP Web Programlama",
+    "YAZAR": "Emrah Yüksel",
+    "ISBN NUMARASI": "978-605-2118-29-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Javascript Programlama",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-5201-23-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Yeni Başlayanlar İçin Kotlin ile Android Programlama",
+    "YAZAR": "Ceren Akman",
+    "ISBN NUMARASI": "978-605-4898-72-5",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay Zekâ ile Sağlık Sistemlerden Uygulamaya",
+    "YAZAR": "Özel Sebetçi",
+    "ISBN NUMARASI": "978-625-7440-96-7",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "SİBER GÜVENLİK EĞİTİM SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "SGAM Siber Güvenlik Araçları ve Metodolojileri",
+    "YAZAR": "Şahap Altınbaş",
+    "ISBN NUMARASI": "978-625-7440-88-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "YAZILIMCILAR İÇİN PROGRAMLAMA SETİ 3",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "MATLAB",
+    "YAZAR": "Gökhun Yayla",
+    "ISBN NUMARASI": "978-605-2118-41-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "C# Çözümlü Soru Bankası",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-35-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  
+  {
+    "BAŞLIK": "C# EĞİTİM SETİ 4",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C# ile Nesne Tabanlı Programlama",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-19-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Projeler ile C#11 ve EF CORE 7.0",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-625-7440-56-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },
+  
+  {
+    "BAŞLIK": "PROGRAMLAMA EĞİTİM SETİ 4",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Her Yönüyle C",
+    "YAZAR": "Tevfik Kızılören",
+    "ISBN NUMARASI": "978-605-5201-09-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 5
+  },{
+    "BAŞLIK": "C/C++ PROGRAMLAMA SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Temel C Programlama",
+    "YAZAR": "İbrahim Onur Sığırcı",
+    "ISBN NUMARASI": "978-605-9118-97-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C++ ile Projeler",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-9118-70-5",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 4
+  },
+  
+  {
+    "BAŞLIK": "C/C++ Programlama",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-605-2118-47-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  
+  
+  {
+    "BAŞLIK": "Oracle Database",
+    "YAZAR": "Talip Hakan Öztürk",
+    "ISBN NUMARASI": "978-605-2263-82-2",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Java ile Programlama ve Veri Yapıları",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-605-2359-84-6",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "Nesneye Yönelik Programlama Dilleri ile Temiz Kod",
+    "YAZAR": "Mücahit Furkan Ardoğan",
+    "ISBN NUMARASI": "978-625-7440-64-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "LINUX EĞİTİM SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "CentOS Sistem ve Sunucu Yönetimi",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-5201-57-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Android Oyun Programlama",
+    "YAZAR": "Şeref Akyüz",
+    "ISBN NUMARASI": "978-605-86660-1-6",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "Rahmi Dalıcı",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "Sıfırdan Uygulamalara Python",
+    "YAZAR": "Furkan Değirmenciler",
+    "ISBN NUMARASI": "978-625-6677-10-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Bir Yazılımcının Yol Haritası",
+    "YAZAR": "Murat Yücedağ",
+    "ISBN NUMARASI": "978-625-6904-16-3",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "Rahmi Dalıcı",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Temel Network",
+    "YAZAR": "Sinan Balcı",
+    "ISBN NUMARASI": "978-605-2118-31-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay Zekâ",
+    "YAZAR": "Atınç Yılmaz",
+    "ISBN NUMARASI": "978-605-9118-80-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  {
+    "BAŞLIK": "Bilgisayar Mühendisliğine Giriş",
+    "YAZAR": "Fatih Kaplan",
+    "ISBN NUMARASI": "978-605-2118-52-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yeni Başlayanlar İçin Kodlama",
+    "YAZAR": "Zafer Demirkol",
+    "ISBN NUMARASI": "978-625-441-280-6",
+    "YAYINEVİ": "Genç Destek",
+    "EDİTÖR": "Devrim Yakut",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C/C++ ve Java Dilleriyle Algoritma ve Programlama",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-605-9129-38-1",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "Fatih Çelik",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "R Programlamaya Giriş",
+    "YAZAR": "Atınç Yılmaz",
+    "ISBN NUMARASI": "978-605-2118-63-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yazılım Mühendisliğine Giriş",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-9129-45-9",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Python ile Makine Öğrenmesi",
+    "YAZAR": "Engin Sorhun",
+    "ISBN NUMARASI": "978-625-7407-00-7",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Yazılım Güvenliği Saldırı ve Savunma",
+    "YAZAR": "Bünyamin Demir",
+    "ISBN NUMARASI": "978-605-86660-8-5",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "Rahmi Dalıcı",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Siber Güvenlik Yönetimi",
+    "YAZAR": "Ahmet Pekel",
+    "ISBN NUMARASI": "978-605-7744-64-7",
+    "YAYINEVİ": "ODTÜ",
+    "EDİTÖR": "Figen Kıyak",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Etkili Kod Yazma Teknikleri",
+    "YAZAR": "Hüseyin Bodur",
+    "ISBN NUMARASI": "978-605-2263-98-3",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Linux Komut Satırı",
+    "YAZAR": "Kemal Demirez",
+    "ISBN NUMARASI": "978-605-9129-39-8",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay Öğrenme",
+    "YAZAR": "Ethem Alpaydın",
+    "ISBN NUMARASI": "978-625-7118-09-5",
+    "YAYINEVİ": "Tellekt",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C# ile Ticari Otomasyon",
+    "YAZAR": "Murat Yücedağ",
+    "ISBN NUMARASI": "978-605-4898-87-9",
+    "YAYINEVİ": "Dikey Eksen",
+    "EDİTÖR": "Rahmi Dalıcı",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Android 4 Ice Cream Sandwich",
+    "YAZAR": "Murat Aydın",
+    "ISBN NUMARASI": "978-9944-711-94-4",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "Haldun Erim",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Nesne Temelli Programlama Mantığı ve Veri Tabanı",
+    "YAZAR": "Özel Sebetçi",
+    "ISBN NUMARASI": "978-605-281-307-2",
+    "YAYINEVİ": "Hiperyayın",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Bilgi Güvenliği ve Bilişim Hukuku",
+    "YAZAR": "Güneş Okan",
+    "ISBN NUMARASI": "978-625-7407-06-9",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Oyun Geliştiriciliğine Giriş ve Unreal Engine 5",
+    "YAZAR": "Güvenç Şahin",
+    "ISBN NUMARASI": "978-625-7440-51-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Sistem ve Network Mühendisliği",
+    "YAZAR": "Kayhan Kırbaş",
+    "ISBN NUMARASI": "978-625-7440-23-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "SİBER GÜVENLİK EĞİTİM SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "SGAM Siber Güvenlik Araçları ve Metodolojileri",
+    "YAZAR": "Şahap Altınbaş",
+    "ISBN NUMARASI": "978-625-7440-88-2",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "YAPAY ZEKA KÜTÜPHANESİ(SET)",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Projelerle Yapay Zekâ ve Bilgisayarlı Görü",
+    "YAZAR": "M.Ümit Aksoylu",
+    "ISBN NUMARASI": "978-625-7440-19-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "R Programlamaya Giriş",
+    "YAZAR": "Atınç Yılmaz",
+    "ISBN NUMARASI": "978-605-2118-63-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Derin Öğrenme",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-39-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "Python ile Algoritma ve Programlama",
+    "YAZAR": "Kubilay Erkeç",
+    "ISBN NUMARASI": "978-625-7440-54-7",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "Nazlı Saluk",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  
+  {
+    "BAŞLIK": "Veri Bilimi için Python",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-625-7440-18-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "TensorFlow ile Derin Öğrenme",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-56-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  
+  
+  
+  {
+    "BAŞLIK": "C++",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-4205-73-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "C# EĞİTİM SETİ 4",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C# ile Nesne Tabanlı Programlama",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-19-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  
+  {
+    "BAŞLIK": "C/C++ Programlama Dili ile Uygulama Geliştirme",
+    "YAZAR": "Fatih Başçiftçi",
+    "ISBN NUMARASI": "978-605-82785-1-6",
+    "YAYINEVİ": "Atlas Akademi",
+    "EDİTÖR": "Ayşe Eldem",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Veritabanı Sistemleri T-",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-320-613-2",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Timur Aydemir-Kahraman Boğaz",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay (Geri) Zekâ",
+    "YAZAR": "Meredith Broussard",
+    "ISBN NUMARASI": "978-605-7628-68-8",
+    "YAYINEVİ": "Sola Unitas",
+    "EDİTÖR": "Buket Konur",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Uygulamalarla Veri Bilimi Yapay Zekâ ve Makine Öğrenmesi",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2263-36-5",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Unix İşletim Dizgesi",
+    "YAZAR": "Oğuzhan Atabek",
+    "ISBN NUMARASI": "978-625-7046-68-8",
+    "YAYINEVİ": "Gece Kitaplığı",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yeni Başlayanlar İçin HTML5 CSS3&JAVASCRIPT",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-263-70-9",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "ArduinoBlocks Projeleri ile Herkes için Arduino Projeleri",
+    "YAZAR": "Cumhur Torun",
+    "ISBN NUMARASI": "978-605-2263-35-8",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "VERİTABANI EĞİTİM SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Buluta Giden Yol Office 365 ve Exchange Server",
+    "YAZAR": "Oğuzhan İlkan Boran",
+    "ISBN NUMARASI": "978-605-9118-85-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "SQL Server",
+    "YAZAR": "Selçuk Özdemir",
+    "ISBN NUMARASI": "978-625-7440-52-3",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 3
+  },
+  
+  {
+    "BAŞLIK": "Oracle Veritabanı Güvenliği ve Sızma Testleri",
+    "YAZAR": "Y.Anıl Akduygu",
+    "ISBN NUMARASI": "978-605-2118-18-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Veri Yönetimi System Center Data Protection Manager",
+    "YAZAR": "Asil Mutlu",
+    "ISBN NUMARASI": "978-605-2118-11-5",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  
+  
+  
+  {
+    "BAŞLIK": "YAPAY ZEKA MÜHENDİSLİĞİ SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },{
+    "BAŞLIK": "Derin Öğrenme",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-2118-39-9",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Kotlin ile Pratik Uygulamalar",
+    "YAZAR": "Anonim",
+    "ISBN NUMARASI": "978-625-6677-12-8",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C Programlama Dili",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-5100-41-4",
+    "YAYINEVİ": "Umuttepe",
+    "EDİTÖR": "Uğur Gelişken",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Ethical Offensive&Defensive Hacking",
+    "YAZAR": "Ömer Çıtak",
+    "ISBN NUMARASI": "978-605-2263-17-4",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "Ziyahan Albeniz",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Oracle Database 19c",
+    "YAZAR": "Talip Hakan Öztürk",
+    "ISBN NUMARASI": "978-605-2263-82-2",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "UML SWIFT ve KOTLIN ile Dizayn Paternleri",
+    "YAZAR": "Aykut Taşdelen",
+    "ISBN NUMARASI": "978-605-2359-86-0",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "Derya Karakoyun",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  {
+    "BAŞLIK": "Uygulama ve Projelerle Swift Programlama",
+    "YAZAR": "Bülent Çobanoğlu",
+    "ISBN NUMARASI": "978-605-2263-63-1",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Python'da Modelleme ve Simülasyon",
+    "YAZAR": "Allen B.Downey",
+    "ISBN NUMARASI": "978-171-502-16-1",
+    "YAYINEVİ": "Buzdağı",
+    "EDİTÖR": "Vedat Çelik-Mustafa Murat Arat",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yeni Başlayanlar için HTML5&CSS3",
+    "YAZAR": "Fahrettin Erdinç",
+    "ISBN NUMARASI": "978-605-66043-7-9",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Kablosuz Ağ Güvenliği (Saldırı-Savunma-Analiz)",
+    "YAZAR": "Besim Altınok",
+    "ISBN NUMARASI": "978-605-9129-67-1",
+    "YAYINEVİ": "Abaküs",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C Programlama Örnek Soru&Cevapları",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-7850-47-2",
+    "YAYINEVİ": "Gece Akademi",
+    "EDİTÖR": "Akın Özçift",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Siber Güvenlik Hacking Atölyesi",
+    "YAZAR": "Onur Aktaş",
+    "ISBN NUMARASI": "978-975-02-9382-5",
+    "YAYINEVİ": "Seçkin",
+    "EDİTÖR": "Hasan Tarık Erdoğan",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "OpenCv Görüntü İşleme ve Yapay Öğrenme",
+    "YAZAR": "Birol Kuyumcu",
+    "ISBN NUMARASI": "978-605-65679-3-3",
+    "YAYINEVİ": "Level",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yapay Zeka",
+    "YAZAR": "Vasif Nabiyev",
+    "ISBN NUMARASI": "978-975-02-6589-1",
+    "YAYINEVİ": "Seçkin",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Bilgi Güvenliği ve Uygulamalı Hacking Yöntemleri",
+    "YAZAR": "Enes Aslanbakan",
+    "ISBN NUMARASI": "978-605-83098-7-6",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "Derya Karakoyun",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "ASP.NET MVC ile E-Ticaret",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-67301-6-0",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "Yazılım Test Teknikleri",
+    "YAZAR": "L.Koray Yitmen",
+    "ISBN NUMARASI": "978-975-02-9294-1",
+    "YAYINEVİ": "Seçkin",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Spring Framework",
+    "YAZAR": "Mimar Aslan",
+    "ISBN NUMARASI": "978-605-65679-5-9",
+    "YAYINEVİ": "Level",
+    "EDİTÖR": "Uğur Gelişken",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Arduino'yu 25 Proje ile Keşfet",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-66043-3-1",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  
+  {
+    "BAŞLIK": "Software Engineering",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-1-260-54800-6",
+    "YAYINEVİ": "Mc Graw Hill",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Kotlin",
+    "YAZAR": "Mehmet Ali Sıcak",
+    "ISBN NUMARASI": "978-605-83527-5-9",
+    "YAYINEVİ": "Level",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  {
+    "BAŞLIK": "PROGRAMLAMAYA GİRİŞ SETİ 2",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  
+  
+  {
+    "BAŞLIK": "Programlama ve Veri Tabanı Mantığı",
+    "YAZAR": "Kadir Çamoğlu",
+    "ISBN NUMARASI": "978-605-4205-12-7",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 2
+  },
+  
+  {
+    "BAŞLIK": "C/C++ PROGRAMLAMA SETİ",
+    "YAZAR": "",
+    "ISBN NUMARASI": "",
+    "YAYINEVİ": "",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Web Tasarım Rehberi",
+    "YAZAR": "Mustafa Aydemir",
+    "ISBN NUMARASI": "978-605-4205-13-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Sıfırdan İleri Seviyeye PHP Web Programlama",
+    "YAZAR": "Emrah Yüksel",
+    "ISBN NUMARASI": "978-605-2118-29-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "ASP.NET CORE ile Proje Geliştirmek",
+    "YAZAR": "Ahmet Bilgiç",
+    "ISBN NUMARASI": "978-625-7440-40-0",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Javascript Programlama",
+    "YAZAR": "İbrahim Çelikbilek",
+    "ISBN NUMARASI": "978-605-5201-23-4",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Nesnelerin İnterneti",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-9594-64-6",
+    "YAYINEVİ": "PapatyaBilim",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "100 Sayfada Makine Öğrenmesi Kitabı",
+    "YAZAR": "Andriy Burkov",
+    "ISBN NUMARASI": "978-975-6797-94-5",
+    "YAYINEVİ": "PapatyaBilim",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Bilgisayar Sistemlerinde Güvenlik ve Gizlilik",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-605-73625-1-3",
+    "YAYINEVİ": "EfeAkademi",
+    "EDİTÖR": "Ömer Aydın",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  
+  {
+    "BAŞLIK": "Excel 365 ile Veri Analizi ve İş Uygulamaları",
+    "YAZAR": "Faruk Çubukçu",
+    "ISBN NUMARASI": "978-625-7440-22-6",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "İrem Soylu",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Database Systems",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-1-292-06118-4",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Marcia Horton-Matt Goldstein-Scott Disanno-K.K.Neelakantan",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Computer Networking",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-0-273-76896-8",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Marcia Horton-Michael Hirsch-Emma Snider-Jeff Holcomb-Ashwitha Jayakumar",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Computer Science",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-1-292-06116-0",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Marcia Horton-Tracy Johnson-Anuprova Dey Chowdhuri",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Software Engineering",
+    "YAZAR": "Ian Sommerwille",
+    "ISBN NUMARASI": "978-0-321-31379-9",
+    "YAYINEVİ": "Addison Wesley",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Operating Systems",
+    "YAZAR": "William Stallings",
+    "ISBN NUMARASI": "978-0-13-603337-0",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Tracy Dunkelberger-ReeAnne Davis-Scott Disanno-Rose Kernan-Gregory Dulles",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Fundamentals of Database Systems",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-321-41506-X",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Matt Goldstein-Patty Mahtani",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Matematik ve Mühendislik Bölümleri İçin Çözümlü Genel Matematik",
+    "YAZAR": "Arif Sabuncuoğlu",
+    "ISBN NUMARASI": "978-625-406-243-8",
+    "YAYINEVİ": "Nobel",
+    "EDİTÖR": "Süleyman Gezgin",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Graph Drawing Algoritms For the Visualization of Graphs",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-13-301615-3",
+    "YAYINEVİ": "Prentice-Hall",
+    "EDİTÖR": "Laura Steele-Edward DeFelippis-Marcia Horton-Eileen Clark-Jerri Uzzo",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Yeni Başlayanlar İçin Unity 3D",
+    "YAZAR": "A.Gökhan Satman",
+    "ISBN NUMARASI": "978-605-5201-66-1",
+    "YAYINEVİ": "Kodlab",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "R ile İstatiksel Programlama",
+    "YAZAR": "İlker Arslan",
+    "ISBN NUMARASI": "978-605-64608-9-0",
+    "YAYINEVİ": "Pusula",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Mathematical Elements for Computer Graphics",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-07-053529-9",
+    "YAYINEVİ": "Mc Graw Hill",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Elementary Linear Algebra",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-471-66959-8",
+    "YAYINEVİ": "Wiley",
+    "EDİTÖR": "Jennifer Battista-Anne Scanlan Rohrer-Ken Santor-Hilary Newman",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Thomas' Calculus",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-321-24335-8",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "William Hoffman-Karen Wernholm-Rachel S.Reeve-David Malone-Bob Carroll",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Data and Computer Communications",
+    "YAZAR": "William Stallings",
+    "ISBN NUMARASI": "0-13-243310-9",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Tracy Dunkelberger-Carole Snyder-Vince O'Brien-Camille Trentacoste-Rose Kernan",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Electronic Devices and Circuit Theory",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-13-197408-4",
+    "YAYINEVİ": "Pearson",
+    "EDİTÖR": "Kate Linsner-Rex Davidson-Lara Dimmick",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Computing Essentials 2008",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-0-07-110153-0",
+    "YAYINEVİ": "Mc Graw Hill",
+    "EDİTÖR": "",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Foundations of Algorithms",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-443-5000",
+    "YAYINEVİ": "Jones and Bartlett",
+    "EDİTÖR": "Stephen Solomon-Caroline Senay",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "C Dersi:Çözümlü Problem Kitabı",
+    "YAZAR": "",
+    "ISBN NUMARASI": "978-9944-0380-0-3",
+    "YAYINEVİ": "",
+    "EDİTÖR": "Bülent Ünal",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Scientific Computing",
+    "YAZAR": "Michael T.Heath",
+    "ISBN NUMARASI": "0-07-027684-6",
+    "YAYINEVİ": "Mc Graw Hill",
+    "EDİTÖR": "Eric M.Munson",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Data Structures&Program Design in C",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-13-288366-X",
+    "YAYINEVİ": "Prentice-Hall",
+    "EDİTÖR": "Sondra Chavez-Alice Dworkin-Judith Winthrop-Cherly Smith",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  },
+  {
+    "BAŞLIK": "Fundamentals of Physics",
+    "YAZAR": "",
+    "ISBN NUMARASI": "0-471-22862-1",
+    "YAYINEVİ": "Wiley",
+    "EDİTÖR": "Stuart Johnson-Ellen Ford-Monique Calello-Elizabeth Swain",
+    "CATEGORY": "",
+    "DESCRIPTION": "",
+    "COPY_COUNT": 1
+  }
+]
