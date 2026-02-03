@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mehmetmertmazici.libraryauapp.data.repository.AuthState
+import com.mehmetmertmazici.libraryauapp.ui.auth.AuthNavigation
+import com.mehmetmertmazici.libraryauapp.ui.auth.PendingApprovalScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.ErrorView
 import com.mehmetmertmazici.libraryauapp.ui.components.LoadingView
 import com.mehmetmertmazici.libraryauapp.ui.splash.SplashScreen
@@ -96,19 +98,11 @@ private fun AuthStateContent(
         }
 
         is AuthState.SignedOut -> {
-            // TODO: LoginScreen()
-            PlaceholderAuthScreen(
-                title = "Giriş Yap",
-                subtitle = "LoginScreen buraya gelecek"
-            )
+            AuthNavigation()
         }
 
         is AuthState.PendingApproval -> {
-            // TODO: PendingApprovalScreen()
-            PlaceholderAuthScreen(
-                title = "Onay Bekleniyor",
-                subtitle = "Hesabınız süper admin onayı bekliyor"
-            )
+            PendingApprovalScreen()
         }
 
         is AuthState.SignedIn -> {
