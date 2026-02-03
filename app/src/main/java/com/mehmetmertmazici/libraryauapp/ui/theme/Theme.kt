@@ -1,62 +1,87 @@
 package com.mehmetmertmazici.libraryauapp.ui.theme
 
+import android.app.Activity
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 /**
  * LibraryAuTheme
  * Ankara Üniversitesi renk paleti ile Material3 tema
  *
- * iOS Karşılığı: Extensions.swift → Color extension + AnkaraBackgroundModifier
- *
- * NOT: Bu dosya Adım 3'te tam olarak doldurulacak.
- * Şimdilik temel yapı ve ana renkler tanımlı.
+ * iOS Karşılığı: Extensions.swift → AnkaraBackgroundModifier
  */
-
-// ── Ankara Üniversitesi Ana Renkleri ──
-// iOS: Extensions.swift'ten birebir taşındı
-val AnkaraBlue = Color(0xFF003882)
-val AnkaraLightBlue = Color(0xFF3378CC)
-val AnkaraGold = Color(0xFFCC9E1C)
-val AnkaraSuccess = Color(0xFF00A64F)
-val AnkaraWarning = Color(0xFFF29C12)
-val AnkaraDanger = Color(0xFFD93333)
-val AnkaraBackground = Color(0xFFFAFBFC)
-val AnkaraCardBackground = Color.White
-val AnkaraSectionBackground = Color(0xFFF2F4F7)
 
 // ── Light Color Scheme ──
 private val LightColorScheme = lightColorScheme(
     primary = AnkaraBlue,
-    secondary = AnkaraLightBlue,
-    tertiary = AnkaraGold,
-    background = AnkaraBackground,
-    surface = AnkaraCardBackground,
-    error = AnkaraDanger,
     onPrimary = Color.White,
+    primaryContainer = AnkaraLightBlue,
+    onPrimaryContainer = Color.White,
+
+    secondary = AnkaraLightBlue,
     onSecondary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+    secondaryContainer = AnkaraColors.SectionBackground,
+    onSecondaryContainer = AnkaraColors.OnBackground,
+
+    tertiary = AnkaraGold,
+    onTertiary = Color.White,
+
+    background = AnkaraBackground,
+    onBackground = AnkaraColors.OnBackground,
+
+    surface = AnkaraCardBackground,
+    onSurface = AnkaraColors.OnBackground,
+    surfaceVariant = AnkaraColors.SectionBackground,
+    onSurfaceVariant = AnkaraColors.Secondary,
+
+    error = AnkaraDanger,
     onError = Color.White,
+
+    outline = Color(0xFFE0E0E0),
+    outlineVariant = Color(0xFFF0F0F0)
 )
 
 // ── Dark Color Scheme ──
 private val DarkColorScheme = darkColorScheme(
     primary = AnkaraLightBlue,
-    secondary = AnkaraBlue,
-    tertiary = AnkaraGold,
-    background = Color(0xFF121212),
-    surface = Color(0xFF1E1E1E),
-    error = Color(0xFFEF5350),
     onPrimary = Color.White,
+    primaryContainer = AnkaraBlue,
+    onPrimaryContainer = Color.White,
+
+    secondary = AnkaraBlue,
     onSecondary = Color.White,
-    onBackground = Color(0xFFE6E1E5),
-    onSurface = Color(0xFFE6E1E5),
+    secondaryContainer = AnkaraColors.SectionBackgroundDark,
+    onSecondaryContainer = AnkaraColors.OnBackgroundDark,
+
+    tertiary = AnkaraGold,
+    onTertiary = Color.White,
+
+    background = AnkaraColors.BackgroundDark,
+    onBackground = AnkaraColors.OnBackgroundDark,
+
+    surface = AnkaraColors.CardBackgroundDark,
+    onSurface = AnkaraColors.OnBackgroundDark,
+    surfaceVariant = AnkaraColors.SectionBackgroundDark,
+    onSurfaceVariant = Color(0xFFAAAAAA),
+
+    error = Color(0xFFEF5350),
     onError = Color.White,
+
+    outline = Color(0xFF444444),
+    outlineVariant = Color(0xFF333333)
 )
 
 @Composable
@@ -66,9 +91,74 @@ fun LibraryAuTheme(
 ) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
+    // Status bar ve navigation bar renklerini ayarla
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = Color.Transparent.toArgb()
+            window.navigationBarColor = Color.Transparent.toArgb()
+            WindowCompat.getInsetsController(window, view).apply {
+                isAppearanceLightStatusBars = !darkTheme
+                isAppearanceLightNavigationBars = !darkTheme
+            }
+        }
+    }
+
     MaterialTheme(
         colorScheme = colorScheme,
-        // typography = LibraryAuTypography,  // Adım 3'te eklenecek
+        typography = LibraryAuTypography,
         content = content
     )
+}
+
+/**
+ * Ankara Üniversitesi gradient arka planı
+ * iOS Karşılığı: AnkaraBackgroundModifier
+ */
+@Composable
+fun AnkaraBackground(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit
+) {
+    val gradientColors = if (darkTheme) {
+        listOf(
+            Color.Black.copy(alpha = 0.6f),
+            AnkaraBlue.copy(alpha = 0.7f)
+        )
+    } else {
+        listOf(
+            Color.White.copy(alpha = 0.6f),
+            AnkaraLightBlue.copy(alpha = 0.7f)
+        )
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.linearGradient(colors = gradientColors)
+            )
+    ) {
+        content()
+    }
+}
+
+/**
+ * Modifier extension for Ankara background
+ */
+fun Modifier.ankaraBackground(darkTheme: Boolean): Modifier {
+    val gradientColors = if (darkTheme) {
+        listOf(
+            Color.Black.copy(alpha = 0.6f),
+            AnkaraBlue.copy(alpha = 0.7f)
+        )
+    } else {
+        listOf(
+            Color.White.copy(alpha = 0.6f),
+            AnkaraLightBlue.copy(alpha = 0.7f)
+        )
+    }
+
+    return this.background(brush = Brush.linearGradient(colors = gradientColors))
 }
