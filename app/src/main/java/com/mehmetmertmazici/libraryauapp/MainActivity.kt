@@ -4,43 +4,37 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.libraryau.app.ui.theme.LibraryAuAppTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
+import androidx.compose.ui.Modifier
+import com.mehmetmertmazici.libraryauapp.ui.navigation.AppNavigation
 import com.mehmetmertmazici.libraryauapp.ui.theme.LibraryAuTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * MainActivity
- * Tek Activity - Compose ile tüm ekranlar burada yönetilir
+ * Ana aktivite - Uygulama giriş noktası
  *
- * iOS Karşılığı: ContentView.swift (Splash + Auth routing mantığı)
- *
- * Splash Akışı:
- *   iOS  → SplashView overlay (2.5s) + fade-out animasyonu
- *   Android → SplashScreen API (sistem splash) + custom Compose splash
+ * iOS Karşılığı: LibraryAuAppApp.swift (@main struct)
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        // Android 12+ SplashScreen API
-        val splashScreen = installSplashScreen()
-
-        // Splash'ı Firebase auth durumu hazır olana kadar tut
-        // (Adım 5'te AuthViewModel ile bağlanacak)
-        splashScreen.setKeepOnScreenCondition { false }
-
         super.onCreate(savedInstanceState)
 
-        // Edge-to-edge görünüm (modern Android tasarım)
+        // Edge-to-edge display
         enableEdgeToEdge()
 
+        println("📱 Kütüphane Yönetim Uygulaması başlatıldı")
+
         setContent {
-            LibraryAuTheme{
-                // Adım 5'te LibraryAuApp composable buraya gelecek
-                // Şimdilik boş bir ekran
-                // LibraryAuApp()
+            LibraryAuTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    AppNavigation()
+                }
             }
         }
     }
