@@ -3,6 +3,10 @@ package com.mehmetmertmazici.libraryauapp.di
 import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mehmetmertmazici.libraryauapp.data.repository.AuthRepository
+import com.mehmetmertmazici.libraryauapp.data.repository.FirebaseRepository
+import com.mehmetmertmazici.libraryauapp.data.repository.ISBNLookupRepository
+import com.mehmetmertmazici.libraryauapp.data.repository.NetworkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,23 +16,18 @@ import javax.inject.Singleton
 
 /**
  * AppModule
- * Hilt bağımlılık enjeksiyon modülü
+ * Hilt dependency injection module
  *
- * iOS Karşılığı:
- *   iOS'ta Singleton pattern kullanılıyordu:
- *     - AuthenticationService.shared
- *     - FirebaseService.shared
- *     - NetworkManager.shared
- *
- *   Android'de Hilt ile merkezi DI kullanıyoruz:
- *     - @Singleton scope ile tek instance garanti
- *     - Constructor injection ile bağımlılıklar otomatik sağlanır
+ * iOS Karşılığı: Singleton pattern'lar (AuthenticationService.shared, FirebaseService.shared, vb.)
+ * Android: Hilt ile constructor injection
  */
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // ── Firebase Instances ──
+    // ══════════════════════════════════════════════════════════════
+    // MARK: - Firebase Instances
+    // ══════════════════════════════════════════════════════════════
 
     @Provides
     @Singleton
@@ -42,27 +41,39 @@ object AppModule {
         return FirebaseFirestore.getInstance()
     }
 
-    // ── Context ──
+    // ══════════════════════════════════════════════════════════════
+    // MARK: - Repositories
+    // ══════════════════════════════════════════════════════════════
 
     @Provides
     @Singleton
-    fun provideApplicationContext(@ApplicationContext context: Context): Context {
-        return context
+    fun provideAuthRepository(
+        auth: FirebaseAuth,
+        firestore: FirebaseFirestore
+    ): AuthRepository {
+        return AuthRepository(auth, firestore)
     }
 
-    // ─────────────────────────────────────────────
-    // Adım 4'te eklenecek repository provide'lar:
-    // ─────────────────────────────────────────────
-    //
-    // @Provides @Singleton
-    // fun provideFirebaseRepository(db: FirebaseFirestore): FirebaseRepository
-    //
-    // @Provides @Singleton
-    // fun provideAuthRepository(auth: FirebaseAuth, db: FirebaseFirestore): AuthRepository
-    //
-    // @Provides @Singleton
-    // fun provideNetworkManager(@ApplicationContext context: Context): NetworkManager
-    //
-    // @Provides @Singleton
-    // fun provideISBNLookupRepository(): ISBNLookupRepository
+    @Provides
+    @Singleton
+    fun provideFirebaseRepository(
+        firestore: FirebaseFirestore,
+        @ApplicationContext context: Context
+    ): FirebaseRepository {
+        return FirebaseRepository(firestore, context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNetworkManager(
+        @ApplicationContext context: Context
+    ): NetworkManager {
+        return NetworkManager(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideISBNLookupRepository(): ISBNLookupRepository {
+        return ISBNLookupRepository()
+    }
 }
