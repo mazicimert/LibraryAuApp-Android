@@ -2,7 +2,9 @@
 <resources>
 
     <!-- Temel Uygulama Teması (Material3) -->
-    <style name="Theme.LibraryAuApp" parent="android:Theme.Material.Light.NoActionBar">
+    <style name="Theme.LibraryAuApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>

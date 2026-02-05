@@ -77,68 +77,65 @@ fun RegisterScreen(
             )
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color.White, AnkaraLightBlue.copy(alpha = 0.3f))
-                    )
-                )
-                .padding(paddingValues)
-        ) {
-            Column(
+        AnkaraBackground {
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(paddingValues)
             ) {
-                Spacer(modifier = Modifier.height(20.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                // ── Header Section ──
-                RegisterHeaderSection()
+                    // ── Header Section ──
+                    RegisterHeaderSection()
 
-                Spacer(modifier = Modifier.height(24.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                // ── Registration Form ──
-                RegistrationFormSection(
-                    displayName = uiState.registerDisplayName,
-                    email = uiState.registerEmail,
-                    password = uiState.registerPassword,
-                    confirmPassword = uiState.registerConfirmPassword,
-                    showPassword = showPassword,
-                    showConfirmPassword = showConfirmPassword,
-                    onDisplayNameChange = { viewModel.updateRegisterDisplayName(it) },
-                    onEmailChange = { viewModel.updateRegisterEmail(it) },
-                    onPasswordChange = { viewModel.updateRegisterPassword(it) },
-                    onConfirmPasswordChange = { viewModel.updateRegisterConfirmPassword(it) },
-                    onTogglePassword = { showPassword = !showPassword },
-                    onToggleConfirmPassword = { showConfirmPassword = !showConfirmPassword }
-                )
+                    // ── Registration Form ──
+                    RegistrationFormSection(
+                        displayName = uiState.registerDisplayName,
+                        email = uiState.registerEmail,
+                        password = uiState.registerPassword,
+                        confirmPassword = uiState.registerConfirmPassword,
+                        showPassword = showPassword,
+                        showConfirmPassword = showConfirmPassword,
+                        onDisplayNameChange = { viewModel.updateRegisterDisplayName(it) },
+                        onEmailChange = { viewModel.updateRegisterEmail(it) },
+                        onPasswordChange = { viewModel.updateRegisterPassword(it) },
+                        onConfirmPasswordChange = { viewModel.updateRegisterConfirmPassword(it) },
+                        onTogglePassword = { showPassword = !showPassword },
+                        onToggleConfirmPassword = { showConfirmPassword = !showConfirmPassword }
+                    )
 
-                // ── Validation Errors ──
-                if (uiState.registerValidationErrors.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ValidationErrorsSection(errors = uiState.registerValidationErrors)
+                    // ── Validation Errors ──
+                    if (uiState.registerValidationErrors.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        ValidationErrorsSection(errors = uiState.registerValidationErrors)
+                    }
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // ── Register Button ──
+                    RegisterButtonSection(
+                        isLoading = uiState.isRegisterLoading,
+                        isEnabled = uiState.isRegisterFormValid && !uiState.isRegisterLoading && isOnline,
+                        isOnline = isOnline,
+                        onRegister = { viewModel.performRegistration() }
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // ── Info Section ──
+                    InfoSection()
+
+                    Spacer(modifier = Modifier.height(32.dp))
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // ── Register Button ──
-                RegisterButtonSection(
-                    isLoading = uiState.isRegisterLoading,
-                    isEnabled = uiState.isRegisterFormValid && !uiState.isRegisterLoading && isOnline,
-                    isOnline = isOnline,
-                    onRegister = { viewModel.performRegistration() }
-                )
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // ── Info Section ──
-                InfoSection()
-
-                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }
@@ -146,6 +143,8 @@ fun RegisterScreen(
 
 @Composable
 private fun RegisterHeaderSection() {
+    val colorScheme = MaterialTheme.colorScheme
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -162,7 +161,7 @@ private fun RegisterHeaderSection() {
             text = "Admin Hesabı Oluştur",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -170,7 +169,7 @@ private fun RegisterHeaderSection() {
         Text(
             text = "Bilgilerinizi girin ve süper admin onayını bekleyin",
             fontSize = 14.sp,
-            color = Color.Gray,
+            color = colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
     }
@@ -343,12 +342,14 @@ private fun RegisterButtonSection(
 
 @Composable
 private fun InfoSection() {
+    val colorScheme = MaterialTheme.colorScheme
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HorizontalDivider(
             modifier = Modifier.padding(horizontal = 40.dp),
-            color = Color.Gray.copy(alpha = 0.3f)
+            color = colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -385,7 +386,7 @@ private fun InfoSection() {
                 Text(
                     text = "Hesabınız oluşturulduktan sonra süper admin tarafından onaylanması gerekmektedir. Onay işlemi tamamlandıktan sonra giriş yapabilirsiniz.",
                     fontSize = 13.sp,
-                    color = Color.Gray,
+                    color = colorScheme.onSurfaceVariant,
                     lineHeight = 18.sp
                 )
             }

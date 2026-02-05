@@ -19,16 +19,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.mehmetmertmazici.libraryauapp.ui.books.BookListScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.NetworkStatusBanner
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraBlue
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraLightBlue
 
 /**
- * MainScreen
- * Ana ekran - Bottom navigation ile tab yapısı
+ * MainScreen Ana ekran - Bottom navigation ile tab yapısı
  *
- * iOS Karşılığı: MainTabView.swift
- * iOS: TabView → Android: NavigationBar + NavHost
+ * iOS Karşılığı: MainTabView.swift iOS: TabView → Android: NavigationBar + NavHost
  */
 @Composable
 fun MainScreen(
@@ -42,24 +41,20 @@ fun MainScreen(
     val currentRoute = navBackStackEntry?.destination?.route
 
     // Tab items based on user role
-    val tabItems = remember(isSuperAdmin) {
-        if (isSuperAdmin) {
-            listOf(
-                TabItem.Books,
-                TabItem.Students,
-                TabItem.Borrowing,
-                TabItem.Admin,
-                TabItem.Profile
-            )
-        } else {
-            listOf(
-                TabItem.Books,
-                TabItem.Students,
-                TabItem.Borrowing,
-                TabItem.Profile
-            )
+    val tabItems =
+        remember(isSuperAdmin) {
+            if (isSuperAdmin) {
+                listOf(
+                    TabItem.Books,
+                    TabItem.Students,
+                    TabItem.Borrowing,
+                    TabItem.Admin,
+                    TabItem.Profile
+                )
+            } else {
+                listOf(TabItem.Books, TabItem.Students, TabItem.Borrowing, TabItem.Profile)
+            }
         }
-    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -84,25 +79,34 @@ fun MainScreen(
         ) { paddingValues ->
             // Main content with gradient background
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color.White,
-                                AnkaraLightBlue.copy(alpha = 0.3f)
-                            )
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush =
+                                Brush.linearGradient(
+                                    colors =
+                                        listOf(
+                                            Color.White,
+                                            AnkaraLightBlue.copy(
+                                                alpha = 0.3f
+                                            )
+                                        )
+                                )
                         )
-                    )
-                    .padding(paddingValues)
+                        .padding(paddingValues)
             ) {
-                NavHost(
-                    navController = navController,
-                    startDestination = TabItem.Books.route
-                ) {
+                NavHost(navController = navController, startDestination = TabItem.Books.route) {
                     composable(TabItem.Books.route) {
-                        // TODO: BookListScreen()
-                        PlaceholderScreen(title = "Kitaplar")
+                        BookListScreen(
+                            onBookClick = { book ->
+                                navController.navigate(
+                                    Screen.BookDetail.createRoute(book.id ?: "")
+                                )
+                            },
+                            onBarcodeScanner = { navController.navigate(Screen.Scanner.route) },
+                            onAddBook = { navController.navigate(Screen.AddBook.route) }
+                        )
                     }
                     composable(TabItem.Students.route) {
                         // TODO: StudentListScreen()
@@ -152,9 +156,7 @@ private fun BottomNavigationBar(
                     if (showBadge) {
                         BadgedBox(
                             badge = {
-                                Badge(
-                                    containerColor = MaterialTheme.colorScheme.error
-                                ) {
+                                Badge(containerColor = MaterialTheme.colorScheme.error) {
                                     Text(
                                         text = pendingAdminCount.toString(),
                                         fontSize = 10.sp
@@ -163,13 +165,17 @@ private fun BottomNavigationBar(
                             }
                         ) {
                             Icon(
-                                imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                                imageVector =
+                                    if (isSelected) item.selectedIcon
+                                    else item.unselectedIcon,
                                 contentDescription = item.title
                             )
                         }
                     } else {
                         Icon(
-                            imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                            imageVector =
+                                if (isSelected) item.selectedIcon
+                                else item.unselectedIcon,
                             contentDescription = item.title
                         )
                     }
@@ -178,26 +184,25 @@ private fun BottomNavigationBar(
                     Text(
                         text = item.title,
                         fontSize = 11.sp,
-                        fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                        fontWeight =
+                            if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                         maxLines = 1
                     )
                 },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = AnkaraBlue,
-                    selectedTextColor = AnkaraBlue,
-                    unselectedIconColor = Color.Gray.copy(alpha = 0.6f),
-                    unselectedTextColor = Color.Gray.copy(alpha = 0.6f),
-                    indicatorColor = AnkaraLightBlue.copy(alpha = 0.15f)
-                )
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        selectedIconColor = AnkaraBlue,
+                        selectedTextColor = AnkaraBlue,
+                        unselectedIconColor = Color.Gray.copy(alpha = 0.6f),
+                        unselectedTextColor = Color.Gray.copy(alpha = 0.6f),
+                        indicatorColor = AnkaraLightBlue.copy(alpha = 0.15f)
+                    )
             )
         }
     }
 }
 
-/**
- * Tab Items
- * iOS tabItem karşılıkları
- */
+/** Tab Items iOS tabItem karşılıkları */
 sealed class TabItem(
     val route: String,
     val title: String,
@@ -205,59 +210,56 @@ sealed class TabItem(
     val unselectedIcon: ImageVector
 ) {
     // Kitaplar - books.vertical
-    data object Books : TabItem(
-        route = Screen.Books.route,
-        title = "Kitaplar",
-        selectedIcon = Icons.Filled.MenuBook,
-        unselectedIcon = Icons.Outlined.MenuBook
-    )
+    data object Books :
+        TabItem(
+            route = Screen.Books.route,
+            title = "Kitaplar",
+            selectedIcon = Icons.Filled.MenuBook,
+            unselectedIcon = Icons.Outlined.MenuBook
+        )
 
     // Öğrenciler - person.3
-    data object Students : TabItem(
-        route = Screen.Students.route,
-        title = "Öğrenciler",
-        selectedIcon = Icons.Filled.Groups,
-        unselectedIcon = Icons.Outlined.Groups
-    )
+    data object Students :
+        TabItem(
+            route = Screen.Students.route,
+            title = "Öğrenciler",
+            selectedIcon = Icons.Filled.Groups,
+            unselectedIcon = Icons.Outlined.Groups
+        )
 
     // Ödünçler - book
-    data object Borrowing : TabItem(
-        route = Screen.Borrowing.route,
-        title = "Ödünçler",
-        selectedIcon = Icons.Filled.Book,
-        unselectedIcon = Icons.Outlined.Book
-    )
+    data object Borrowing :
+        TabItem(
+            route = Screen.Borrowing.route,
+            title = "Ödünçler",
+            selectedIcon = Icons.Filled.Book,
+            unselectedIcon = Icons.Outlined.Book
+        )
 
     // Adminler - person.badge.key
-    data object Admin : TabItem(
-        route = Screen.Admin.route,
-        title = "Adminler",
-        selectedIcon = Icons.Filled.AdminPanelSettings,
-        unselectedIcon = Icons.Outlined.AdminPanelSettings
-    )
+    data object Admin :
+        TabItem(
+            route = Screen.Admin.route,
+            title = "Adminler",
+            selectedIcon = Icons.Filled.AdminPanelSettings,
+            unselectedIcon = Icons.Outlined.AdminPanelSettings
+        )
 
     // Profil - person.circle
-    data object Profile : TabItem(
-        route = Screen.Profile.route,
-        title = "Profil",
-        selectedIcon = Icons.Filled.AccountCircle,
-        unselectedIcon = Icons.Outlined.AccountCircle
-    )
+    data object Profile :
+        TabItem(
+            route = Screen.Profile.route,
+            title = "Profil",
+            selectedIcon = Icons.Filled.AccountCircle,
+            unselectedIcon = Icons.Outlined.AccountCircle
+        )
 }
 
-/**
- * Placeholder screen for tabs
- * Gerçek ekranlar implement edilene kadar kullanılacak
- */
+/** Placeholder screen for tabs Gerçek ekranlar implement edilene kadar kullanılacak */
 @Composable
 private fun PlaceholderScreen(title: String) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.headlineMedium,

@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.LibraryAuApp" parent="android:Theme.Material.NoActionBar">
+    <!-- Temel Uygulama Teması (Material3) -->
+    <style name="Theme.LibraryAuApp" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+
+    <!-- Splash Teması (Android 12+ SplashScreen API) -->
+    <style name="Theme.LibraryAuApp.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/ankara_blue</item>
+        <item name="postSplashScreenTheme">@style/Theme.LibraryAuApp</item>
+    </style>
+
+    <!-- Ankara Üniversitesi Renkleri -->
+    <color name="ankara_blue">#003882</color>
+    <color name="ankara_light_blue">#3378CC</color>
+    <color name="ankara_gold">#CC9E1C</color>
 
 </resources>

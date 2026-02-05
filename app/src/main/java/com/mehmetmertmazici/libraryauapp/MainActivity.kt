@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen // <-- BU IMPORT ÖNEMLİ
 import com.mehmetmertmazici.libraryauapp.ui.navigation.AppNavigation
 import com.mehmetmertmazici.libraryauapp.ui.theme.LibraryAuTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +22,8 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
 
         // Edge-to-edge display

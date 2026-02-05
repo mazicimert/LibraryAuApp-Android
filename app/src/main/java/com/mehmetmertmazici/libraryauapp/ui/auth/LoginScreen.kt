@@ -16,6 +16,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -59,15 +60,8 @@ fun LoginScreen(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color.White, AnkaraLightBlue.copy(alpha = 0.3f))
-                )
-            )
-    ) {
+    AnkaraBackground {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -75,7 +69,7 @@ fun LoginScreen(
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height(60.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             // ── Header Section ──
             HeaderSection()
@@ -118,6 +112,8 @@ fun LoginScreen(
 
 @Composable
 private fun HeaderSection() {
+    val colorScheme = MaterialTheme.colorScheme
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -135,14 +131,14 @@ private fun HeaderSection() {
             text = "Kütüphane",
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black
+            color = colorScheme.onBackground
         )
 
         Text(
             text = "Yönetim Sistemi",
             fontSize = 20.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.Gray
+            color = colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -150,7 +146,7 @@ private fun HeaderSection() {
         Text(
             text = "Admin ve Süper Admin Girişi",
             fontSize = 14.sp,
-            color = Color.Gray
+            color = colorScheme.onSurfaceVariant
         )
     }
 }
@@ -204,37 +200,72 @@ private fun ActionButtonsSection(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Login Button
+
+        // Gradient Tanımı (Soldan sağa, Koyu Mavi -> Açık Mavi)
+        val buttonGradient = Brush.horizontalGradient(
+            colors = listOf(AnkaraBlue, AnkaraLightBlue)
+        )
+
+        // Disabled rengi (Düz gri) için Brush
+        val disabledBrush = androidx.compose.ui.graphics.SolidColor(Color.Gray.copy(alpha = 0.6f))
+
         Button(
             onClick = onLogin,
             enabled = isEnabled,
+            contentPadding = PaddingValues(), // İçeriği biz yöneteceğiz, varsayılan padding'i sıfırla
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent, // Rengi background modifier ile vereceğiz
+                disabledContainerColor = Color.Transparent
+            ),
+            shape = RoundedCornerShape(12.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = AnkaraBlue,
-                disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
-            ),
-            shape = RoundedCornerShape(12.dp)
+                .height(50.dp)
+                // Gölge Efekti (Sadece aktifken mavi gölge)
+                .then(
+                    if (isEnabled) {
+                        Modifier.shadow(
+                            elevation = 8.dp,
+                            shape = RoundedCornerShape(12.dp),
+                            ambientColor = AnkaraBlue,
+                            spotColor = AnkaraBlue // iOS'teki renkli gölge efekti
+                        )
+                    } else Modifier
+                )
+                // Arka Plan (Gradient veya Gri)
+                .background(
+                    brush = if (isEnabled) buttonGradient else disabledBrush,
+                    shape = RoundedCornerShape(12.dp)
+                )
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = Color.White,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(24.dp)
-                )
-            } else {
-                Icon(
-                    imageVector = Icons.Filled.ArrowForward,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Giriş Yap",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        // iOS'teki "arrow.right.circle.fill" ikonuna en yakın material ikon
+                        Icon(
+                            imageVector = Icons.Filled.ArrowCircleRight, // Hata verirse ArrowForward yapabilirsin
+                            contentDescription = null,
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "Giriş Yap",
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
             }
         }
 
@@ -262,12 +293,14 @@ private fun RegisterSection(
     isOnline: Boolean,
     onNavigateToRegister: () -> Unit
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         HorizontalDivider(
             modifier = Modifier.padding(horizontal = 40.dp),
-            color = Color.Gray.copy(alpha = 0.3f)
+            color = colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -275,7 +308,7 @@ private fun RegisterSection(
         Text(
             text = "Hesabınız yok mu?",
             fontSize = 14.sp,
-            color = Color.Gray
+            color = colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -320,12 +353,14 @@ fun AuthTextField(
     showPassword: Boolean = false,
     onTogglePassword: (() -> Unit)? = null
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+    
     Column {
         Text(
             text = label,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            color = Color.Black
+            color = colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -336,14 +371,14 @@ fun AuthTextField(
             placeholder = {
                 Text(
                     text = placeholder,
-                    color = Color.Gray.copy(alpha = 0.6f)
+                    color = colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
             },
             leadingIcon = {
                 Icon(
                     imageVector = leadingIcon,
                     contentDescription = null,
-                    tint = Color.Gray
+                    tint = colorScheme.onSurfaceVariant
                 )
             },
             trailingIcon = if (isPassword) {
@@ -352,7 +387,7 @@ fun AuthTextField(
                         Icon(
                             imageVector = if (showPassword) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,
                             contentDescription = if (showPassword) "Şifreyi gizle" else "Şifreyi göster",
-                            tint = Color.Gray
+                            tint = colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -368,9 +403,11 @@ fun AuthTextField(
             shape = RoundedCornerShape(12.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = AnkaraBlue,
-                unfocusedBorderColor = Color.Gray.copy(alpha = 0.3f),
-                focusedContainerColor = Color.White.copy(alpha = 0.8f),
-                unfocusedContainerColor = Color.White.copy(alpha = 0.6f)
+                unfocusedBorderColor = colorScheme.outline,
+                focusedContainerColor = colorScheme.surface.copy(alpha = 0.8f),
+                unfocusedContainerColor = colorScheme.surface.copy(alpha = 0.6f),
+                focusedTextColor = colorScheme.onSurface,
+                unfocusedTextColor = colorScheme.onSurface
             )
         )
     }

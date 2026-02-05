@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -22,15 +21,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.mehmetmertmazici.libraryauapp.ui.theme.*
 
 /**
- * PendingApprovalScreen
- * Onay bekleme ekranı
+ * PendingApprovalScreen Onay bekleme ekranı
  *
  * iOS Karşılığı: PendingApprovalView.swift
  */
 @Composable
-fun PendingApprovalScreen(
-    viewModel: AuthViewModel = hiltViewModel()
-) {
+fun PendingApprovalScreen(viewModel: AuthViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     // Alert Dialog
@@ -40,22 +36,14 @@ fun PendingApprovalScreen(
             title = { Text(uiState.alertTitle) },
             text = { Text(uiState.alertMessage) },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) {
-                    Text("Tamam")
-                }
+                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
             }
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(Color.White, AnkaraLightBlue.copy(alpha = 0.3f))
-                )
-            )
-    ) {
+    AnkaraBackground {
+        val colorScheme = MaterialTheme.colorScheme
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -66,17 +54,16 @@ fun PendingApprovalScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             // ── Clock Icon with Circles ──
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
+            Box(contentAlignment = Alignment.Center) {
                 // Outer circle
                 Box(
-                    modifier = Modifier
-                        .size(180.dp)
-                        .background(
-                            color = Color(0xFFFF9800).copy(alpha = 0.15f),
-                            shape = CircleShape
-                        )
+                    modifier =
+                        Modifier
+                            .size(180.dp)
+                            .background(
+                                color = Color(0xFFFF9800).copy(alpha = 0.15f),
+                                shape = CircleShape
+                            )
                 )
 
                 // Middle circle (stroke)
@@ -115,9 +102,10 @@ fun PendingApprovalScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White.copy(alpha = 0.9f)
-                ),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor = colorScheme.surface.copy(alpha = 0.9f)
+                    ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Column(
@@ -128,15 +116,16 @@ fun PendingApprovalScreen(
                         text = "Onay Bekleniyor",
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = colorScheme.onBackground
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "Hesabınız süper admin tarafından onaylanmayı bekliyor. Lütfen daha sonra tekrar giriş yapmayı deneyin.",
+                        text =
+                            "Hesabınız süper admin tarafından onaylanmayı bekliyor. Lütfen daha sonra tekrar giriş yapmayı deneyin.",
                         fontSize = 16.sp,
-                        color = Color.Gray,
+                        color = colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         lineHeight = 24.sp
                     )
@@ -149,14 +138,9 @@ fun PendingApprovalScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = AnkaraBlue.copy(alpha = 0.1f)
-                )
+                colors = CardDefaults.cardColors(containerColor = AnkaraBlue.copy(alpha = 0.1f))
             ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
+                Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.Top) {
                     Icon(
                         imageVector = Icons.Filled.Info,
                         contentDescription = null,
@@ -171,15 +155,15 @@ fun PendingApprovalScreen(
                             text = "Ne yapmalıyım?",
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 14.sp,
-                            color = Color.Black
+                            color = colorScheme.onBackground
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                            text = "Hesabınız onaylandığında tekrar giriş yapabileceksiniz",
+                            text = "Hesabınız onaylanıdığında tekrar giriş yapabileceksiniz",
                             fontSize = 13.sp,
-                            color = Color.Gray
+                            color = colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -193,9 +177,7 @@ fun PendingApprovalScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFE53935)
-                ),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFE53935)),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Icon(
@@ -204,11 +186,7 @@ fun PendingApprovalScreen(
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Çıkış Yap",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Text(text = "Çıkış Yap", fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
             }
 
             Spacer(modifier = Modifier.height(32.dp))

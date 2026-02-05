@@ -9,29 +9,30 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.mehmetmertmazici.libraryauapp.data.model.AdminUser
 import com.mehmetmertmazici.libraryauapp.data.model.Permission
 import com.mehmetmertmazici.libraryauapp.data.model.UserRole
+import javax.inject.Inject
+import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
- * AuthRepository
- * Firebase Authentication ile kullanıcı yönetimi
+ * AuthRepository Firebase Authentication ile kullanıcı yönetimi
  *
- * iOS Karşılığı: AuthenticationService.swift
- * iOS: Combine Publisher → Android: Flow/suspend function
- * iOS: @Published → Android: StateFlow
+ * iOS Karşılığı: AuthenticationService.swift iOS: Combine Publisher → Android: Flow/suspend
+ * function iOS: @Published → Android: StateFlow
  */
 @Singleton
-class AuthRepository @Inject constructor(
-    private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
-) {
+class AuthRepository
+@Inject
+constructor(private val auth: FirebaseAuth, private val firestore: FirebaseFirestore) {
     // ── State Flows ──
     private val _isSignedIn = MutableStateFlow(false)
     val isSignedIn: StateFlow<Boolean> = _isSignedIn.asStateFlow()
@@ -44,6 +45,8 @@ class AuthRepository @Inject constructor(
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState.asStateFlow()
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     // ── Collection Names ──
     private object Collections {
@@ -65,8 +68,8 @@ class AuthRepository @Inject constructor(
             _isSignedIn.value = user != null
 
             if (user != null) {
-                // Admin verilerini yükle (coroutine scope'da çağrılmalı)
-                // Bu ViewModel'den tetiklenecek
+                // FIXED: Coroutine scope ile verileri yükle
+                scope.launch { loadAdminUserData(user.uid) }
             } else {
                 _currentAdminUser.value = null
                 _authState.value = AuthState.SignedOut
@@ -74,13 +77,9 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /**
-     * Auth state değişikliklerini Flow olarak dinle
-     */
+    /** Auth state değişikliklerini Flow olarak dinle */
     fun observeAuthState(): Flow<FirebaseUser?> = callbackFlow {
-        val listener = FirebaseAuth.AuthStateListener { auth ->
-            trySend(auth.currentUser)
-        }
+        val listener = FirebaseAuth.AuthStateListener { auth -> trySend(auth.currentUser) }
         this@AuthRepository.auth.addAuthStateListener(listener)
         awaitClose { this@AuthRepository.auth.removeAuthStateListener(listener) }
     }
@@ -89,25 +88,18 @@ class AuthRepository @Inject constructor(
     // MARK: - Load Admin User Data
     // ══════════════════════════════════════════════════════════════
 
-    /**
-     * Admin kullanıcı verilerini yükle
-     */
+    /** Admin kullanıcı verilerini yükle */
     suspend fun loadAdminUserData(userId: String): Result<AdminUser?> {
         return try {
-            val document = firestore.collection(Collections.ADMIN_USERS)
-                .document(userId)
-                .get()
-                .await()
+            val document =
+                    firestore.collection(Collections.ADMIN_USERS).document(userId).get().await()
 
             val adminUser = document.toObject(AdminUser::class.java)
             _currentAdminUser.value = adminUser
 
             if (adminUser != null) {
-                _authState.value = if (adminUser.isActive) {
-                    AuthState.SignedIn
-                } else {
-                    AuthState.PendingApproval
-                }
+                _authState.value =
+                        if (adminUser.isActive) AuthState.SignedIn else AuthState.PendingApproval
             } else {
                 println("⚠️ Admin kullanıcı verisi bulunamadı")
                 _authState.value = AuthState.SignedOut
@@ -125,9 +117,7 @@ class AuthRepository @Inject constructor(
     // MARK: - Authentication Methods
     // ══════════════════════════════════════════════════════════════
 
-    /**
-     * Kullanıcı giriş işlemi
-     */
+    /** Kullanıcı giriş işlemi */
     suspend fun signIn(email: String, password: String): Result<FirebaseUser> {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
@@ -142,53 +132,49 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /**
-     * Kullanıcı kayıt işlemi
-     */
-    suspend fun signUp(
-        email: String,
-        password: String,
-        displayName: String
-    ): Result<Unit> {
+    /** Kullanıcı kayıt işlemi */
+    suspend fun signUp(email: String, password: String, displayName: String): Result<Unit> {
         return try {
             // Firebase Auth'da kullanıcı oluştur
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             val user = result.user ?: throw AuthError.UserCreationFailed
 
             // Profil güncelle
-            val profileUpdates = userProfileChangeRequest {
-                this.displayName = displayName
-            }
+            val profileUpdates = userProfileChangeRequest { this.displayName = displayName }
             user.updateProfile(profileUpdates).await()
 
             // Admin kullanıcı kaydı oluştur (onay bekliyor)
-            val adminUser = AdminUser(
-                email = email,
-                displayName = displayName,
-                isSuperAdmin = false
-            )
+            val adminUser =
+                    AdminUser(email = email, displayName = displayName, isSuperAdmin = false)
 
-            saveAdminUserWithId(adminUser, user.uid)
-
-            _authState.value = AuthState.PendingApproval
-            Result.success(Unit)
+            try {
+                saveAdminUserWithId(adminUser, user.uid)
+                _authState.value = AuthState.PendingApproval
+                Result.success(Unit)
+            } catch (e: Exception) {
+                // ROLLBACK: Kullanıcı oluşturuldu ama Firestore'a yazılamadı
+                // Kullanıcıyı sil ki tekrar kayıt olabilsin
+                println("⚠️ Firestore yazma hatası, kullanıcı siliniyor: ${e.message}")
+                try {
+                    user.delete().await()
+                } catch (deleteError: Exception) {
+                    println("⚠️ Rollback silme hatası: ${deleteError.message}")
+                }
+                throw e
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    /**
-     * Çıkış işlemi
-     */
+    /** Çıkış işlemi */
     fun signOut() {
         auth.signOut()
         _currentAdminUser.value = null
         _authState.value = AuthState.SignedOut
     }
 
-    /**
-     * Şifre sıfırlama e-postası gönder
-     */
+    /** Şifre sıfırlama e-postası gönder */
     suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
         return try {
             auth.sendPasswordResetEmail(email).await()
@@ -198,9 +184,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /**
-     * E-posta doğrulama gönder
-     */
+    /** E-posta doğrulama gönder */
     suspend fun sendEmailVerification(): Result<Unit> {
         return try {
             val user = auth.currentUser ?: throw AuthError.UserNotFound
@@ -211,9 +195,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /**
-     * Kullanıcı hesabını sil
-     */
+    /** Kullanıcı hesabını sil */
     suspend fun deleteAccount(password: String): Result<Unit> {
         return try {
             val user = auth.currentUser ?: throw AuthError.UserNotFound
@@ -227,10 +209,7 @@ class AuthRepository @Inject constructor(
 
             // Firestore'dan sil
             try {
-                firestore.collection(Collections.ADMIN_USERS)
-                    .document(userId)
-                    .delete()
-                    .await()
+                firestore.collection(Collections.ADMIN_USERS).document(userId).delete().await()
             } catch (e: Exception) {
                 println("❌ Firestore kullanıcı kaydı silinemedi: ${e.message}")
             }
@@ -250,25 +229,18 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    /**
-     * Admin kullanıcıyı ID ile kaydet
-     */
+    /** Admin kullanıcıyı ID ile kaydet */
     private suspend fun saveAdminUserWithId(adminUser: AdminUser, userId: String) {
-        firestore.collection(Collections.ADMIN_USERS)
-            .document(userId)
-            .set(adminUser)
-            .await()
+        firestore.collection(Collections.ADMIN_USERS).document(userId).set(adminUser).await()
     }
 
-    /**
-     * Süper Admin tarafından yeni admin oluştur
-     */
+    /** Süper Admin tarafından yeni admin oluştur */
     suspend fun createAdminBySuperAdmin(
-        email: String,
-        password: String,
-        displayName: String,
-        superAdminPassword: String,
-        newAdminIsSuperAdmin: Boolean
+            email: String,
+            password: String,
+            displayName: String,
+            superAdminPassword: String,
+            newAdminIsSuperAdmin: Boolean
     ): Result<String> {
         return try {
             val currentUser = auth.currentUser ?: throw AuthError.UserNotFound
@@ -289,17 +261,19 @@ class AuthRepository @Inject constructor(
             val newUserId = newUser.uid
 
             // Profil güncelle
-            val profileUpdates = userProfileChangeRequest {
-                this.displayName = displayName
-            }
+            val profileUpdates = userProfileChangeRequest { this.displayName = displayName }
             newUser.updateProfile(profileUpdates).await()
 
             // Admin kaydı oluştur (otomatik onaylı)
-            val adminUser = AdminUser(
-                email = email,
-                displayName = displayName,
-                isSuperAdmin = newAdminIsSuperAdmin
-            ).copy(isApproved = true) // Süper admin tarafından oluşturulanlar otomatik onaylı
+            val adminUser =
+                    AdminUser(
+                                    email = email,
+                                    displayName = displayName,
+                                    isSuperAdmin = newAdminIsSuperAdmin
+                            )
+                            .copy(
+                                    isApproved = true
+                            ) // Süper admin tarafından oluşturulanlar otomatik onaylı
 
             saveAdminUserWithId(adminUser, newUserId)
 
@@ -371,9 +345,9 @@ class AuthRepository @Inject constructor(
 
     /** Form validasyonu (kayıt için) */
     fun validateRegistrationForm(
-        email: String,
-        password: String,
-        displayName: String
+            email: String,
+            password: String,
+            displayName: String
     ): RegistrationValidationResult {
         val errors = mutableListOf<String>()
 
@@ -429,12 +403,6 @@ sealed class AuthError(override val message: String) : Exception(message) {
 // MARK: - Validation Results
 // ══════════════════════════════════════════════════════════════
 
-data class PasswordValidationResult(
-    val isValid: Boolean,
-    val message: String?
-)
+data class PasswordValidationResult(val isValid: Boolean, val message: String?)
 
-data class RegistrationValidationResult(
-    val isValid: Boolean,
-    val errors: List<String>
-)
+data class RegistrationValidationResult(val isValid: Boolean, val errors: List<String>)
