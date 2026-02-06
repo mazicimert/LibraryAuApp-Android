@@ -30,15 +30,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * BookDetailScreen
- * Kitap detay ve kopyalar ekranı
+ * BookDetailScreen Kitap detay ve kopyalar ekranı
  *
  * iOS Karşılığı: BookDetailView.swift
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(
-    bookTemplate: BookTemplate,
+    bookId: String,
     viewModel: BookDetailViewModel = hiltViewModel(),
     onBack: () -> Unit,
     onEditBook: (BookTemplate) -> Unit,
@@ -48,12 +47,22 @@ fun BookDetailScreen(
     val bookCopies by viewModel.bookCopies.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
 
-    // Initialize book
-    LaunchedEffect(bookTemplate) {
-        viewModel.setInitialBook(bookTemplate)
-    }
+    val currentBook = uiState.currentBook
 
-    val currentBook = uiState.currentBook ?: bookTemplate
+    // Show loading state while book is being loaded
+    if (currentBook == null) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            if (uiState.isLoading) {
+                CircularProgressIndicator(color = AnkaraBlue)
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Kitap bulunamadı", color = MaterialTheme.colorScheme.onBackground)
+                    TextButton(onClick = onBack) { Text("Geri Dön") }
+                }
+            }
+        }
+        return
+    }
 
     // Delete copy confirmation dialog
     if (uiState.showDeleteConfirmation) {
@@ -72,14 +81,10 @@ fun BookDetailScreen(
                 TextButton(
                     onClick = { viewModel.confirmDeleteCopy() },
                     colors = ButtonDefaults.textButtonColors(contentColor = AnkaraDanger)
-                ) {
-                    Text("Sil")
-                }
+                ) { Text("Sil") }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.cancelDeleteCopy() }) {
-                    Text("İptal")
-                }
+                TextButton(onClick = { viewModel.cancelDeleteCopy() }) { Text("İptal") }
             }
         )
     }
@@ -91,9 +96,7 @@ fun BookDetailScreen(
             title = { Text(uiState.alertTitle) },
             text = { Text(uiState.alertMessage) },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) {
-                    Text("Tamam")
-                }
+                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
             }
         )
     }
@@ -135,73 +138,65 @@ fun BookDetailScreen(
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
             )
         }
     ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(Color.White, AnkaraLightBlue.copy(alpha = 0.3f))
-                    )
-                )
-                .padding(paddingValues)
-        ) {
-            PullToRefreshBox(
-                isRefreshing = uiState.isLoading,
-                onRefresh = { currentBook.id?.let { viewModel.loadBookCopies(it) } }
+        AnkaraBackground {
+            val colorScheme = MaterialTheme.colorScheme
+
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                PullToRefreshBox(
+                    isRefreshing = uiState.isLoading,
+                    onRefresh = { currentBook.id?.let { viewModel.loadBookCopies(it) } }
                 ) {
-                    // Book Info Section
-                    item {
-                        BookInfoSection(
-                            book = currentBook,
-                            isDescriptionExpanded = uiState.isDescriptionExpanded,
-                            isTitleExpanded = uiState.isTitleExpanded
-                        )
-                    }
-
-                    item {
-                        HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f))
-                    }
-
-                    // Copies Section Header
-                    item {
-                        CopiesSectionHeader(
-                            totalCopies = bookCopies.size,
-                            availableCopies = viewModel.availableCopiesCount,
-                            borrowedCopies = viewModel.borrowedCopiesCount
-                        )
-                    }
-
-                    // Copies List
-                    if (bookCopies.isEmpty() && !uiState.isLoading) {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        // Book Info Section
                         item {
-                            EmptyCopyStateView(
-                                onAddCopy = { onAddCopy(currentBook) }
+                            BookInfoSection(
+                                book = currentBook,
+                                isDescriptionExpanded = uiState.isDescriptionExpanded,
+                                isTitleExpanded = uiState.isTitleExpanded
                             )
                         }
-                    } else {
-                        items(bookCopies, key = { it.id ?: it.hashCode() }) { copy ->
-                            BookCopyRowView(
-                                copy = copy,
-                                onDelete = { viewModel.requestDeleteCopy(copy) },
-                                canDelete = viewModel.canManageBooks && copy.isAvailable
-                            )
-                        }
-                    }
 
-                    // Bottom spacer
-                    item {
-                        Spacer(modifier = Modifier.height(20.dp))
+                        item { HorizontalDivider(color = Color.Gray.copy(alpha = 0.3f)) }
+
+                        // Copies Section Header
+                        item {
+                            CopiesSectionHeader(
+                                totalCopies = bookCopies.size,
+                                availableCopies = viewModel.availableCopiesCount,
+                                borrowedCopies = viewModel.borrowedCopiesCount
+                            )
+                        }
+
+                        // Copies List
+                        if (bookCopies.isEmpty() && !uiState.isLoading) {
+                            item { EmptyCopyStateView(onAddCopy = { onAddCopy(currentBook) }) }
+                        } else {
+                            items(bookCopies, key = { it.id ?: it.hashCode() }) { copy ->
+                                BookCopyRowView(
+                                    copy = copy,
+                                    onDelete = { viewModel.requestDeleteCopy(copy) },
+                                    canDelete = viewModel.canManageBooks && copy.isAvailable
+                                )
+                            }
+                        }
+
+                        // Bottom spacer
+                        item { Spacer(modifier = Modifier.height(20.dp)) }
                     }
                 }
             }
@@ -213,20 +208,19 @@ fun BookDetailScreen(
 private fun BookInfoSection(
     book: BookTemplate,
     isDescriptionExpanded: Boolean,
-    isTitleExpanded: Boolean
+    isTitleExpanded: Boolean,
+    colorScheme: ColorScheme = MaterialTheme.colorScheme
 ) {
     var titleExpanded by remember { mutableStateOf(isTitleExpanded) }
     var descExpanded by remember { mutableStateOf(isDescriptionExpanded) }
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         // Title
         Text(
             text = book.title,
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            color = colorScheme.onBackground,
             maxLines = if (titleExpanded) Int.MAX_VALUE else 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -243,21 +237,17 @@ private fun BookInfoSection(
 
         HorizontalDivider(
             modifier = Modifier.padding(vertical = 4.dp),
-            color = Color.Gray.copy(alpha = 0.2f)
+            color = colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
         )
 
         // Author
-        Text(
-            text = "Yazar: ${book.author}",
-            fontSize = 16.sp,
-            color = Color.Black
-        )
+        Text(text = "Yazar: ${book.author}", fontSize = 16.sp, color = colorScheme.onBackground)
 
         // Publisher
         Text(
             text = "Yayınevi: ${book.publisher}",
             fontSize = 14.sp,
-            color = Color.Gray
+            color = colorScheme.onSurfaceVariant
         )
 
         // Editor (if exists)
@@ -265,7 +255,7 @@ private fun BookInfoSection(
             Text(
                 text = "Editör: ${book.editor}",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = colorScheme.onSurfaceVariant
             )
         }
 
@@ -274,13 +264,14 @@ private fun BookInfoSection(
             Text(
                 text = "ISBN: ${book.isbn}",
                 fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier
-                    .background(
-                        color = Color.Gray.copy(alpha = 0.1f),
-                        shape = RoundedCornerShape(6.dp)
-                    )
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                color = colorScheme.onSurfaceVariant,
+                modifier =
+                    Modifier
+                        .background(
+                            color = colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         }
 
@@ -294,18 +285,19 @@ private fun BookInfoSection(
                     text = "Kategori:",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Medium,
-                    color = Color.Black
+                    color = colorScheme.onBackground
                 )
                 Text(
                     text = book.category,
                     fontSize = 14.sp,
                     color = AnkaraLightBlue,
-                    modifier = Modifier
-                        .background(
-                            color = AnkaraLightBlue.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                    modifier =
+                        Modifier
+                            .background(
+                                color = AnkaraLightBlue.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 12.dp, vertical = 4.dp)
                 )
             }
         }
@@ -318,13 +310,13 @@ private fun BookInfoSection(
                 text = "Açıklama",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Black
+                color = colorScheme.onBackground
             )
 
             Text(
                 text = book.description,
                 fontSize = 14.sp,
-                color = Color.Gray,
+                color = colorScheme.onSurfaceVariant,
                 maxLines = if (descExpanded) Int.MAX_VALUE else 5,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.clickable { descExpanded = !descExpanded }
@@ -347,7 +339,8 @@ private fun BookInfoSection(
 private fun CopiesSectionHeader(
     totalCopies: Int,
     availableCopies: Int,
-    borrowedCopies: Int
+    borrowedCopies: Int,
+    colorScheme: ColorScheme = MaterialTheme.colorScheme
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -359,27 +352,27 @@ private fun CopiesSectionHeader(
                 text = "Fiziksel Kopyalar",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = colorScheme.onBackground
             )
             Text(
                 text = "$totalCopies kopya • $availableCopies müsait",
                 fontSize = 14.sp,
-                color = Color.Gray
+                color = colorScheme.onSurfaceVariant
             )
         }
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             StatusIndicator(
                 count = availableCopies,
                 label = "Müsait",
-                color = AnkaraSuccess
+                color = AnkaraSuccess,
+                labelColor = colorScheme.onSurfaceVariant
             )
             StatusIndicator(
                 count = borrowedCopies,
                 label = "Ödünçte",
-                color = AnkaraDanger
+                color = AnkaraDanger,
+                labelColor = colorScheme.onSurfaceVariant
             )
         }
     }
@@ -389,42 +382,32 @@ private fun CopiesSectionHeader(
 private fun StatusIndicator(
     count: Int,
     label: String,
-    color: Color
+    color: Color,
+    labelColor: Color = Color.Gray
 ) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = "$count",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
-            color = color
-        )
-        Text(
-            text = label,
-            fontSize = 11.sp,
-            color = Color.Gray
-        )
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(text = "$count", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = color)
+        Text(text = label, fontSize = 11.sp, color = labelColor)
     }
 }
 
 @Composable
-fun BookCopyRowView(
-    copy: BookCopy,
-    onDelete: () -> Unit,
-    canDelete: Boolean
-) {
+fun BookCopyRowView(copy: BookCopy, onDelete: () -> Unit, canDelete: Boolean) {
+    val colorScheme = MaterialTheme.colorScheme
     val statusColor = if (copy.isAvailable) AnkaraSuccess else AnkaraDanger
-    val statusBackgroundColor = if (copy.isAvailable) AnkaraLightBlue.copy(alpha = 0.15f) else AnkaraDanger.copy(alpha = 0.15f)
+    val statusBackgroundColor =
+        if (copy.isAvailable) AnkaraLightBlue.copy(alpha = 0.15f)
+        else AnkaraDanger.copy(alpha = 0.15f)
     val statusForegroundColor = if (copy.isAvailable) AnkaraLightBlue else AnkaraDanger
-    val borderColor = if (copy.isAvailable) Color.Gray.copy(alpha = 0.2f) else AnkaraDanger.copy(alpha = 0.3f)
+    val borderColor =
+        if (copy.isAvailable) colorScheme.onSurfaceVariant.copy(alpha = 0.2f) else AnkaraDanger.copy(
+            alpha = 0.3f
+        )
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White.copy(alpha = 0.9f)
-        ),
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surface.copy(alpha = 0.9f)),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -435,19 +418,26 @@ fun BookCopyRowView(
         ) {
             // Book icon
             Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(AnkaraBlue, AnkaraLightBlue)
+                modifier =
+                    Modifier
+                        .size(60.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .background(
+                            brush =
+                                Brush.linearGradient(
+                                    colors =
+                                        listOf(
+                                            AnkaraBlue,
+                                            AnkaraLightBlue
+                                        )
+                                )
                         )
-                    )
-                    .shadow(4.dp, RoundedCornerShape(12.dp)),
+                        .shadow(4.dp, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = if (copy.isAvailable) Icons.Filled.MenuBook else Icons.Filled.Book,
+                    imageVector =
+                        if (copy.isAvailable) Icons.Filled.MenuBook else Icons.Filled.Book,
                     contentDescription = null,
                     tint = Color.White,
                     modifier = Modifier.size(28.dp)
@@ -465,7 +455,7 @@ fun BookCopyRowView(
                     text = "Kopya #${copy.copyNumber}",
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
+                    color = colorScheme.onBackground
                 )
 
                 // Barcode
@@ -476,13 +466,13 @@ fun BookCopyRowView(
                     Icon(
                         imageVector = Icons.Filled.QrCode,
                         contentDescription = null,
-                        tint = Color.Gray,
+                        tint = colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(12.dp)
                     )
                     Text(
                         text = copy.displayBarcode,
                         fontSize = 14.sp,
-                        color = Color.Gray
+                        color = colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -494,13 +484,13 @@ fun BookCopyRowView(
                     Icon(
                         imageVector = Icons.Filled.CalendarToday,
                         contentDescription = null,
-                        tint = Color.Gray,
+                        tint = colorScheme.onSurfaceVariant,
                         modifier = Modifier.size(12.dp)
                     )
                     Text(
                         text = formatDate(copy.createdAt?.toDate()),
                         fontSize = 12.sp,
-                        color = Color.Gray
+                        color = colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -510,12 +500,13 @@ fun BookCopyRowView(
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Medium,
                     color = statusForegroundColor,
-                    modifier = Modifier
-                        .background(
-                            color = statusBackgroundColor,
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                    modifier =
+                        Modifier
+                            .background(
+                                color = statusBackgroundColor,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .padding(horizontal = 10.dp, vertical = 4.dp)
                 )
             }
 
@@ -526,16 +517,19 @@ fun BookCopyRowView(
             ) {
                 // Status icon
                 Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(
-                            color = statusColor.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        ),
+                    modifier =
+                        Modifier
+                            .size(32.dp)
+                            .background(
+                                color = statusColor.copy(alpha = 0.1f),
+                                shape = RoundedCornerShape(8.dp)
+                            ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                        imageVector = if (copy.isAvailable) Icons.Filled.CheckCircle else Icons.Filled.Warning,
+                        imageVector =
+                            if (copy.isAvailable) Icons.Filled.CheckCircle
+                            else Icons.Filled.Warning,
                         contentDescription = null,
                         tint = statusColor,
                         modifier = Modifier.size(20.dp)
@@ -545,11 +539,12 @@ fun BookCopyRowView(
                 // Delete button (only for available copies)
                 if (canDelete) {
                     Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(AnkaraDanger)
-                            .clickable { onDelete() },
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(AnkaraDanger)
+                                .clickable { onDelete() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -566,9 +561,9 @@ fun BookCopyRowView(
 }
 
 @Composable
-private fun EmptyCopyStateView(
-    onAddCopy: () -> Unit
-) {
+private fun EmptyCopyStateView(onAddCopy: () -> Unit) {
+    val colorScheme = MaterialTheme.colorScheme
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -579,7 +574,7 @@ private fun EmptyCopyStateView(
         Icon(
             imageVector = Icons.Filled.MenuBook,
             contentDescription = null,
-            tint = Color.Gray,
+            tint = colorScheme.onSurfaceVariant,
             modifier = Modifier.size(40.dp)
         )
 
@@ -587,27 +582,20 @@ private fun EmptyCopyStateView(
             text = "Henüz fiziksel kopya yok",
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
-            color = Color.Black
+            color = colorScheme.onBackground
         )
 
         Text(
             text = "Bu kitabın fiziksel kopyalarını ekleyerek ödünç vermeye başlayabilirsiniz",
             fontSize = 14.sp,
-            color = Color.Gray,
+            color = colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 32.dp)
         )
 
         TextButton(
             onClick = onAddCopy,
-            colors = ButtonDefaults.textButtonColors(
-                contentColor = AnkaraLightBlue
-            )
-        ) {
-            Text(
-                text = "İlk Kopyayı Ekle",
-                fontWeight = FontWeight.Medium
-            )
-        }
+            colors = ButtonDefaults.textButtonColors(contentColor = AnkaraLightBlue)
+        ) { Text(text = "İlk Kopyayı Ekle", fontWeight = FontWeight.Medium) }
     }
 }
 

@@ -9,21 +9,22 @@ import com.mehmetmertmazici.libraryauapp.data.repository.AuthRepository
 import com.mehmetmertmazici.libraryauapp.data.repository.FirebaseRepository
 import com.mehmetmertmazici.libraryauapp.data.repository.NetworkManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
- * BookDetailViewModel
- * Kitap detay ve kopya yönetimi işlemleri
+ * BookDetailViewModel Kitap detay ve kopya yönetimi işlemleri
  *
  * iOS Karşılığı: BookDetailViewModel.swift
  */
 @HiltViewModel
-class BookDetailViewModel @Inject constructor(
+class BookDetailViewModel
+@Inject
+constructor(
     private val firebaseRepository: FirebaseRepository,
     private val authRepository: AuthRepository,
     private val networkManager: NetworkManager,
@@ -41,6 +42,15 @@ class BookDetailViewModel @Inject constructor(
     // ── Network State ──
     val isOnline: StateFlow<Boolean> = networkManager.isOnline
 
+    init {
+        // Get bookId from navigation argument
+        savedStateHandle.get<String>("bookId")?.let { bookId ->
+            if (bookId.isNotEmpty()) {
+                loadBookById(bookId)
+            }
+        }
+    }
+
     // ══════════════════════════════════════════════════════════════
     // MARK: - Computed Properties
     // ══════════════════════════════════════════════════════════════
@@ -52,7 +62,34 @@ class BookDetailViewModel @Inject constructor(
         get() = _bookCopies.value.count { !it.isAvailable }
 
     val canManageBooks: Boolean
-        get() = authRepository.hasPermission(com.mehmetmertmazici.libraryauapp.data.model.Permission.MANAGE_BOOKS)
+        get() =
+            authRepository.hasPermission(
+                com.mehmetmertmazici.libraryauapp.data.model.Permission.MANAGE_BOOKS
+            )
+
+    // ══════════════════════════════════════════════════════════════
+    // MARK: - Load Book By ID
+    // ══════════════════════════════════════════════════════════════
+
+    fun loadBookById(bookId: String) {
+        _uiState.update { it.copy(isLoading = true) }
+
+        viewModelScope.launch {
+            firebaseRepository
+                .fetchBookTemplateById(bookId)
+                .onSuccess { book ->
+                    _uiState.update { it.copy(currentBook = book, isLoading = false) }
+                    loadBookCopies(bookId)
+                }
+                .onFailure { error ->
+                    _uiState.update { it.copy(isLoading = false) }
+                    showAlert(
+                        "Yükleme Hatası",
+                        "Kitap bilgileri yüklenirken hata oluştu: ${error.message}"
+                    )
+                }
+        }
+    }
 
     // ══════════════════════════════════════════════════════════════
     // MARK: - Load Book Copies
@@ -67,14 +104,18 @@ class BookDetailViewModel @Inject constructor(
         _uiState.update { it.copy(isLoading = true) }
 
         viewModelScope.launch {
-            firebaseRepository.fetchBookCopies(bookTemplateId)
+            firebaseRepository
+                .fetchBookCopies(bookTemplateId)
                 .onSuccess { copies ->
                     _bookCopies.value = copies.sortedBy { it.copyNumber }
                     _uiState.update { it.copy(isLoading = false) }
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isLoading = false) }
-                    showAlert("Yükleme Hatası", "Kopya bilgileri yüklenirken hata oluştu: ${error.message}")
+                    showAlert(
+                        "Yükleme Hatası",
+                        "Kopya bilgileri yüklenirken hata oluştu: ${error.message}"
+                    )
                 }
         }
     }
@@ -84,12 +125,7 @@ class BookDetailViewModel @Inject constructor(
     // ══════════════════════════════════════════════════════════════
 
     fun requestDeleteCopy(copy: BookCopy) {
-        _uiState.update {
-            it.copy(
-                copyToDelete = copy,
-                showDeleteConfirmation = true
-            )
-        }
+        _uiState.update { it.copy(copyToDelete = copy, showDeleteConfirmation = true) }
     }
 
     fun confirmDeleteCopy() {
@@ -99,12 +135,11 @@ class BookDetailViewModel @Inject constructor(
         _uiState.update { it.copy(showDeleteConfirmation = false) }
 
         viewModelScope.launch {
-            firebaseRepository.deleteBookCopy(copyId)
+            firebaseRepository
+                .deleteBookCopy(copyId)
                 .onSuccess {
                     // Başarılı silme - listeyi güncelle
-                    _bookCopies.update { copies ->
-                        copies.filter { it.id != copyId }
-                    }
+                    _bookCopies.update { copies -> copies.filter { it.id != copyId } }
                     _uiState.update { it.copy(copyToDelete = null) }
                     showAlert("Başarılı", "Kopya başarıyla silindi")
                 }
@@ -116,12 +151,7 @@ class BookDetailViewModel @Inject constructor(
     }
 
     fun cancelDeleteCopy() {
-        _uiState.update {
-            it.copy(
-                copyToDelete = null,
-                showDeleteConfirmation = false
-            )
-        }
+        _uiState.update { it.copy(copyToDelete = null, showDeleteConfirmation = false) }
     }
 
     // ══════════════════════════════════════════════════════════════
@@ -162,29 +192,15 @@ class BookDetailViewModel @Inject constructor(
     // ══════════════════════════════════════════════════════════════
 
     private fun showAlert(title: String, message: String) {
-        _uiState.update {
-            it.copy(
-                showAlert = true,
-                alertTitle = title,
-                alertMessage = message
-            )
-        }
+        _uiState.update { it.copy(showAlert = true, alertTitle = title, alertMessage = message) }
     }
 
     fun dismissAlert() {
-        _uiState.update {
-            it.copy(
-                showAlert = false,
-                alertTitle = "",
-                alertMessage = ""
-            )
-        }
+        _uiState.update { it.copy(showAlert = false, alertTitle = "", alertMessage = "") }
     }
 }
 
-/**
- * Book Detail UI State
- */
+/** Book Detail UI State */
 data class BookDetailUiState(
     val isLoading: Boolean = false,
     val currentBook: BookTemplate? = null,

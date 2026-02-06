@@ -1,6 +1,7 @@
 package com.mehmetmertmazici.libraryauapp.ui.navigation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,12 +16,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.mehmetmertmazici.libraryauapp.ui.books.AddBookScreen
+import com.mehmetmertmazici.libraryauapp.ui.books.AddCopyScreen
+import com.mehmetmertmazici.libraryauapp.ui.books.BookDetailScreen
+import com.mehmetmertmazici.libraryauapp.ui.books.BookEditScreen
 import com.mehmetmertmazici.libraryauapp.ui.books.BookListScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.NetworkStatusBanner
+import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraBackground
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraBlue
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraLightBlue
 
@@ -58,8 +66,9 @@ fun MainScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
+            containerColor = Color.Transparent,
             bottomBar = {
-                BottomNavigationBar(
+                ModernBottomNavigationBar(
                     items = tabItems,
                     currentRoute = currentRoute,
                     pendingAdminCount = if (isSuperAdmin) pendingAdminCount else 0,
@@ -77,52 +86,93 @@ fun MainScreen(
                 )
             }
         ) { paddingValues ->
-            // Main content with gradient background
-            Box(
-                modifier =
-                    Modifier
+            // Main content with AnkaraBackground
+            AnkaraBackground {
+                Box(
+                    modifier = Modifier
                         .fillMaxSize()
-                        .background(
-                            brush =
-                                Brush.linearGradient(
-                                    colors =
-                                        listOf(
-                                            Color.White,
-                                            AnkaraLightBlue.copy(
-                                                alpha = 0.3f
-                                            )
-                                        )
-                                )
-                        )
-                        .padding(paddingValues)
-            ) {
-                NavHost(navController = navController, startDestination = TabItem.Books.route) {
-                    composable(TabItem.Books.route) {
-                        BookListScreen(
-                            onBookClick = { book ->
-                                navController.navigate(
-                                    Screen.BookDetail.createRoute(book.id ?: "")
-                                )
-                            },
-                            onBarcodeScanner = { navController.navigate(Screen.Scanner.route) },
-                            onAddBook = { navController.navigate(Screen.AddBook.route) }
-                        )
-                    }
-                    composable(TabItem.Students.route) {
-                        // TODO: StudentListScreen()
-                        PlaceholderScreen(title = "Öğrenciler")
-                    }
-                    composable(TabItem.Borrowing.route) {
-                        // TODO: BorrowedBooksScreen()
-                        PlaceholderScreen(title = "Ödünçler")
-                    }
-                    composable(TabItem.Admin.route) {
-                        // TODO: AdminManagementScreen()
-                        PlaceholderScreen(title = "Admin Yönetimi")
-                    }
-                    composable(TabItem.Profile.route) {
-                        // TODO: ProfileScreen()
-                        PlaceholderScreen(title = "Profil")
+                        .padding(bottom = paddingValues.calculateBottomPadding())
+                        .statusBarsPadding()
+                ) {
+                    NavHost(navController = navController, startDestination = TabItem.Books.route) {
+                        composable(TabItem.Books.route) {
+                            BookListScreen(
+                                onBookClick = { book ->
+                                    navController.navigate(
+                                        Screen.BookDetail.createRoute(book.id ?: "")
+                                    )
+                                },
+                                onBarcodeScanner = {
+                                    navController.navigate(Screen.Scanner.route)
+                                },
+                                onAddBook = { navController.navigate(Screen.AddBook.route) }
+                            )
+                        }
+                        composable(TabItem.Students.route) {
+                            PlaceholderScreen(title = "Öğrenciler")
+                        }
+                        composable(TabItem.Borrowing.route) {
+                            PlaceholderScreen(title = "Ödünçler")
+                        }
+                        composable(TabItem.Admin.route) {
+                            PlaceholderScreen(title = "Admin Yönetimi")
+                        }
+                        composable(TabItem.Profile.route) { PlaceholderScreen(title = "Profil") }
+
+                        // BookDetail Screen
+                        composable(
+                            route = Screen.BookDetail.route,
+                            arguments =
+                                listOf(navArgument("bookId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+                            BookDetailScreen(
+                                bookId = bookId,
+                                onBack = { navController.popBackStack() },
+                                onEditBook = {
+                                    navController.navigate(Screen.BookEdit.createRoute(bookId))
+                                },
+                                onAddCopy = {
+                                    navController.navigate(Screen.AddCopy.createRoute(bookId))
+                                }
+                            )
+                        }
+
+                        // AddBook Screen
+                        composable(route = Screen.AddBook.route) {
+                            AddBookScreen(
+                                onBack = { navController.popBackStack() },
+                                onBookAdded = { navController.popBackStack() }
+                            )
+                        }
+
+                        // AddCopy Screen
+                        composable(
+                            route = Screen.AddCopy.route,
+                            arguments =
+                                listOf(navArgument("bookId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+                            AddCopyScreen(
+                                bookId = bookId,
+                                onBack = { navController.popBackStack() },
+                                onCopyAdded = { navController.popBackStack() }
+                            )
+                        }
+
+                        // BookEdit Screen
+                        composable(
+                            route = Screen.BookEdit.route,
+                            arguments =
+                                listOf(navArgument("bookId") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
+                            BookEditScreen(
+                                bookId = bookId,
+                                onBack = { navController.popBackStack() },
+                                onBookUpdated = { navController.popBackStack() }
+                            )
+                        }
                     }
                 }
             }
@@ -133,71 +183,128 @@ fun MainScreen(
     }
 }
 
+/** Modern Bottom Navigation Bar Arka plan gradyanına uyumlu, glassmorphism efektli modern bar */
 @Composable
-private fun BottomNavigationBar(
+private fun ModernBottomNavigationBar(
     items: List<TabItem>,
     currentRoute: String?,
     pendingAdminCount: Int,
     onItemClick: (TabItem) -> Unit
 ) {
-    NavigationBar(
-        containerColor = Color.White.copy(alpha = 0.92f),
-        contentColor = AnkaraBlue,
-        tonalElevation = 0.dp
-    ) {
-        items.forEach { item ->
-            val isSelected = currentRoute == item.route
-            val showBadge = item == TabItem.Admin && pendingAdminCount > 0
+    val isDark = isSystemInDarkTheme()
 
-            NavigationBarItem(
-                selected = isSelected,
-                onClick = { onItemClick(item) },
-                icon = {
-                    if (showBadge) {
-                        BadgedBox(
-                            badge = {
-                                Badge(containerColor = MaterialTheme.colorScheme.error) {
-                                    Text(
-                                        text = pendingAdminCount.toString(),
-                                        fontSize = 10.sp
-                                    )
-                                }
-                            }
-                        ) {
-                            Icon(
-                                imageVector =
-                                    if (isSelected) item.selectedIcon
-                                    else item.unselectedIcon,
-                                contentDescription = item.title
-                            )
-                        }
-                    } else {
-                        Icon(
-                            imageVector =
-                                if (isSelected) item.selectedIcon
-                                else item.unselectedIcon,
-                            contentDescription = item.title
-                        )
-                    }
-                },
-                label = {
-                    Text(
-                        text = item.title,
-                        fontSize = 11.sp,
-                        fontWeight =
-                            if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
-                        maxLines = 1
-                    )
-                },
+    // Glassmorphism arka plan renkleri
+    val barBackground =
+        if (isDark) {
+            Brush.verticalGradient(
                 colors =
-                    NavigationBarItemDefaults.colors(
-                        selectedIconColor = AnkaraBlue,
-                        selectedTextColor = AnkaraBlue,
-                        unselectedIconColor = Color.Gray.copy(alpha = 0.6f),
-                        unselectedTextColor = Color.Gray.copy(alpha = 0.6f),
-                        indicatorColor = AnkaraLightBlue.copy(alpha = 0.15f)
+                    listOf(
+                        AnkaraBlue.copy(alpha = 0.85f),
+                        Color(0xFF001A3D).copy(alpha = 0.95f)
                     )
             )
+        } else {
+            Brush.verticalGradient(
+                colors =
+                    listOf(
+                        Color.White.copy(alpha = 0.75f),
+                        Color.White.copy(alpha = 0.90f)
+                    )
+            )
+        }
+
+    // Üst kenarlık / ayırıcı çizgi rengi
+    val borderColor =
+        if (isDark) {
+            AnkaraLightBlue.copy(alpha = 0.25f)
+        } else {
+            AnkaraBlue.copy(alpha = 0.08f)
+        }
+
+    // Seçili ikon ve metin renkleri
+    val selectedColor = if (isDark) AnkaraLightBlue else AnkaraBlue
+    val unselectedColor =
+        if (isDark) Color.White.copy(alpha = 0.50f) else AnkaraBlue.copy(alpha = 0.40f)
+    val indicatorColor =
+        if (isDark) AnkaraLightBlue.copy(alpha = 0.15f) else AnkaraLightBlue.copy(alpha = 0.15f)
+
+    Column {
+        // İnce üst ayırıcı çizgi
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+                .background(borderColor)
+        )
+
+        // Navigation Bar
+        NavigationBar(
+            modifier = Modifier
+                .background(barBackground)
+                .navigationBarsPadding(),
+            containerColor = Color.Transparent,
+            tonalElevation = 0.dp
+        ) {
+            items.forEach { item ->
+                val isSelected = currentRoute == item.route
+                val showBadge = item == TabItem.Admin && pendingAdminCount > 0
+
+                NavigationBarItem(
+                    selected = isSelected,
+                    onClick = { onItemClick(item) },
+                    icon = {
+                        val icon = if (isSelected) item.selectedIcon else item.unselectedIcon
+
+                        if (showBadge) {
+                            BadgedBox(
+                                badge = {
+                                    Badge(
+                                        containerColor =
+                                            if (isDark) Color(0xFFFF6B6B)
+                                            else MaterialTheme.colorScheme.error,
+                                        contentColor = Color.White
+                                    ) {
+                                        Text(
+                                            text = pendingAdminCount.toString(),
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = icon,
+                                    contentDescription = item.title,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        } else {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = item.title,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = item.title,
+                            fontSize = 11.sp,
+                            fontWeight =
+                                if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1
+                        )
+                    },
+                    colors =
+                        NavigationBarItemDefaults.colors(
+                            selectedIconColor = selectedColor,
+                            selectedTextColor = selectedColor,
+                            unselectedIconColor = unselectedColor,
+                            unselectedTextColor = unselectedColor,
+                            indicatorColor = indicatorColor
+                        )
+                )
+            }
         }
     }
 }
@@ -209,7 +316,6 @@ sealed class TabItem(
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 ) {
-    // Kitaplar - books.vertical
     data object Books :
         TabItem(
             route = Screen.Books.route,
@@ -218,7 +324,6 @@ sealed class TabItem(
             unselectedIcon = Icons.Outlined.MenuBook
         )
 
-    // Öğrenciler - person.3
     data object Students :
         TabItem(
             route = Screen.Students.route,
@@ -227,7 +332,6 @@ sealed class TabItem(
             unselectedIcon = Icons.Outlined.Groups
         )
 
-    // Ödünçler - book
     data object Borrowing :
         TabItem(
             route = Screen.Borrowing.route,
@@ -236,7 +340,6 @@ sealed class TabItem(
             unselectedIcon = Icons.Outlined.Book
         )
 
-    // Adminler - person.badge.key
     data object Admin :
         TabItem(
             route = Screen.Admin.route,
@@ -245,7 +348,6 @@ sealed class TabItem(
             unselectedIcon = Icons.Outlined.AdminPanelSettings
         )
 
-    // Profil - person.circle
     data object Profile :
         TabItem(
             route = Screen.Profile.route,
@@ -255,7 +357,7 @@ sealed class TabItem(
         )
 }
 
-/** Placeholder screen for tabs Gerçek ekranlar implement edilene kadar kullanılacak */
+/** Placeholder screen for tabs */
 @Composable
 private fun PlaceholderScreen(title: String) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

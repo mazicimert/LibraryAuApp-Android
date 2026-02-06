@@ -5,13 +5,15 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.persistentCacheSettings
 import com.google.firebase.firestore.firestoreSettings
+import com.google.firebase.firestore.persistentCacheSettings
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.mehmetmertmazici.libraryauapp.data.model.*
 import com.mehmetmertmazici.libraryauapp.domain.util.BarcodeGenerator
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,18 +21,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
- * FirebaseRepository
- * Tüm Firebase Firestore işlemlerini yönetir
+ * FirebaseRepository Tüm Firebase Firestore işlemlerini yönetir
  *
- * iOS Karşılığı: FirebaseService.swift
- * iOS: Combine Publisher → Android: Flow/suspend function
+ * iOS Karşılığı: FirebaseService.swift iOS: Combine Publisher → Android: Flow/suspend function
  */
 @Singleton
-class FirebaseRepository @Inject constructor(
+class FirebaseRepository
+@Inject
+constructor(
     private val firestore: FirebaseFirestore,
     @ApplicationContext private val context: Context
 ) {
@@ -61,9 +61,11 @@ class FirebaseRepository @Inject constructor(
 
     private fun enableOfflinePersistence() {
         val settings = firestoreSettings {
-            setLocalCacheSettings(persistentCacheSettings {
-                setSizeBytes(100 * 1024 * 1024) // 100MB cache
-            })
+            setLocalCacheSettings(
+                persistentCacheSettings {
+                    setSizeBytes(100 * 1024 * 1024) // 100MB cache
+                }
+            )
         }
         firestore.firestoreSettings = settings
     }
@@ -75,16 +77,36 @@ class FirebaseRepository @Inject constructor(
     /** Tüm kitap şablonlarını getir */
     suspend fun fetchBookTemplates(): Result<List<BookTemplate>> {
         return try {
-            val snapshot = firestore.collection(Collections.BOOK_TEMPLATES)
-                .whereEqualTo("isDeleted", false)
-                .orderBy("title")
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BOOK_TEMPLATES)
+                    .whereEqualTo("isDeleted", false)
+                    .orderBy("title")
+                    .get()
+                    .await()
 
-            val templates = snapshot.documents.mapNotNull {
-                it.toObject(BookTemplate::class.java)?.copy(id = it.id)
-            }
+            val templates =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BookTemplate::class.java)?.copy(id = it.id)
+                }
             Result.success(templates)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    /** ID ile tek kitap şablonu getir */
+    suspend fun fetchBookTemplateById(bookId: String): Result<BookTemplate> {
+        return try {
+            val document =
+                firestore.collection(Collections.BOOK_TEMPLATES).document(bookId).get().await()
+
+            val template = document.toObject(BookTemplate::class.java)?.copy(id = document.id)
+            if (template != null) {
+                Result.success(template)
+            } else {
+                Result.failure(Exception("Kitap bulunamadı"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -93,9 +115,7 @@ class FirebaseRepository @Inject constructor(
     /** Yeni kitap şablonu ekle */
     suspend fun addBookTemplate(template: BookTemplate): Result<String> {
         return try {
-            val docRef = firestore.collection(Collections.BOOK_TEMPLATES)
-                .add(template)
-                .await()
+            val docRef = firestore.collection(Collections.BOOK_TEMPLATES).add(template).await()
             Result.success(docRef.id)
         } catch (e: Exception) {
             Result.failure(e)
@@ -106,10 +126,7 @@ class FirebaseRepository @Inject constructor(
     suspend fun updateBookTemplate(template: BookTemplate): Result<Unit> {
         return try {
             val id = template.id ?: throw FirebaseError.InvalidDocumentID
-            firestore.collection(Collections.BOOK_TEMPLATES)
-                .document(id)
-                .set(template)
-                .await()
+            firestore.collection(Collections.BOOK_TEMPLATES).document(id).set(template).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -123,16 +140,19 @@ class FirebaseRepository @Inject constructor(
     /** Belirli kitap şablonuna ait kopyaları getir */
     suspend fun fetchBookCopies(bookTemplateId: String): Result<List<BookCopy>> {
         return try {
-            val snapshot = firestore.collection(Collections.BOOK_COPIES)
-                .whereEqualTo("bookTemplateId", bookTemplateId)
-                .whereEqualTo("isDeleted", false)
-                .orderBy("copyNumber")
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BOOK_COPIES)
+                    .whereEqualTo("bookTemplateId", bookTemplateId)
+                    .whereEqualTo("isDeleted", false)
+                    .orderBy("copyNumber")
+                    .get()
+                    .await()
 
-            val copies = snapshot.documents.mapNotNull {
-                it.toObject(BookCopy::class.java)?.copy(id = it.id)
-            }
+            val copies =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BookCopy::class.java)?.copy(id = it.id)
+                }
             Result.success(copies)
         } catch (e: Exception) {
             Result.failure(e)
@@ -142,13 +162,12 @@ class FirebaseRepository @Inject constructor(
     /** Tüm kitap kopyalarını getir */
     suspend fun fetchAllBookCopies(): Result<List<BookCopy>> {
         return try {
-            val snapshot = firestore.collection(Collections.BOOK_COPIES)
-                .get()
-                .await()
+            val snapshot = firestore.collection(Collections.BOOK_COPIES).get().await()
 
-            val copies = snapshot.documents.mapNotNull {
-                it.toObject(BookCopy::class.java)?.copy(id = it.id)
-            }
+            val copies =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BookCopy::class.java)?.copy(id = it.id)
+                }
             Result.success(copies)
         } catch (e: Exception) {
             Result.failure(e)
@@ -158,18 +177,21 @@ class FirebaseRepository @Inject constructor(
     /** Sonraki bookId'yi al */
     suspend fun getNextBookId(): Result<Int> {
         return try {
-            val snapshot = firestore.collection(Collections.BOOK_COPIES)
-                .orderBy("bookId", Query.Direction.DESCENDING)
-                .limit(1)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BOOK_COPIES)
+                    .orderBy("bookId", Query.Direction.DESCENDING)
+                    .limit(1)
+                    .get()
+                    .await()
 
-            val nextId = if (snapshot.documents.isNotEmpty()) {
-                val lastCopy = snapshot.documents.first().toObject(BookCopy::class.java)
-                (lastCopy?.bookId ?: 0) + 1
-            } else {
-                1
-            }
+            val nextId =
+                if (snapshot.documents.isNotEmpty()) {
+                    val lastCopy = snapshot.documents.first().toObject(BookCopy::class.java)
+                    (lastCopy?.bookId ?: 0) + 1
+                } else {
+                    1
+                }
             println("📊 Sonraki bookId: $nextId")
             Result.success(nextId)
         } catch (e: Exception) {
@@ -180,15 +202,18 @@ class FirebaseRepository @Inject constructor(
     /** Barkod ile kitap kopyası ara */
     suspend fun findBookCopy(barcode: String): Result<BookCopy?> {
         return try {
-            val snapshot = firestore.collection(Collections.BOOK_COPIES)
-                .whereEqualTo("barcode", barcode)
-                .limit(1)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BOOK_COPIES)
+                    .whereEqualTo("barcode", barcode)
+                    .limit(1)
+                    .get()
+                    .await()
 
-            val copy = snapshot.documents.firstOrNull()?.let {
-                it.toObject(BookCopy::class.java)?.copy(id = it.id)
-            }
+            val copy =
+                snapshot.documents.firstOrNull()?.let {
+                    it.toObject(BookCopy::class.java)?.copy(id = it.id)
+                }
             Result.success(copy)
         } catch (e: Exception) {
             Result.failure(e)
@@ -198,9 +223,7 @@ class FirebaseRepository @Inject constructor(
     /** Yeni kitap kopyası ekle */
     suspend fun addBookCopy(copy: BookCopy): Result<String> {
         return try {
-            val docRef = firestore.collection(Collections.BOOK_COPIES)
-                .add(copy)
-                .await()
+            val docRef = firestore.collection(Collections.BOOK_COPIES).add(copy).await()
             Result.success(docRef.id)
         } catch (e: Exception) {
             Result.failure(e)
@@ -211,10 +234,7 @@ class FirebaseRepository @Inject constructor(
     suspend fun updateBookCopy(copy: BookCopy): Result<Unit> {
         return try {
             val id = copy.id ?: throw FirebaseError.InvalidDocumentID
-            firestore.collection(Collections.BOOK_COPIES)
-                .document(id)
-                .set(copy)
-                .await()
+            firestore.collection(Collections.BOOK_COPIES).document(id).set(copy).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -228,15 +248,18 @@ class FirebaseRepository @Inject constructor(
     /** Tüm öğrencileri getir */
     suspend fun fetchStudents(): Result<List<Student>> {
         return try {
-            val snapshot = firestore.collection(Collections.STUDENTS)
-                .whereEqualTo("isDeleted", false)
-                .orderBy("name")
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.STUDENTS)
+                    .whereEqualTo("isDeleted", false)
+                    .orderBy("name")
+                    .get()
+                    .await()
 
-            val students = snapshot.documents.mapNotNull {
-                it.toObject(Student::class.java)?.copy(id = it.id)
-            }
+            val students =
+                snapshot.documents.mapNotNull {
+                    it.toObject(Student::class.java)?.copy(id = it.id)
+                }
             Result.success(students)
         } catch (e: Exception) {
             Result.failure(e)
@@ -246,15 +269,18 @@ class FirebaseRepository @Inject constructor(
     /** Öğrenci numarası ile ara */
     suspend fun findStudent(studentNumber: String): Result<Student?> {
         return try {
-            val snapshot = firestore.collection(Collections.STUDENTS)
-                .whereEqualTo("studentNumber", studentNumber)
-                .limit(1)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.STUDENTS)
+                    .whereEqualTo("studentNumber", studentNumber)
+                    .limit(1)
+                    .get()
+                    .await()
 
-            val student = snapshot.documents.firstOrNull()?.let {
-                it.toObject(Student::class.java)?.copy(id = it.id)
-            }
+            val student =
+                snapshot.documents.firstOrNull()?.let {
+                    it.toObject(Student::class.java)?.copy(id = it.id)
+                }
             Result.success(student)
         } catch (e: Exception) {
             Result.failure(e)
@@ -264,9 +290,7 @@ class FirebaseRepository @Inject constructor(
     /** Yeni öğrenci ekle */
     suspend fun addStudent(student: Student): Result<String> {
         return try {
-            val docRef = firestore.collection(Collections.STUDENTS)
-                .add(student)
-                .await()
+            val docRef = firestore.collection(Collections.STUDENTS).add(student).await()
             Result.success(docRef.id)
         } catch (e: Exception) {
             Result.failure(e)
@@ -277,10 +301,7 @@ class FirebaseRepository @Inject constructor(
     suspend fun updateStudent(student: Student): Result<Unit> {
         return try {
             val id = student.id ?: throw FirebaseError.InvalidDocumentID
-            firestore.collection(Collections.STUDENTS)
-                .document(id)
-                .set(student)
-                .await()
+            firestore.collection(Collections.STUDENTS).document(id).set(student).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -294,14 +315,17 @@ class FirebaseRepository @Inject constructor(
     /** Tüm ödünç kayıtlarını getir */
     suspend fun fetchBorrowedBooks(): Result<List<BorrowedBook>> {
         return try {
-            val snapshot = firestore.collection(Collections.BORROWED_BOOKS)
-                .orderBy("borrowDate", Query.Direction.DESCENDING)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BORROWED_BOOKS)
+                    .orderBy("borrowDate", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
 
-            val borrowedBooks = snapshot.documents.mapNotNull {
-                it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
-            }
+            val borrowedBooks =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
+                }
             Result.success(borrowedBooks)
         } catch (e: Exception) {
             Result.failure(e)
@@ -311,15 +335,18 @@ class FirebaseRepository @Inject constructor(
     /** Aktif ödünç kayıtlarını getir */
     suspend fun fetchActiveBorrowedBooks(): Result<List<BorrowedBook>> {
         return try {
-            val snapshot = firestore.collection(Collections.BORROWED_BOOKS)
-                .whereEqualTo("isReturned", false)
-                .orderBy("dueDate")
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BORROWED_BOOKS)
+                    .whereEqualTo("isReturned", false)
+                    .orderBy("dueDate")
+                    .get()
+                    .await()
 
-            val borrowedBooks = snapshot.documents.mapNotNull {
-                it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
-            }
+            val borrowedBooks =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
+                }
             Result.success(borrowedBooks)
         } catch (e: Exception) {
             Result.failure(e)
@@ -330,16 +357,19 @@ class FirebaseRepository @Inject constructor(
     suspend fun fetchOverdueBooks(): Result<List<BorrowedBook>> {
         return try {
             val now = Timestamp.now()
-            val snapshot = firestore.collection(Collections.BORROWED_BOOKS)
-                .whereEqualTo("isReturned", false)
-                .whereLessThan("dueDate", now)
-                .orderBy("dueDate")
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BORROWED_BOOKS)
+                    .whereEqualTo("isReturned", false)
+                    .whereLessThan("dueDate", now)
+                    .orderBy("dueDate")
+                    .get()
+                    .await()
 
-            val overdueBooks = snapshot.documents.mapNotNull {
-                it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
-            }
+            val overdueBooks =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
+                }
             Result.success(overdueBooks)
         } catch (e: Exception) {
             Result.failure(e)
@@ -349,15 +379,18 @@ class FirebaseRepository @Inject constructor(
     /** Öğrencinin aktif ödünç kayıtlarını getir */
     suspend fun fetchStudentActiveBorrowedBooks(studentId: String): Result<List<BorrowedBook>> {
         return try {
-            val snapshot = firestore.collection(Collections.BORROWED_BOOKS)
-                .whereEqualTo("studentId", studentId)
-                .whereEqualTo("isReturned", false)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BORROWED_BOOKS)
+                    .whereEqualTo("studentId", studentId)
+                    .whereEqualTo("isReturned", false)
+                    .get()
+                    .await()
 
-            val borrowedBooks = snapshot.documents.mapNotNull {
-                it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
-            }
+            val borrowedBooks =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BorrowedBook::class.java)?.copy(id = it.id)
+                }
             Result.success(borrowedBooks)
         } catch (e: Exception) {
             Result.failure(e)
@@ -367,9 +400,7 @@ class FirebaseRepository @Inject constructor(
     /** Yeni ödünç kaydı oluştur */
     suspend fun createBorrowRecord(borrowedBook: BorrowedBook): Result<String> {
         return try {
-            val docRef = firestore.collection(Collections.BORROWED_BOOKS)
-                .add(borrowedBook)
-                .await()
+            val docRef = firestore.collection(Collections.BORROWED_BOOKS).add(borrowedBook).await()
             Result.success(docRef.id)
         } catch (e: Exception) {
             Result.failure(e)
@@ -379,14 +410,10 @@ class FirebaseRepository @Inject constructor(
     /** Kitap iade işlemi */
     suspend fun returnBook(borrowedBookId: String): Result<Unit> {
         return try {
-            firestore.collection(Collections.BORROWED_BOOKS)
+            firestore
+                .collection(Collections.BORROWED_BOOKS)
                 .document(borrowedBookId)
-                .update(
-                    mapOf(
-                        "isReturned" to true,
-                        "returnDate" to Timestamp.now()
-                    )
-                )
+                .update(mapOf("isReturned" to true, "returnDate" to Timestamp.now()))
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -401,14 +428,13 @@ class FirebaseRepository @Inject constructor(
     /** Tüm admin kullanıcılarını getir */
     suspend fun fetchAdminUsers(): Result<List<AdminUser>> {
         return try {
-            val snapshot = firestore.collection(Collections.ADMIN_USERS)
-                .orderBy("createdAt")
-                .get()
-                .await()
+            val snapshot =
+                firestore.collection(Collections.ADMIN_USERS).orderBy("createdAt").get().await()
 
-            val adminUsers = snapshot.documents.mapNotNull {
-                it.toObject(AdminUser::class.java)?.copy(id = it.id)
-            }
+            val adminUsers =
+                snapshot.documents.mapNotNull {
+                    it.toObject(AdminUser::class.java)?.copy(id = it.id)
+                }
             println("✅ fetchAdminUsers başarılı: ${adminUsers.size} admin")
             Result.success(adminUsers)
         } catch (e: Exception) {
@@ -420,16 +446,19 @@ class FirebaseRepository @Inject constructor(
     /** Onay bekleyen adminleri getir */
     suspend fun fetchPendingAdmins(): Result<List<AdminUser>> {
         return try {
-            val snapshot = firestore.collection(Collections.ADMIN_USERS)
-                .whereEqualTo("isApproved", false)
-                .whereEqualTo("isSuperAdmin", false)
-                .orderBy("createdAt")
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.ADMIN_USERS)
+                    .whereEqualTo("isApproved", false)
+                    .whereEqualTo("isSuperAdmin", false)
+                    .orderBy("createdAt")
+                    .get()
+                    .await()
 
-            val pendingAdmins = snapshot.documents.mapNotNull {
-                it.toObject(AdminUser::class.java)?.copy(id = it.id)
-            }
+            val pendingAdmins =
+                snapshot.documents.mapNotNull {
+                    it.toObject(AdminUser::class.java)?.copy(id = it.id)
+                }
             println("✅ fetchPendingAdmins başarılı: ${pendingAdmins.size} bekleyen")
             Result.success(pendingAdmins)
         } catch (e: Exception) {
@@ -442,10 +471,7 @@ class FirebaseRepository @Inject constructor(
     suspend fun saveAdminUser(adminUser: AdminUser): Result<Unit> {
         return try {
             val id = adminUser.id ?: throw FirebaseError.InvalidDocumentID
-            firestore.collection(Collections.ADMIN_USERS)
-                .document(id)
-                .set(adminUser)
-                .await()
+            firestore.collection(Collections.ADMIN_USERS).document(id).set(adminUser).await()
             println("✅ saveAdminUser başarılı: $id")
             Result.success(Unit)
         } catch (e: Exception) {
@@ -457,7 +483,8 @@ class FirebaseRepository @Inject constructor(
     /** Admin onaylama */
     suspend fun approveAdmin(adminId: String): Result<Unit> {
         return try {
-            firestore.collection(Collections.ADMIN_USERS)
+            firestore
+                .collection(Collections.ADMIN_USERS)
                 .document(adminId)
                 .update("isApproved", true)
                 .await()
@@ -472,10 +499,7 @@ class FirebaseRepository @Inject constructor(
     /** Admin kullanıcı sil */
     suspend fun deleteAdminUser(adminId: String): Result<Unit> {
         return try {
-            firestore.collection(Collections.ADMIN_USERS)
-                .document(adminId)
-                .delete()
-                .await()
+            firestore.collection(Collections.ADMIN_USERS).document(adminId).delete().await()
             println("✅ deleteAdminUser başarılı: $adminId")
             Result.success(Unit)
         } catch (e: Exception) {
@@ -487,10 +511,8 @@ class FirebaseRepository @Inject constructor(
     /** Kullanıcı bilgilerini getir */
     suspend fun fetchAdminUser(userId: String): Result<AdminUser?> {
         return try {
-            val document = firestore.collection(Collections.ADMIN_USERS)
-                .document(userId)
-                .get()
-                .await()
+            val document =
+                firestore.collection(Collections.ADMIN_USERS).document(userId).get().await()
 
             val adminUser = document.toObject(AdminUser::class.java)?.copy(id = document.id)
             println("✅ fetchAdminUser başarılı: ${adminUser?.displayName}")
@@ -504,10 +526,12 @@ class FirebaseRepository @Inject constructor(
     /** Süper admin sayısını getir */
     suspend fun fetchSuperAdminCount(): Result<Int> {
         return try {
-            val snapshot = firestore.collection(Collections.ADMIN_USERS)
-                .whereEqualTo("isSuperAdmin", true)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.ADMIN_USERS)
+                    .whereEqualTo("isSuperAdmin", true)
+                    .get()
+                    .await()
 
             val count = snapshot.documents.size
             println("✅ fetchSuperAdminCount başarılı: $count süper admin")
@@ -520,21 +544,25 @@ class FirebaseRepository @Inject constructor(
 
     /** Onay bekleyen adminleri gerçek zamanlı dinle */
     fun listenToPendingAdmins(): Flow<List<AdminUser>> = callbackFlow {
-        val listener = firestore.collection(Collections.ADMIN_USERS)
-            .whereEqualTo("isApproved", false)
-            .whereEqualTo("isSuperAdmin", false)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    close(error)
-                    return@addSnapshotListener
+        val listener =
+            firestore
+                .collection(Collections.ADMIN_USERS)
+                .whereEqualTo("isApproved", false)
+                .whereEqualTo("isSuperAdmin", false)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        close(error)
+                        return@addSnapshotListener
+                    }
+
+                    val pendingAdmins =
+                        snapshot?.documents?.mapNotNull {
+                            it.toObject(AdminUser::class.java)?.copy(id = it.id)
+                        }
+                            ?: emptyList()
+
+                    trySend(pendingAdmins)
                 }
-
-                val pendingAdmins = snapshot?.documents?.mapNotNull {
-                    it.toObject(AdminUser::class.java)?.copy(id = it.id)
-                } ?: emptyList()
-
-                trySend(pendingAdmins)
-            }
 
         awaitClose { listener.remove() }
     }
@@ -546,10 +574,8 @@ class FirebaseRepository @Inject constructor(
     /** Uygulama ayarlarını getir */
     suspend fun fetchAppSettings(): Result<AppSettings?> {
         return try {
-            val document = firestore.collection(Collections.APP_SETTINGS)
-                .document("main")
-                .get()
-                .await()
+            val document =
+                firestore.collection(Collections.APP_SETTINGS).document("main").get().await()
 
             val settings = document.toObject(AppSettings::class.java)
             Result.success(settings)
@@ -561,10 +587,7 @@ class FirebaseRepository @Inject constructor(
     /** Uygulama ayarlarını güncelle */
     suspend fun updateAppSettings(settings: AppSettings): Result<Unit> {
         return try {
-            firestore.collection(Collections.APP_SETTINGS)
-                .document("main")
-                .set(settings)
-                .await()
+            firestore.collection(Collections.APP_SETTINGS).document("main").set(settings).await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -578,9 +601,8 @@ class FirebaseRepository @Inject constructor(
     /** JSON dosyasından kitapları yükle */
     suspend fun loadBooksFromJSON(): Result<Unit> {
         return try {
-            val jsonString = context.assets.open("books.json")
-                .bufferedReader()
-                .use { it.readText() }
+            val jsonString =
+                context.assets.open("books.json").bufferedReader().use { it.readText() }
 
             val gson = Gson()
             val type = object : TypeToken<List<BookData>>() {}.type
@@ -604,17 +626,16 @@ class FirebaseRepository @Inject constructor(
                 val templateId = templateResult.getOrNull() ?: return@forEachIndexed
 
                 // Kopyaları oluştur
-                val copies = BarcodeGenerator.createBookCopies(
-                    bookId = bookId,
-                    isbn = cleanISBN,
-                    copyCount = bookData.copyCount,
-                    bookTemplateId = templateId
-                )
+                val copies =
+                    BarcodeGenerator.createBookCopies(
+                        bookId = bookId,
+                        isbn = cleanISBN,
+                        copyCount = bookData.copyCount,
+                        bookTemplateId = templateId
+                    )
 
                 // Kopyaları kaydet
-                copies.forEach { copy ->
-                    addBookCopy(copy)
-                }
+                copies.forEach { copy -> addBookCopy(copy) }
             }
 
             println("✅✅✅ Tüm kitaplar (${validBooks.size} adet) başarıyla yüklendi!")
@@ -671,15 +692,18 @@ class FirebaseRepository @Inject constructor(
     /** Silinmiş kitapları getir */
     suspend fun fetchDeletedBookTemplates(): Result<List<BookTemplate>> {
         return try {
-            val snapshot = firestore.collection(Collections.BOOK_TEMPLATES)
-                .whereEqualTo("isDeleted", true)
-                .orderBy("deletedAt", Query.Direction.DESCENDING)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.BOOK_TEMPLATES)
+                    .whereEqualTo("isDeleted", true)
+                    .orderBy("deletedAt", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
 
-            val items = snapshot.documents.mapNotNull {
-                it.toObject(BookTemplate::class.java)?.copy(id = it.id)
-            }
+            val items =
+                snapshot.documents.mapNotNull {
+                    it.toObject(BookTemplate::class.java)?.copy(id = it.id)
+                }
             Result.success(items)
         } catch (e: Exception) {
             Result.failure(e)
@@ -689,15 +713,18 @@ class FirebaseRepository @Inject constructor(
     /** Silinmiş öğrencileri getir */
     suspend fun fetchDeletedStudents(): Result<List<Student>> {
         return try {
-            val snapshot = firestore.collection(Collections.STUDENTS)
-                .whereEqualTo("isDeleted", true)
-                .orderBy("deletedAt", Query.Direction.DESCENDING)
-                .get()
-                .await()
+            val snapshot =
+                firestore
+                    .collection(Collections.STUDENTS)
+                    .whereEqualTo("isDeleted", true)
+                    .orderBy("deletedAt", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
 
-            val items = snapshot.documents.mapNotNull {
-                it.toObject(Student::class.java)?.copy(id = it.id)
-            }
+            val items =
+                snapshot.documents.mapNotNull {
+                    it.toObject(Student::class.java)?.copy(id = it.id)
+                }
             Result.success(items)
         } catch (e: Exception) {
             Result.failure(e)
@@ -711,24 +738,26 @@ class FirebaseRepository @Inject constructor(
 
             // Template'i geri getir
             val templateRef = firestore.collection(Collections.BOOK_TEMPLATES).document(id)
-            batch.update(templateRef, mapOf(
-                "isDeleted" to false,
-                "deletedAt" to FieldValue.delete()
-            ))
+            batch.update(
+                templateRef,
+                mapOf("isDeleted" to false, "deletedAt" to FieldValue.delete())
+            )
 
             // Kopyaları bul ve geri getir
-            val copiesSnapshot = firestore.collection(Collections.BOOK_COPIES)
-                .whereEqualTo("bookTemplateId", id)
-                .whereEqualTo("isDeleted", true)
-                .get()
-                .await()
+            val copiesSnapshot =
+                firestore
+                    .collection(Collections.BOOK_COPIES)
+                    .whereEqualTo("bookTemplateId", id)
+                    .whereEqualTo("isDeleted", true)
+                    .get()
+                    .await()
 
             copiesSnapshot.documents.forEach { doc ->
                 val copyRef = firestore.collection(Collections.BOOK_COPIES).document(doc.id)
-                batch.update(copyRef, mapOf(
-                    "isDeleted" to false,
-                    "deletedAt" to FieldValue.delete()
-                ))
+                batch.update(
+                    copyRef,
+                    mapOf("isDeleted" to false, "deletedAt" to FieldValue.delete())
+                )
             }
 
             batch.commit().await()
@@ -755,10 +784,12 @@ class FirebaseRepository @Inject constructor(
             batch.delete(templateRef)
 
             // Kopyaları bul ve sil
-            val copiesSnapshot = firestore.collection(Collections.BOOK_COPIES)
-                .whereEqualTo("bookTemplateId", id)
-                .get()
-                .await()
+            val copiesSnapshot =
+                firestore
+                    .collection(Collections.BOOK_COPIES)
+                    .whereEqualTo("bookTemplateId", id)
+                    .get()
+                    .await()
 
             copiesSnapshot.documents.forEach { doc ->
                 val copyRef = firestore.collection(Collections.BOOK_COPIES).document(doc.id)
@@ -782,12 +813,10 @@ class FirebaseRepository @Inject constructor(
 
     private suspend fun softDelete(collection: String, documentId: String): Result<Unit> {
         return try {
-            firestore.collection(collection)
+            firestore
+                .collection(collection)
                 .document(documentId)
-                .update(mapOf(
-                    "isDeleted" to true,
-                    "deletedAt" to Timestamp.now()
-                ))
+                .update(mapOf("isDeleted" to true, "deletedAt" to Timestamp.now()))
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -797,12 +826,10 @@ class FirebaseRepository @Inject constructor(
 
     private suspend fun restoreItem(collection: String, documentId: String): Result<Unit> {
         return try {
-            firestore.collection(collection)
+            firestore
+                .collection(collection)
                 .document(documentId)
-                .update(mapOf(
-                    "isDeleted" to false,
-                    "deletedAt" to FieldValue.delete()
-                ))
+                .update(mapOf("isDeleted" to false, "deletedAt" to FieldValue.delete()))
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -812,10 +839,7 @@ class FirebaseRepository @Inject constructor(
 
     private suspend fun hardDelete(collection: String, documentId: String): Result<Unit> {
         return try {
-            firestore.collection(collection)
-                .document(documentId)
-                .delete()
-                .await()
+            firestore.collection(collection).document(documentId).delete().await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
