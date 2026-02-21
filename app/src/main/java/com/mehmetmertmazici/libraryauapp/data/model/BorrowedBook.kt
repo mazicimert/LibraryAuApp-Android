@@ -2,6 +2,7 @@ package com.mehmetmertmazici.libraryauapp.data.model
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.PropertyName
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -9,36 +10,34 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
- * BorrowedBook Model
- * Ödünç alınan kitap işlemlerini temsil eder
+ * BorrowedBook Model Ödünç alınan kitap işlemlerini temsil eder
  *
  * iOS Karşılığı: BorrowedBook.swift
  */
 data class BorrowedBook(
-    @DocumentId
-    val id: String? = null,
-    val bookCopyId: String = "",
-    val studentId: String = "",
-    val borrowDate: Timestamp = Timestamp.now(),
-    val dueDate: Timestamp = Timestamp.now(),
-    val returnDate: Timestamp? = null,
-    val isReturned: Boolean = false
+        @DocumentId val id: String? = null,
+        val bookCopyId: String = "",
+        val studentId: String = "",
+        val borrowDate: Timestamp = Timestamp.now(),
+        val dueDate: Timestamp = Timestamp.now(),
+        val returnDate: Timestamp? = null,
+        @get:PropertyName("isReturned")
+        @set:PropertyName("isReturned")
+        var isReturned: Boolean = false
 ) {
-    /**
-     * Yeni ödünç kaydı oluşturma için secondary constructor
-     */
+    /** Yeni ödünç kaydı oluşturma için secondary constructor */
     constructor(
-        bookCopyId: String,
-        studentId: String,
-        borrowDays: Int = 14
+            bookCopyId: String,
+            studentId: String,
+            borrowDays: Int = 14
     ) : this(
-        id = null,
-        bookCopyId = bookCopyId,
-        studentId = studentId,
-        borrowDate = Timestamp.now(),
-        dueDate = calculateDueDate(borrowDays),
-        returnDate = null,
-        isReturned = false
+            id = null,
+            bookCopyId = bookCopyId,
+            studentId = studentId,
+            borrowDate = Timestamp.now(),
+            dueDate = calculateDueDate(borrowDays),
+            returnDate = null,
+            isReturned = false
     )
 
     companion object {
@@ -72,19 +71,21 @@ data class BorrowedBook(
 
     /** Durum metni */
     val statusText: String
-        get() = when {
-            isReturned -> "İade Edildi"
-            isOverdue -> "Süresi Geçti ($overdueDays gün)"
-            else -> "Ödünçte"
-        }
+        get() =
+                when {
+                    isReturned -> "İade Edildi"
+                    isOverdue -> "Süresi Geçti ($overdueDays gün)"
+                    else -> "Ödünçte"
+                }
 
     /** Durum rengi */
     val statusColor: String
-        get() = when {
-            isReturned -> "green"
-            isOverdue -> "red"
-            else -> "blue"
-        }
+        get() =
+                when {
+                    isReturned -> "green"
+                    isOverdue -> "red"
+                    else -> "blue"
+                }
 
     /** Kalan gün sayısı (pozitif değer) */
     val remainingDays: Int
@@ -109,11 +110,12 @@ data class BorrowedBook(
 
     /** Gecikme durumu için emoji */
     val statusEmoji: String
-        get() = when {
-            isReturned -> "✅"
-            isOverdue -> "⏰"
-            else -> "📖"
-        }
+        get() =
+                when {
+                    isReturned -> "✅"
+                    isOverdue -> "⏰"
+                    else -> "📖"
+                }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -130,23 +132,19 @@ object BorrowingRule {
         return currentBorrowCount < MAX_BOOKS_PER_STUDENT
     }
 
-    /**
-     * Öğrencinin aynı kitaptan alabileceği kontrol (BookTemplate bazlı)
-     */
+    /** Öğrencinin aynı kitaptan alabileceği kontrol (BookTemplate bazlı) */
     fun canBorrowSameBook(
-        studentBorrowedBooks: List<BorrowedBook>,
-        targetBookTemplateId: String,
-        allBookCopies: List<BookCopy>
+            studentBorrowedBooks: List<BorrowedBook>,
+            targetBookTemplateId: String,
+            allBookCopies: List<BookCopy>
     ): Boolean {
         // Öğrencinin şu an ödünçte olan kitaplarını al
-        val activeBorrowedCopyIds = studentBorrowedBooks
-            .filter { !it.isReturned }
-            .map { it.bookCopyId }
+        val activeBorrowedCopyIds =
+                studentBorrowedBooks.filter { !it.isReturned }.map { it.bookCopyId }
 
         // Bu kopyaların hangi kitap şablonlarına ait olduğunu bul
-        val borrowedTemplateIds = allBookCopies
-            .filter { it.id in activeBorrowedCopyIds }
-            .map { it.bookTemplateId }
+        val borrowedTemplateIds =
+                allBookCopies.filter { it.id in activeBorrowedCopyIds }.map { it.bookTemplateId }
 
         // Hedef kitap şablonu zaten ödünçte mi kontrol et
         return targetBookTemplateId !in borrowedTemplateIds

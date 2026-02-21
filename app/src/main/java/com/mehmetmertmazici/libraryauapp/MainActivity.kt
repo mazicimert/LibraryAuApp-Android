@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen // <-- BU IMPORT ÖNEMLİ
 import com.mehmetmertmazici.libraryauapp.ui.navigation.AppNavigation
 import com.mehmetmertmazici.libraryauapp.ui.theme.LibraryAuTheme
@@ -34,7 +35,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             LibraryAuTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.Transparent
                 ) {
                     AppNavigation()
                 }

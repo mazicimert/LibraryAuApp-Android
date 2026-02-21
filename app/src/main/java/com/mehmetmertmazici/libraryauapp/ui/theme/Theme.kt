@@ -18,77 +18,63 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 /**
- * LibraryAuTheme
- * Ankara Üniversitesi renk paleti ile Material3 tema
+ * LibraryAuTheme Ankara Üniversitesi renk paleti ile Material3 tema
  *
  * iOS Karşılığı: Extensions.swift → AnkaraBackgroundModifier
  */
 
 // ── Light Color Scheme ──
-private val LightColorScheme = lightColorScheme(
-    primary = AnkaraBlue,
-    onPrimary = Color.White,
-    primaryContainer = AnkaraLightBlue,
-    onPrimaryContainer = Color.White,
-
-    secondary = AnkaraLightBlue,
-    onSecondary = Color.White,
-    secondaryContainer = AnkaraColors.SectionBackground,
-    onSecondaryContainer = AnkaraColors.OnBackground,
-
-    tertiary = AnkaraGold,
-    onTertiary = Color.White,
-
-    background = AnkaraBackground,
-    onBackground = AnkaraColors.OnBackground,
-
-    surface = AnkaraCardBackground,
-    onSurface = AnkaraColors.OnBackground,
-    surfaceVariant = AnkaraColors.SectionBackground,
-    onSurfaceVariant = AnkaraColors.Secondary,
-
-    error = AnkaraDanger,
-    onError = Color.White,
-
-    outline = Color(0xFFE0E0E0),
-    outlineVariant = Color(0xFFF0F0F0)
-)
+private val LightColorScheme =
+        lightColorScheme(
+                primary = AnkaraBlue,
+                onPrimary = Color.White,
+                primaryContainer = AnkaraLightBlue,
+                onPrimaryContainer = Color.White,
+                secondary = AnkaraLightBlue,
+                onSecondary = Color.White,
+                secondaryContainer = AnkaraColors.SectionBackground,
+                onSecondaryContainer = AnkaraColors.OnBackground,
+                tertiary = AnkaraGold,
+                onTertiary = Color.White,
+                background = AnkaraBackground,
+                onBackground = AnkaraColors.OnBackground,
+                surface = AnkaraCardBackground,
+                onSurface = AnkaraColors.OnBackground,
+                surfaceVariant = AnkaraColors.SectionBackground,
+                onSurfaceVariant = AnkaraColors.Secondary,
+                error = AnkaraDanger,
+                onError = Color.White,
+                outline = Color(0xFFE0E0E0),
+                outlineVariant = Color(0xFFF0F0F0)
+        )
 
 // ── Dark Color Scheme ──
-private val DarkColorScheme = darkColorScheme(
-    primary = AnkaraLightBlue,
-    onPrimary = Color.White,
-    primaryContainer = AnkaraBlue,
-    onPrimaryContainer = Color.White,
-
-    secondary = AnkaraBlue,
-    onSecondary = Color.White,
-    secondaryContainer = AnkaraColors.SectionBackgroundDark,
-    onSecondaryContainer = AnkaraColors.OnBackgroundDark,
-
-    tertiary = AnkaraGold,
-    onTertiary = Color.White,
-
-    background = AnkaraColors.BackgroundDark,
-    onBackground = AnkaraColors.OnBackgroundDark,
-
-    surface = AnkaraColors.CardBackgroundDark,
-    onSurface = AnkaraColors.OnBackgroundDark,
-    surfaceVariant = AnkaraColors.SectionBackgroundDark,
-    onSurfaceVariant = Color(0xFFAAAAAA),
-
-    error = Color(0xFFEF5350),
-    onError = Color.White,
-
-    outline = Color(0xFF444444),
-    outlineVariant = Color(0xFF333333)
-)
+private val DarkColorScheme =
+        darkColorScheme(
+                primary = AnkaraLightBlue,
+                onPrimary = Color.White,
+                primaryContainer = AnkaraBlue,
+                onPrimaryContainer = Color.White,
+                secondary = AnkaraBlue,
+                onSecondary = Color.White,
+                secondaryContainer = AnkaraColors.SectionBackgroundDark,
+                onSecondaryContainer = AnkaraColors.OnBackgroundDark,
+                tertiary = AnkaraGold,
+                onTertiary = Color.White,
+                background = AnkaraColors.BackgroundDark,
+                onBackground = AnkaraColors.OnBackgroundDark,
+                surface = AnkaraColors.CardBackgroundDark,
+                onSurface = AnkaraColors.OnBackgroundDark,
+                surfaceVariant = AnkaraColors.SectionBackgroundDark,
+                onSurfaceVariant = Color(0xFFAAAAAA),
+                error = Color(0xFFEF5350),
+                onError = Color.White,
+                outline = Color(0xFF444444),
+                outlineVariant = Color(0xFF333333)
+        )
 
 @Composable
-fun LibraryAuTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun LibraryAuTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
 
     // Status bar ve navigation bar renklerini ayarla
@@ -105,60 +91,40 @@ fun LibraryAuTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = LibraryAuTypography,
-        content = content
-    )
+    MaterialTheme(colorScheme = colorScheme, typography = LibraryAuTypography, content = content)
 }
 
-/**
- * Ankara Üniversitesi gradient arka planı
- * iOS Karşılığı: AnkaraBackgroundModifier
- */
+/** Ankara Üniversitesi gradient arka planı iOS Karşılığı: AnkaraBackgroundModifier */
 @Composable
 fun AnkaraBackground(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+        modifier: Modifier = Modifier,
+        darkTheme: Boolean = isSystemInDarkTheme(),
+        content: @Composable () -> Unit
 ) {
-    val gradientColors = if (darkTheme) {
-        listOf(
-            Color.Black.copy(alpha = 0.6f),
-            AnkaraBlue.copy(alpha = 0.7f)
-        )
-    } else {
-        listOf(
-            Color.White.copy(alpha = 0.6f),
-            AnkaraLightBlue.copy(alpha = 0.7f)
-        )
-    }
+    // Fully opaque colors to avoid status bar bleed-through with transparent window
+    val gradientColors =
+            if (darkTheme) {
+                listOf(Color(0xFF1A1A1A), Color(0xFF001C44))
+            } else {
+                listOf(Color(0xFFF5F7FA), Color(0xFFB8D4ED))
+            }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.linearGradient(colors = gradientColors)
-            )
-    ) {
-        content()
-    }
+            modifier =
+                    modifier.fillMaxSize()
+                            .background(brush = Brush.linearGradient(colors = gradientColors))
+    ) { content() }
 }
 
-/**
- * Modifier extension for Ankara background
- */
+/** Modifier extension for Ankara background */
 fun Modifier.ankaraBackground(darkTheme: Boolean): Modifier {
-    val gradientColors = if (darkTheme) {
-        listOf(
-            Color.Black.copy(alpha = 0.6f),
-            AnkaraBlue.copy(alpha = 0.7f)
-        )
-    } else {
-        listOf(
-            Color.White.copy(alpha = 0.6f),
-            AnkaraLightBlue.copy(alpha = 0.7f)
-        )
-    }
+    // Fully opaque colors to avoid status bar bleed-through with transparent window
+    val gradientColors =
+            if (darkTheme) {
+                listOf(Color(0xFF1A1A1A), Color(0xFF001C44))
+            } else {
+                listOf(Color(0xFFF5F7FA), Color(0xFFB8D4ED))
+            }
 
     return this.background(brush = Brush.linearGradient(colors = gradientColors))
 }

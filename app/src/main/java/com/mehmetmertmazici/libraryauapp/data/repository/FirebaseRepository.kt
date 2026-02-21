@@ -287,6 +287,23 @@ constructor(
         }
     }
 
+    /** Öğrenci ID ile getir */
+    suspend fun fetchStudentById(studentId: String): Result<Student?> {
+        return try {
+            val document =
+                firestore.collection(Collections.STUDENTS).document(studentId).get().await()
+
+            val student = document.toObject(Student::class.java)?.copy(id = document.id)
+            if (student != null) {
+                Result.success(student)
+            } else {
+                Result.failure(Exception("Öğrenci bulunamadı"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     /** Yeni öğrenci ekle */
     suspend fun addStudent(student: Student): Result<String> {
         return try {
