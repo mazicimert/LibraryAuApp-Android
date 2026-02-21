@@ -27,6 +27,8 @@ import com.mehmetmertmazici.libraryauapp.ui.books.AddCopyScreen
 import com.mehmetmertmazici.libraryauapp.ui.books.BookDetailScreen
 import com.mehmetmertmazici.libraryauapp.ui.books.BookEditScreen
 import com.mehmetmertmazici.libraryauapp.ui.books.BookListScreen
+import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowBookScreen
+import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowedBooksScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.NetworkStatusBanner
 import com.mehmetmertmazici.libraryauapp.ui.students.AddStudentScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.StudentDetailScreen
@@ -124,7 +126,11 @@ fun MainScreen(
                             )
                         }
                         composable(TabItem.Borrowing.route) {
-                            PlaceholderScreen(title = "Ödünçler")
+                            BorrowedBooksScreen(
+                                    onBorrowBook = {
+                                        navController.navigate(Screen.BorrowBook.createRoute(""))
+                                    }
+                            )
                         }
                         composable(TabItem.Admin.route) {
                             PlaceholderScreen(title = "Admin Yönetimi")
@@ -206,6 +212,22 @@ fun MainScreen(
                         // AddStudent Screen
                         composable(Screen.AddStudent.route) {
                             AddStudentScreen(onDismiss = { navController.popBackStack() })
+                        }
+
+                        // BorrowBook Screen
+                        composable(
+                                route = Screen.BorrowBook.route,
+                                arguments =
+                                        listOf(
+                                                navArgument("studentId") {
+                                                    type = NavType.StringType
+                                                    defaultValue = ""
+                                                }
+                                        )
+                        ) {
+                            BorrowBookScreen(
+                                    onDismiss = { navController.popBackStack() }
+                            )
                         }
                     }
                 }
