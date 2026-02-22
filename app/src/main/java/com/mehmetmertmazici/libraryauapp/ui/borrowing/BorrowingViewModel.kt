@@ -15,6 +15,10 @@ import com.mehmetmertmazici.libraryauapp.data.repository.NetworkManager
 import com.mehmetmertmazici.libraryauapp.domain.util.searchNormalized
 import com.mehmetmertmazici.libraryauapp.domain.util.trimmed
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,20 +28,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
-import javax.inject.Inject
 
 /**
- * BorrowingViewModel
- * Kitap odunc verme ve iade islemlerini yoneten ViewModel
+ * BorrowingViewModel Kitap odunc verme ve iade islemlerini yoneten ViewModel
  *
  * iOS Karsiligi: BorrowingViewModel.swift
  */
 @HiltViewModel
-class BorrowingViewModel @Inject constructor(
+class BorrowingViewModel
+@Inject
+constructor(
     private val firebaseRepository: FirebaseRepository,
     private val authRepository: AuthRepository,
     private val networkManager: NetworkManager
@@ -86,21 +86,20 @@ class BorrowingViewModel @Inject constructor(
     private var bookTemplateCache: Map<String, BookTemplate> = emptyMap()
 
     // ── Filtered Books (Reactive) ──
-    val filteredBorrowedBooks: StateFlow<List<BorrowedBook>> = combine(
-        _borrowedBooks,
-        _searchText,
-        _filterOption
-    ) { books, search, filter ->
-        filterBorrowedBooks(books, search, filter)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val filteredBorrowedBooks: StateFlow<List<BorrowedBook>> =
+        combine(_borrowedBooks, _searchText, _filterOption) { books, search, filter ->
+            filterBorrowedBooks(books, search, filter)
+        }
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // ══════════════════════════════════════════════════════════════
     // MARK: - Computed Properties
     // ══════════════════════════════════════════════════════════════
 
     val canManageBorrowing: Boolean
-        get() = authRepository.hasPermission(Permission.MANAGE_BORROWING) &&
-                networkManager.isOnline.value
+        get() =
+            authRepository.hasPermission(Permission.MANAGE_BORROWING) &&
+                    networkManager.isOnline.value
 
     val overdueCount: Int
         get() = _overdueBooks.value.size
@@ -115,14 +114,17 @@ class BorrowingViewModel @Inject constructor(
             val student = _selectedStudent.value
             val bookCopy = _selectedBookCopy.value
 
-            if (studentNumber.isEmpty() || bookBarcode.isEmpty() || student == null || bookCopy == null) {
+            if (studentNumber.isEmpty() ||
+                bookBarcode.isEmpty() ||
+                student == null ||
+                bookCopy == null
+            ) {
                 return false
             }
 
             // Limit kontrolu
-            val activeBorrows = _borrowedBooks.value.filter {
-                it.studentId == student.id && !it.isReturned
-            }
+            val activeBorrows =
+                _borrowedBooks.value.filter { it.studentId == student.id && !it.isReturned }
             if (activeBorrows.size >= BorrowingRule.MAX_BOOKS_PER_STUDENT) {
                 return false
             }
@@ -134,19 +136,22 @@ class BorrowingViewModel @Inject constructor(
         get() = _uiState.value.isLoading || _uiState.value.loadingState.isLoading
 
     val showEmptyState: Boolean
-        get() = !_uiState.value.isLoading &&
-                filteredBorrowedBooks.value.isEmpty() &&
-                _uiState.value.loadingState !is LoadingState.Loading
+        get() =
+            !_uiState.value.isLoading &&
+                    filteredBorrowedBooks.value.isEmpty() &&
+                    _uiState.value.loadingState !is LoadingState.Loading
 
     val emptyStateMessage: String
-        get() = when (_filterOption.value) {
-            BorrowFilterOption.ALL ->
-                if (_searchText.value.isEmpty()) "Henuz odunc verilen kitap yok"
-                else "Arama kriterlerinize uygun kayit bulunamadi"
-            BorrowFilterOption.ACTIVE -> "Su anda oduncte olan kitap yok"
-            BorrowFilterOption.RETURNED -> "Iade edilmis kitap bulunamadi"
-            BorrowFilterOption.OVERDUE -> "Suresi gecmis kitap yok"
-        }
+        get() =
+            when (_filterOption.value) {
+                BorrowFilterOption.ALL ->
+                    if (_searchText.value.isEmpty()) "Henüz ödünç verilen kitap yok"
+                    else "Arama kriterlerinize uygun kayıt bulunamadı"
+
+                BorrowFilterOption.ACTIVE -> "Şu anda ödünçte olan kitap yok"
+                BorrowFilterOption.RETURNED -> "İade edilmiş kitap bulunamadı"
+                BorrowFilterOption.OVERDUE -> "Süresi geçmiş kitap yok"
+            }
 
     val hasOverdueWarning: Boolean
         get() = _overdueBooks.value.isNotEmpty()
@@ -154,8 +159,7 @@ class BorrowingViewModel @Inject constructor(
     val overdueWarningMessage: String
         get() {
             val count = _overdueBooks.value.size
-            return if (count == 1) "1 kitabin suresi gecmis"
-            else "$count kitabin suresi gecmis"
+            return if (count == 1) "1 kitabın süresi geçmiş" else "$count kitabın süresi geçmiş"
         }
 
     val statisticsInfo: BorrowingStatistics
@@ -185,7 +189,8 @@ class BorrowingViewModel @Inject constructor(
     private fun observeNetworkChanges() {
         viewModelScope.launch {
             networkManager.isOnline.collect { isOnline ->
-                if (isOnline && _borrowedBooks.value.isEmpty() &&
+                if (isOnline &&
+                    _borrowedBooks.value.isEmpty() &&
                     _uiState.value.loadingState !is LoadingState.Loading
                 ) {
                     loadData()
@@ -212,32 +217,19 @@ class BorrowingViewModel @Inject constructor(
             val loadErrors = mutableMapOf<String, String>()
 
             // Paralel yukleme
-            val borrowedDeferred = async {
-                firebaseRepository.fetchBorrowedBooks()
-            }
-            val studentsDeferred = async {
-                firebaseRepository.fetchStudents()
-            }
-            val bookCopiesDeferred = async {
-                firebaseRepository.fetchAllBookCopies()
-            }
-            val bookTemplatesDeferred = async {
-                firebaseRepository.fetchBookTemplates()
-            }
+            val borrowedDeferred = async { firebaseRepository.fetchBorrowedBooks() }
+            val studentsDeferred = async { firebaseRepository.fetchStudents() }
+            val bookCopiesDeferred = async { firebaseRepository.fetchAllBookCopies() }
+            val bookTemplatesDeferred = async { firebaseRepository.fetchBookTemplates() }
 
-            // 1. Borrowed Books
-            borrowedDeferred.await()
-                .onSuccess { books ->
-                    _borrowedBooks.value = books
-                    println("✅ ${books.size} odunc kaydi yuklendi")
-                }
-                .onFailure { error ->
-                    loadErrors["borrowedBooks"] = error.message ?: "Bilinmeyen hata"
-                    println("❌ Borrowed Books yuklenemedi: ${error.message}")
-                }
+            // Paralel yuklemeleri bekle
+            val borrowedResult = borrowedDeferred.await()
+            val studentsResult = studentsDeferred.await()
+            val bookCopiesResult = bookCopiesDeferred.await()
+            val bookTemplatesResult = bookTemplatesDeferred.await()
 
-            // 2. Students
-            studentsDeferred.await()
+            // 1. Students
+            studentsResult
                 .onSuccess { students ->
                     _students.value = students
                     println("✅ ${students.size} ogrenci yuklendi")
@@ -247,8 +239,8 @@ class BorrowingViewModel @Inject constructor(
                     println("❌ Students yuklenemedi: ${error.message}")
                 }
 
-            // 3. Book Copies
-            bookCopiesDeferred.await()
+            // 2. Book Copies
+            bookCopiesResult
                 .onSuccess { copies ->
                     _bookCopies.value = copies
                     println("✅ ${copies.size} kitap kopyasi yuklendi")
@@ -258,8 +250,8 @@ class BorrowingViewModel @Inject constructor(
                     println("❌ Book Copies yuklenemedi: ${error.message}")
                 }
 
-            // 4. Book Templates
-            bookTemplatesDeferred.await()
+            // 3. Book Templates
+            bookTemplatesResult
                 .onSuccess { templates ->
                     _bookTemplates.value = templates
                     println("✅ ${templates.size} kitap sablonu yuklendi")
@@ -269,22 +261,39 @@ class BorrowingViewModel @Inject constructor(
                     println("❌ Book Templates yuklenemedi: ${error.message}")
                 }
 
+            // Veriler hazir, onbellekleri olustur
+            buildCaches()
+
+            // 4. Borrowed Books (En son yapiliyor ki UI recompose oldugunda diger veriler hazir
+            // olsun)
+            borrowedResult
+                .onSuccess { books ->
+                    _borrowedBooks.value = books
+                    println("✅ ${books.size} odunc kaydi yuklendi")
+                }
+                .onFailure { error ->
+                    loadErrors["borrowedBooks"] = error.message ?: "Bilinmeyen hata"
+                    println("❌ Borrowed Books yuklenemedi: ${error.message}")
+                }
+
             // Yukleme tamamlandi
             _uiState.update { it.copy(isLoading = false) }
             checkOverdueBooks()
-            buildCaches()
 
             val totalDataSources = 4
             val failedCount = loadErrors.size
 
             when {
                 failedCount == totalDataSources -> {
-                    _uiState.update { it.copy(loadingState = LoadingState.Error("Veriler yuklenemedi")) }
+                    _uiState.update {
+                        it.copy(loadingState = LoadingState.Error("Veriler yuklenemedi"))
+                    }
                     showAlert(
                         "Yukleme Hatasi",
                         "Hicbir veri yuklenemedi. Lutfen internet baglantinizi kontrol edin ve tekrar deneyin."
                     )
                 }
+
                 failedCount > 0 -> {
                     _uiState.update { it.copy(loadingState = LoadingState.Success) }
                     val failedDataNames = loadErrors.keys.joinToString(", ")
@@ -293,6 +302,7 @@ class BorrowingViewModel @Inject constructor(
                         "Bazi veriler yuklenemedi: $failedDataNames. Uygulama sinirli ozelliklerle calisabilir."
                     )
                 }
+
                 else -> {
                     _uiState.update { it.copy(loadingState = LoadingState.Success) }
                     println("✅ Tum veriler basariyla yuklendi")
@@ -302,17 +312,20 @@ class BorrowingViewModel @Inject constructor(
     }
 
     private fun buildCaches() {
-        studentCache = _students.value.mapNotNull { student ->
-            student.id?.let { id -> id to student }
-        }.toMap()
+        studentCache =
+            _students
+                .value
+                .mapNotNull { student -> student.id?.let { id -> id to student } }
+                .toMap()
 
-        bookCopyCache = _bookCopies.value.mapNotNull { copy ->
-            copy.id?.let { id -> id to copy }
-        }.toMap()
+        bookCopyCache =
+            _bookCopies.value.mapNotNull { copy -> copy.id?.let { id -> id to copy } }.toMap()
 
-        bookTemplateCache = _bookTemplates.value.mapNotNull { template ->
-            template.id?.let { id -> id to template }
-        }.toMap()
+        bookTemplateCache =
+            _bookTemplates
+                .value
+                .mapNotNull { template -> template.id?.let { id -> id to template } }
+                .toMap()
     }
 
     fun refreshData() {
@@ -332,7 +345,10 @@ class BorrowingViewModel @Inject constructor(
 
         // Durum filtresi
         when (filter) {
-            BorrowFilterOption.ALL -> { /* Tumunu goster */ }
+            BorrowFilterOption.ALL -> {
+                /* Tumunu goster */
+            }
+
             BorrowFilterOption.ACTIVE -> filtered = filtered.filter { !it.isReturned }
             BorrowFilterOption.RETURNED -> filtered = filtered.filter { it.isReturned }
             BorrowFilterOption.OVERDUE -> filtered = filtered.filter { it.isOverdue }
@@ -346,22 +362,30 @@ class BorrowingViewModel @Inject constructor(
             val bookCopies = _bookCopies.value
             val bookTemplates = _bookTemplates.value
 
-            filtered = filtered.filter { borrowRecord ->
-                // Ogrenci bilgilerinde ara
-                val student = students.firstOrNull { it.id == borrowRecord.studentId }
-                val studentMatch = student?.name?.searchNormalized?.contains(searchTerm) == true ||
-                        student?.surname?.searchNormalized?.contains(searchTerm) == true ||
-                        student?.studentNumber?.contains(searchTerm) == true
+            filtered =
+                filtered.filter { borrowRecord ->
+                    // Ogrenci bilgilerinde ara
+                    val student = students.firstOrNull { it.id == borrowRecord.studentId }
+                    val studentMatch =
+                        student?.name?.searchNormalized?.contains(searchTerm) == true ||
+                                student?.surname?.searchNormalized?.contains(searchTerm) ==
+                                true ||
+                                student?.studentNumber?.contains(searchTerm) == true
 
-                // Kitap bilgilerinde ara
-                val bookCopy = bookCopies.firstOrNull { it.id == borrowRecord.bookCopyId }
-                val bookTemplate = bookTemplates.firstOrNull { it.id == bookCopy?.bookTemplateId }
-                val bookMatch = bookTemplate?.title?.searchNormalized?.contains(searchTerm) == true ||
-                        bookTemplate?.author?.searchNormalized?.contains(searchTerm) == true ||
-                        bookCopy?.barcode?.contains(searchTerm) == true
+                    // Kitap bilgilerinde ara
+                    val bookCopy = bookCopies.firstOrNull { it.id == borrowRecord.bookCopyId }
+                    val bookTemplate =
+                        bookTemplates.firstOrNull { it.id == bookCopy?.bookTemplateId }
+                    val bookMatch =
+                        bookTemplate?.title?.searchNormalized?.contains(searchTerm) ==
+                                true ||
+                                bookTemplate?.author?.searchNormalized?.contains(
+                                    searchTerm
+                                ) == true ||
+                                bookCopy?.barcode?.contains(searchTerm) == true
 
-                studentMatch || bookMatch
-            }
+                    studentMatch || bookMatch
+                }
         }
 
         // Tarihe gore sirala (en yeni once)
@@ -445,9 +469,8 @@ class BorrowingViewModel @Inject constructor(
     }
 
     private fun checkStudentBorrowLimit(student: Student) {
-        val activeBorrows = _borrowedBooks.value.filter {
-            it.studentId == student.id && !it.isReturned
-        }
+        val activeBorrows =
+            _borrowedBooks.value.filter { it.studentId == student.id && !it.isReturned }
         if (activeBorrows.size >= BorrowingRule.MAX_BOOKS_PER_STUDENT) {
             showAlert(
                 "Limit Asildi",
@@ -458,10 +481,7 @@ class BorrowingViewModel @Inject constructor(
 
     private fun checkBookAvailability(bookCopy: BookCopy) {
         if (!bookCopy.isAvailable) {
-            showAlert(
-                "Kitap Musait Degil",
-                "Bu kitap su anda oduncte. Barkod: ${bookCopy.barcode}"
-            )
+            showAlert("Kitap Musait Degil", "Bu kitap su anda oduncte. Barkod: ${bookCopy.barcode}")
         }
     }
 
@@ -472,9 +492,8 @@ class BorrowingViewModel @Inject constructor(
             return
         }
 
-        val availableCopies = _bookCopies.value.filter {
-            it.bookTemplateId == templateId && it.isAvailable
-        }
+        val availableCopies =
+            _bookCopies.value.filter { it.bookTemplateId == templateId && it.isAvailable }
 
         val firstAvailableCopy = availableCopies.firstOrNull()
         if (firstAvailableCopy == null) {
@@ -527,19 +546,22 @@ class BorrowingViewModel @Inject constructor(
 
         _uiState.update { it.copy(isBorrowingBook = true) }
 
-        val borrowRecord = BorrowedBook(
-            bookCopyId = bookCopyId,
-            studentId = studentId,
-            borrowDays = BorrowingRule.DEFAULT_BORROW_DAYS
-        )
+        val borrowRecord =
+            BorrowedBook(
+                bookCopyId = bookCopyId,
+                studentId = studentId,
+                borrowDays = BorrowingRule.DEFAULT_BORROW_DAYS
+            )
 
         viewModelScope.launch {
             // Odunc kaydi olustur
-            firebaseRepository.createBorrowRecord(borrowRecord)
+            firebaseRepository
+                .createBorrowRecord(borrowRecord)
                 .onSuccess {
                     // Kitap kopyasinin durumunu guncelle
                     val updatedBookCopy = bookCopy.copy(isAvailable = false)
-                    firebaseRepository.updateBookCopy(updatedBookCopy)
+                    firebaseRepository
+                        .updateBookCopy(updatedBookCopy)
                         .onSuccess {
                             _uiState.update {
                                 it.copy(
@@ -553,7 +575,9 @@ class BorrowingViewModel @Inject constructor(
                                 "Basarili",
                                 "'${bookTemplate.title}' kitabi ${student.fullName} ogrencisine odunc verildi"
                             )
-                            println("✅ Kitap odunc verildi: ${bookTemplate.title} -> ${student.fullName}")
+                            println(
+                                "✅ Kitap odunc verildi: ${bookTemplate.title} -> ${student.fullName}"
+                            )
                         }
                         .onFailure { error ->
                             _uiState.update { it.copy(isBorrowingBook = false) }
@@ -586,9 +610,8 @@ class BorrowingViewModel @Inject constructor(
             return Pair(false, "Bu kitap su anda musait degil")
         }
 
-        val studentActiveBorrows = _borrowedBooks.value.filter {
-            it.studentId == student.id && !it.isReturned
-        }
+        val studentActiveBorrows =
+            _borrowedBooks.value.filter { it.studentId == student.id && !it.isReturned }
 
         if (!BorrowingRule.canBorrowBook(studentActiveBorrows.size)) {
             return Pair(
@@ -643,10 +666,12 @@ class BorrowingViewModel @Inject constructor(
         _uiState.update { it.copy(isReturningBook = true) }
 
         viewModelScope.launch {
-            firebaseRepository.returnBook(borrowedBookId)
+            firebaseRepository
+                .returnBook(borrowedBookId)
                 .onSuccess {
                     // Kitap kopyasinin durumunu guncelle
-                    val bookCopy = _bookCopies.value.firstOrNull { it.id == borrowRecord.bookCopyId }
+                    val bookCopy =
+                        _bookCopies.value.firstOrNull { it.id == borrowRecord.bookCopyId }
                     if (bookCopy != null) {
                         val updatedBookCopy = bookCopy.copy(isAvailable = true)
                         firebaseRepository.updateBookCopy(updatedBookCopy)
@@ -655,15 +680,22 @@ class BorrowingViewModel @Inject constructor(
                     _uiState.update { it.copy(isReturningBook = false) }
                     loadData()
 
-                    val student = _students.value.firstOrNull { it.id == borrowRecord.studentId }
-                    val bookCopyInfo = _bookCopies.value.firstOrNull { it.id == borrowRecord.bookCopyId }
-                    val bookTemplate = _bookTemplates.value.firstOrNull { it.id == bookCopyInfo?.bookTemplateId }
+                    val student =
+                        _students.value.firstOrNull { it.id == borrowRecord.studentId }
+                    val bookCopyInfo =
+                        _bookCopies.value.firstOrNull { it.id == borrowRecord.bookCopyId }
+                    val bookTemplate =
+                        _bookTemplates.value.firstOrNull {
+                            it.id == bookCopyInfo?.bookTemplateId
+                        }
 
                     showAlert(
                         "Iade Basarili",
                         "'${bookTemplate?.title ?: "Kitap"}' ${student?.fullName ?: "ogrenci"}'den iade alindi"
                     )
-                    println("✅ Kitap iade edildi: ${bookTemplate?.title ?: "Unknown"} <- ${student?.fullName ?: "Unknown"}")
+                    println(
+                        "✅ Kitap iade edildi: ${bookTemplate?.title ?: "Unknown"} <- ${student?.fullName ?: "Unknown"}"
+                    )
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isReturningBook = false) }
@@ -731,23 +763,11 @@ class BorrowingViewModel @Inject constructor(
     }
 
     private fun showAlert(title: String, message: String) {
-        _uiState.update {
-            it.copy(
-                showAlert = true,
-                alertTitle = title,
-                alertMessage = message
-            )
-        }
+        _uiState.update { it.copy(showAlert = true, alertTitle = title, alertMessage = message) }
     }
 
     fun dismissAlert() {
-        _uiState.update {
-            it.copy(
-                showAlert = false,
-                alertTitle = "",
-                alertMessage = ""
-            )
-        }
+        _uiState.update { it.copy(showAlert = false, alertTitle = "", alertMessage = "") }
     }
 
     fun getStudentInfo(borrowRecord: BorrowedBook): Student? {
@@ -756,12 +776,14 @@ class BorrowingViewModel @Inject constructor(
     }
 
     fun getBookInfo(borrowRecord: BorrowedBook): Pair<BookCopy?, BookTemplate?> {
-        val bookCopy = bookCopyCache[borrowRecord.bookCopyId]
-            ?: _bookCopies.value.firstOrNull { it.id == borrowRecord.bookCopyId }
-        val bookTemplate = bookCopy?.bookTemplateId?.let { templateId ->
-            bookTemplateCache[templateId]
-                ?: _bookTemplates.value.firstOrNull { it.id == templateId }
-        }
+        val bookCopy =
+            bookCopyCache[borrowRecord.bookCopyId]
+                ?: _bookCopies.value.firstOrNull { it.id == borrowRecord.bookCopyId }
+        val bookTemplate =
+            bookCopy?.bookTemplateId?.let { templateId ->
+                bookTemplateCache[templateId]
+                    ?: _bookTemplates.value.firstOrNull { it.id == templateId }
+            }
         return Pair(bookCopy, bookTemplate)
     }
 
@@ -798,17 +820,19 @@ class BorrowingViewModel @Inject constructor(
         val thisMonth = calendar.get(Calendar.MONTH)
         val thisYear = calendar.get(Calendar.YEAR)
 
-        val thisMonthBorrows = _borrowedBooks.value.filter { borrowRecord ->
-            val borrowDate = borrowRecord.borrowDate.toDate()
-            val cal = Calendar.getInstance().apply { time = borrowDate }
-            cal.get(Calendar.MONTH) == thisMonth && cal.get(Calendar.YEAR) == thisYear
-        }
+        val thisMonthBorrows =
+            _borrowedBooks.value.filter { borrowRecord ->
+                val borrowDate = borrowRecord.borrowDate.toDate()
+                val cal = Calendar.getInstance().apply { time = borrowDate }
+                cal.get(Calendar.MONTH) == thisMonth && cal.get(Calendar.YEAR) == thisYear
+            }
 
-        val thisMonthReturns = _borrowedBooks.value.filter { borrowRecord ->
-            val returnDate = borrowRecord.returnDate?.toDate() ?: return@filter false
-            val cal = Calendar.getInstance().apply { time = returnDate }
-            cal.get(Calendar.MONTH) == thisMonth && cal.get(Calendar.YEAR) == thisYear
-        }
+        val thisMonthReturns =
+            _borrowedBooks.value.filter { borrowRecord ->
+                val returnDate = borrowRecord.returnDate?.toDate() ?: return@filter false
+                val cal = Calendar.getInstance().apply { time = returnDate }
+                cal.get(Calendar.MONTH) == thisMonth && cal.get(Calendar.YEAR) == thisYear
+            }
 
         return MonthlyBorrowReport(
             month = thisMonth,
@@ -830,9 +854,7 @@ class BorrowingViewModel @Inject constructor(
             }
         }
 
-        return bookBorrowCounts.entries
-            .sortedByDescending { it.value }
-            .take(limit)
+        return bookBorrowCounts.entries.sortedByDescending { it.value }.take(limit)
             .mapNotNull { (templateId, count) ->
                 val template = _bookTemplates.value.firstOrNull { it.id == templateId }
                 template?.let { Pair(it, count) }
@@ -847,9 +869,7 @@ class BorrowingViewModel @Inject constructor(
                 (studentBorrowCounts[borrowRecord.studentId] ?: 0) + 1
         }
 
-        return studentBorrowCounts.entries
-            .sortedByDescending { it.value }
-            .take(limit)
+        return studentBorrowCounts.entries.sortedByDescending { it.value }.take(limit)
             .mapNotNull { (studentId, count) ->
                 val student = _students.value.firstOrNull { it.id == studentId }
                 student?.let { Pair(it, count) }
@@ -888,18 +908,19 @@ data class BorrowingUiState(
 // ══════════════════════════════════════════════════════════════
 
 enum class BorrowFilterOption(val displayName: String) {
-    ALL("Tumu"),
-    ACTIVE("Oduncte"),
-    RETURNED("Iade Edildi"),
-    OVERDUE("Suresi Gecti");
+    ALL("Tümü"),
+    ACTIVE("Ödünçte"),
+    RETURNED("İade Edildi"),
+    OVERDUE("Süresi Geçti");
 
     val icon: String
-        get() = when (this) {
-            ALL -> "list"
-            ACTIVE -> "book"
-            RETURNED -> "check_circle"
-            OVERDUE -> "warning"
-        }
+        get() =
+            when (this) {
+                ALL -> "list"
+                ACTIVE -> "book"
+                RETURNED -> "check_circle"
+                OVERDUE -> "warning"
+            }
 }
 
 data class BorrowingStatistics(
@@ -925,9 +946,7 @@ data class MonthlyBorrowReport(
     val monthName: String
         get() {
             val formatter = SimpleDateFormat("MMMM", Locale("tr", "TR"))
-            val calendar = Calendar.getInstance().apply {
-                set(Calendar.MONTH, month)
-            }
+            val calendar = Calendar.getInstance().apply { set(Calendar.MONTH, month) }
             return formatter.format(calendar.time)
         }
 
