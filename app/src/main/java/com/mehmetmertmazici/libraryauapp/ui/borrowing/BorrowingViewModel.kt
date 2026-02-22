@@ -676,6 +676,40 @@ class BorrowingViewModel @Inject constructor(
     }
 
     // ══════════════════════════════════════════════════════════════
+    // MARK: - Search Helpers (for Student/Book Search Sheets)
+    // ══════════════════════════════════════════════════════════════
+
+    fun getFilteredStudents(searchText: String): List<Student> {
+        if (searchText.isEmpty()) return _students.value
+        val searchTerm = searchText.searchNormalized
+        return _students.value.filter { student ->
+            student.name.searchNormalized.contains(searchTerm) ||
+                    student.surname.searchNormalized.contains(searchTerm) ||
+                    student.studentNumber.contains(searchTerm)
+        }
+    }
+
+    fun getFilteredBookTemplates(searchText: String): List<BookTemplate> {
+        if (searchText.isEmpty()) return _bookTemplates.value
+        val searchTerm = searchText.searchNormalized
+        return _bookTemplates.value.filter { template ->
+            template.title.searchNormalized.contains(searchTerm) ||
+                    template.author.searchNormalized.contains(searchTerm)
+        }
+    }
+
+    fun directSelectStudent(student: Student) {
+        _selectedStudent.value = student
+        _borrowStudentNumber.value = student.studentNumber
+        checkStudentBorrowLimit(student)
+    }
+
+    fun directSetBorrowBarcode(barcode: String) {
+        _borrowBookBarcode.value = barcode
+        searchBookByBarcode()
+    }
+
+    // ══════════════════════════════════════════════════════════════
     // MARK: - Helper Methods
     // ══════════════════════════════════════════════════════════════
 

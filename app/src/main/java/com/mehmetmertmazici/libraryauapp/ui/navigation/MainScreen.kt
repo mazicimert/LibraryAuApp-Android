@@ -29,6 +29,7 @@ import com.mehmetmertmazici.libraryauapp.ui.books.BookEditScreen
 import com.mehmetmertmazici.libraryauapp.ui.books.BookListScreen
 import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowBookScreen
 import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowedBooksScreen
+import com.mehmetmertmazici.libraryauapp.ui.scanner.BarcodeScannerScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.NetworkStatusBanner
 import com.mehmetmertmazici.libraryauapp.ui.students.AddStudentScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.StudentDetailScreen
@@ -212,6 +213,19 @@ fun MainScreen(
                         // AddStudent Screen
                         composable(Screen.AddStudent.route) {
                             AddStudentScreen(onDismiss = { navController.popBackStack() })
+                        }
+
+                        // Scanner Screen
+                        composable(Screen.Scanner.route) {
+                            BarcodeScannerScreen(
+                                    onBarcodeScanned = { barcode ->
+                                        navController.previousBackStackEntry
+                                                ?.savedStateHandle
+                                                ?.set("scannedBarcode", barcode)
+                                        navController.popBackStack()
+                                    },
+                                    onDismiss = { navController.popBackStack() }
+                            )
                         }
 
                         // BorrowBook Screen
