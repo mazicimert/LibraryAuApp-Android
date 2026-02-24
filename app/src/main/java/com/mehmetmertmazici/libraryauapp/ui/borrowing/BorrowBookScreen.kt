@@ -49,7 +49,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -70,6 +70,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.mehmetmertmazici.libraryauapp.data.model.BookCopy
 import com.mehmetmertmazici.libraryauapp.data.model.BookTemplate
@@ -77,6 +78,7 @@ import com.mehmetmertmazici.libraryauapp.data.model.BorrowingRule
 import com.mehmetmertmazici.libraryauapp.data.model.Student
 import com.mehmetmertmazici.libraryauapp.ui.components.LoadingOverlay
 import com.mehmetmertmazici.libraryauapp.ui.scanner.BarcodeScannerScreen
+import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraBackground
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraBlue
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraDanger
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraLightBlue
@@ -89,7 +91,7 @@ import java.util.Locale
 
 /**
  * BorrowBookScreen
- * Kitap odunc verme ekrani
+ * Kitap ödünç verme ekranı
  *
  * iOS Karsiligi: BorrowBookView.swift
  */
@@ -169,46 +171,56 @@ fun BorrowBookScreen(
 
     LoadingOverlay(
         isLoading = uiState.isBorrowingBook,
-        message = "Kitap odunc veriliyor..."
+        message = "Kitap ödünç veriliyor..."
     ) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Kitap Odunc Ver") },
-                    navigationIcon = {
-                        IconButton(onClick = onDismiss) {
-                            Icon(Icons.Default.Close, contentDescription = "Iptal")
-                        }
-                    },
-                    actions = {
-                        TextButton(
-                            onClick = { viewModel.borrowBook() },
-                            enabled = viewModel.isBorrowFormValid && !uiState.isBorrowingBook
-                        ) {
+        AnkaraBackground {
+            Scaffold(
+                containerColor = Color.Transparent,
+                topBar = {
+                    CenterAlignedTopAppBar(
+                        title = {
                             Text(
-                                text = "Odunc Ver",
-                                fontWeight = FontWeight.Bold,
-                                color = if (viewModel.isBorrowFormValid && !uiState.isBorrowingBook)
-                                    AnkaraBlue
-                                else
-                                    Color.Gray
+                                text = "Kitap Ödünç Ver",
+                                fontWeight = FontWeight.SemiBold
                             )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface
+                        },
+                        navigationIcon = {
+                            TextButton(onClick = onDismiss) {
+                                Text(
+                                    text = "İptal",
+                                    color = AnkaraLightBlue
+                                )
+                            }
+                        },
+                        actions = {
+                            TextButton(
+                                onClick = { viewModel.borrowBook() },
+                                enabled = viewModel.isBorrowFormValid && !uiState.isBorrowingBook
+                            ) {
+                                Text(
+                                    text = "Ödünç Ver",
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (viewModel.isBorrowFormValid && !uiState.isBorrowingBook)
+                                        AnkaraLightBlue
+                                    else
+                                        Color.Gray
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = Color.Transparent
+                        )
                     )
-                )
-            }
-        ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-                    .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
+                }
+            ) { paddingValues ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
                 // Ogrenci Arama Bolumu
                 StudentSearchSection(
                     studentNumber = borrowStudentNumber,
@@ -252,6 +264,7 @@ fun BorrowBookScreen(
                 }
 
                 Spacer(modifier = Modifier.height(32.dp))
+                }
             }
         }
     }
@@ -270,8 +283,8 @@ private fun StudentSearchSection(
     selectedStudent: Student?
 ) {
     SectionCard(
-        title = "Ogrenci Bilgileri",
-        footer = "Ogrenci numarasi 8 haneli olmalidir"
+        title = "Öğrenci Bilgileri",
+        footer = "Öğrenci numarası 8 haneli olmalıdır"
     ) {
         // Ogrenci Numarasi Girisi
         Row(
@@ -282,7 +295,7 @@ private fun StudentSearchSection(
             OutlinedTextField(
                 value = studentNumber,
                 onValueChange = onStudentNumberChange,
-                label = { Text("Ogrenci numarasi (8 hane)") },
+                label = { Text("Öğrenci numarası (8 hane)") },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Search
@@ -302,13 +315,13 @@ private fun StudentSearchSection(
                 enabled = studentNumber.length == 8,
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AnkaraBlue
+                    containerColor = AnkaraLightBlue
                 )
             ) {
                 Text("Ara")
             }
 
-            // Ogrenci listesinden sec butonu
+            // Öğrenci listesinden seç butonu
             IconButton(
                 onClick = onOpenStudentList,
                 modifier = Modifier
@@ -320,8 +333,8 @@ private fun StudentSearchSection(
             ) {
                 Icon(
                     Icons.Default.Search,
-                    contentDescription = "Ogrenci Listesi",
-                    tint = AnkaraBlue,
+                    contentDescription = "Öğrenci Listesi",
+                    tint = AnkaraLightBlue,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -342,7 +355,7 @@ private fun StudentSearchSection(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Ogrenci bulunamadi",
+                    text = "Öğrenci bulunamadı",
                     style = MaterialTheme.typography.labelSmall,
                     color = AnkaraWarning
                 )
@@ -412,7 +425,7 @@ private fun BookSearchSection(
                 enabled = barcode.isNotEmpty(),
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = AnkaraBlue
+                    containerColor = AnkaraLightBlue
                 )
             ) {
                 Text("Ara")
@@ -431,7 +444,7 @@ private fun BookSearchSection(
                 Icon(
                     Icons.Default.QrCodeScanner,
                     contentDescription = "Barkod Tara",
-                    tint = AnkaraBlue,
+                    tint = AnkaraLightBlue,
                     modifier = Modifier.size(20.dp)
                 )
             }
@@ -451,13 +464,13 @@ private fun BookSearchSection(
             Icon(
                 Icons.Default.Book,
                 contentDescription = null,
-                tint = AnkaraBlue,
+                tint = AnkaraLightBlue,
                 modifier = Modifier.size(18.dp)
             )
             Text(
-                text = "Kitap Listesinden Sec",
+                text = "Kitap Listesinden Seç",
                 style = MaterialTheme.typography.bodySmall,
-                color = AnkaraBlue,
+                color = AnkaraLightBlue,
                 fontWeight = FontWeight.Medium
             )
         }
@@ -480,7 +493,7 @@ private fun BookSearchSection(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Kitap bulunamadi veya musait degil",
+                    text = "Kitap bulunamadı veya müsait değil",
                     style = MaterialTheme.typography.labelSmall,
                     color = Color(0xFFFF9800)
                 )
@@ -546,7 +559,7 @@ private fun StudentSelectedView(student: Student) {
                 modifier = Modifier.size(20.dp)
             )
             Text(
-                text = "Secildi",
+                text = "Seçildi",
                 style = MaterialTheme.typography.labelSmall,
                 color = AnkaraSuccess
             )
@@ -615,7 +628,7 @@ private fun BookSelectedView(
                 modifier = Modifier.size(20.dp)
             )
             Text(
-                text = "Musait",
+                text = "Müsait",
                 style = MaterialTheme.typography.labelSmall,
                 color = AnkaraLightBlue
             )
@@ -637,7 +650,7 @@ private fun SelectedItemsSection(
         SimpleDateFormat("d MMMM yyyy", Locale("tr", "TR"))
     }
 
-    SectionCard(title = "Odunc Ozeti") {
+    SectionCard(title = "Ödünç Özeti") {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             if (student != null) {
                 Row(
@@ -672,9 +685,9 @@ private fun SelectedItemsSection(
                 val today = Date()
                 val calendar = Calendar.getInstance().apply { add(Calendar.DAY_OF_YEAR, BorrowingRule.DEFAULT_BORROW_DAYS) }
                 val dueDate = calendar.time
-                SummaryRow("Odunc Tarihi:", dateFormatter.format(today))
+                SummaryRow("Ödünç Tarihi:", dateFormatter.format(today))
                 SummaryRow("Teslim Tarihi:", dateFormatter.format(dueDate))
-                SummaryRow("Odunc Suresi:", "${BorrowingRule.DEFAULT_BORROW_DAYS} gun", valueColor = AnkaraLightBlue)
+                SummaryRow("Ödünç Süresi:", "${BorrowingRule.DEFAULT_BORROW_DAYS} gün", valueColor = AnkaraLightBlue)
             }
         }
     }
@@ -694,12 +707,12 @@ private fun SummaryRow(label: String, value: String, valueColor: Color = Materia
 
 @Composable
 private fun BorrowingRulesSection() {
-    SectionCard(title = "Odunc Kurallari", footer = "Bu kurallar sistem ayarlarindan degistirilebilir") {
+    SectionCard(title = "Ödünç Kuralları", footer = "Bu kurallar sistem ayarlarından değiştirilebilir") {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            RuleRowView(icon = Icons.Default.Book, title = "Maksimum Kitap", value = "${BorrowingRule.MAX_BOOKS_PER_STUDENT} kitap/ogrenci")
-            RuleRowView(icon = Icons.Default.CalendarMonth, title = "Odunc Suresi", value = "${BorrowingRule.DEFAULT_BORROW_DAYS} gun")
-            RuleRowView(icon = Icons.Default.Warning, title = "Ayni Kitap", value = "Ogrenci ayni kitaptan alamaz")
-            RuleRowView(icon = Icons.Default.Info, title = "Gecikme", value = "Ceza yok, sadece uyari")
+            RuleRowView(icon = Icons.Default.Book, title = "Maksimum Kitap", value = "${BorrowingRule.MAX_BOOKS_PER_STUDENT} kitap/öğrenci")
+            RuleRowView(icon = Icons.Default.CalendarMonth, title = "Ödünç Süresi", value = "${BorrowingRule.DEFAULT_BORROW_DAYS} gün")
+            RuleRowView(icon = Icons.Default.Warning, title = "Aynı Kitap", value = "Öğrenci aynı kitaptan alamaz")
+            RuleRowView(icon = Icons.Default.Info, title = "Gecikme", value = "Ceza yok, sadece uyarı")
         }
     }
 }
@@ -750,7 +763,13 @@ private fun ValidationSection(messages: List<String>) {
 private fun SectionCard(title: String?, footer: String? = null, content: @Composable () -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (title != null) {
-            Text(text = title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = title.uppercase(),
+                style = MaterialTheme.typography.labelSmall,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                letterSpacing = 0.5.sp
+            )
         }
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -799,12 +818,12 @@ private fun StudentSearchSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Ogrenci Sec",
+                    text = "Öğrenci Seç",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 TextButton(onClick = onDismiss) {
-                    Text("Iptal")
+                    Text("İptal")
                 }
             }
 
@@ -812,7 +831,7 @@ private fun StudentSearchSheet(
             TextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                placeholder = { Text("Ogrenci ara...") },
+                placeholder = { Text("Öğrenci ara...") },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
                 trailingIcon = {
                     if (searchText.isNotEmpty()) {
@@ -930,12 +949,12 @@ private fun BookSearchSheet(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Kitap Sec",
+                    text = "Kitap Seç",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold
                 )
                 TextButton(onClick = onDismiss) {
-                    Text("Iptal")
+                    Text("İptal")
                 }
             }
 
@@ -995,7 +1014,7 @@ private fun BookSearchRowView(book: BookTemplate, onClick: () -> Unit) {
         Icon(
             Icons.Default.Book,
             contentDescription = null,
-            tint = AnkaraBlue,
+            tint = AnkaraLightBlue,
             modifier = Modifier.size(28.dp)
         )
 
@@ -1033,8 +1052,8 @@ private fun buildValidationMessages(
     selectedBookCopy: BookCopy?
 ): List<String> {
     val messages = mutableListOf<String>()
-    if (selectedStudent == null) messages.add("Ogrenci secilmedi")
-    if (selectedBookTemplate == null) messages.add("Kitap secilmedi")
-    if (selectedBookCopy == null) messages.add("Musait kopya bulunamadi")
+    if (selectedStudent == null) messages.add("Öğrenci seçilmedi")
+    if (selectedBookTemplate == null) messages.add("Kitap seçilmedi")
+    if (selectedBookCopy == null) messages.add("Müsait kopya bulunamadı")
     return messages
 }

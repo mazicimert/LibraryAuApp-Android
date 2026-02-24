@@ -2,6 +2,7 @@ package com.mehmetmertmazici.libraryauapp.data.model
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.PropertyName
 import com.google.gson.annotations.SerializedName
 
 /**
@@ -21,7 +22,9 @@ data class BookTemplate(
     val category: String = "",
     val description: String = "",
     val createdAt: Timestamp = Timestamp.now(),
-    val isDeleted: Boolean = false,
+    @get:PropertyName("isDeleted")
+    @set:PropertyName("isDeleted")
+    var isDeleted: Boolean = false,
     val deletedAt: Timestamp? = null
 ) {
     /**

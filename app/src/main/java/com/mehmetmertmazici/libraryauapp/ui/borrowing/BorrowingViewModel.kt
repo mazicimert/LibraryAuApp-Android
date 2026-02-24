@@ -30,9 +30,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
- * BorrowingViewModel Kitap odunc verme ve iade islemlerini yoneten ViewModel
+ * BorrowingViewModel Kitap ödünç verme ve iade işlemlerini yöneten ViewModel
  *
- * iOS Karsiligi: BorrowingViewModel.swift
+ * iOS Karşılığı: BorrowingViewModel.swift
  */
 @HiltViewModel
 class BorrowingViewModel
@@ -206,7 +206,7 @@ constructor(
     fun loadData() {
         if (!networkManager.isOnline.value) {
             _uiState.update {
-                it.copy(loadingState = LoadingState.Error("Internet baglantisi gereklidir"))
+                it.copy(loadingState = LoadingState.Error("İnternet bağlantısı gereklidir"))
             }
             return
         }
@@ -232,7 +232,7 @@ constructor(
             studentsResult
                 .onSuccess { students ->
                     _students.value = students
-                    println("✅ ${students.size} ogrenci yuklendi")
+                    println("✅ ${students.size} öğrenci yüklendi")
                 }
                 .onFailure { error ->
                     loadErrors["students"] = error.message ?: "Bilinmeyen hata"
@@ -247,7 +247,7 @@ constructor(
                 }
                 .onFailure { error ->
                     loadErrors["bookCopies"] = error.message ?: "Bilinmeyen hata"
-                    println("❌ Book Copies yuklenemedi: ${error.message}")
+                    println("❌ Kitap kopyaları yüklenemedi: ${error.message}")
                 }
 
             // 3. Book Templates
@@ -258,7 +258,7 @@ constructor(
                 }
                 .onFailure { error ->
                     loadErrors["bookTemplates"] = error.message ?: "Bilinmeyen hata"
-                    println("❌ Book Templates yuklenemedi: ${error.message}")
+                    println("❌ Kitap şablonları yüklenemedi: ${error.message}")
                 }
 
             // Veriler hazir, onbellekleri olustur
@@ -269,11 +269,11 @@ constructor(
             borrowedResult
                 .onSuccess { books ->
                     _borrowedBooks.value = books
-                    println("✅ ${books.size} odunc kaydi yuklendi")
+                    println("✅ ${books.size} ödünç kaydı yüklendi")
                 }
                 .onFailure { error ->
                     loadErrors["borrowedBooks"] = error.message ?: "Bilinmeyen hata"
-                    println("❌ Borrowed Books yuklenemedi: ${error.message}")
+                    println("❌ Ödünç kayıtları yüklenemedi: ${error.message}")
                 }
 
             // Yukleme tamamlandi
@@ -286,11 +286,11 @@ constructor(
             when {
                 failedCount == totalDataSources -> {
                     _uiState.update {
-                        it.copy(loadingState = LoadingState.Error("Veriler yuklenemedi"))
+                        it.copy(loadingState = LoadingState.Error("Veriler yüklenemedi"))
                     }
                     showAlert(
-                        "Yukleme Hatasi",
-                        "Hicbir veri yuklenemedi. Lutfen internet baglantinizi kontrol edin ve tekrar deneyin."
+                        "Yükleme Hatası",
+                        "Hiçbir veri yüklenemedi. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin."
                     )
                 }
 
@@ -298,14 +298,14 @@ constructor(
                     _uiState.update { it.copy(loadingState = LoadingState.Success) }
                     val failedDataNames = loadErrors.keys.joinToString(", ")
                     showAlert(
-                        "Kismi Yukleme",
-                        "Bazi veriler yuklenemedi: $failedDataNames. Uygulama sinirli ozelliklerle calisabilir."
+                        "Kısmi Yükleme",
+                        "Bazı veriler yüklenemedi: $failedDataNames. Uygulama sınırlı özelliklerle çalışabilir."
                     )
                 }
 
                 else -> {
                     _uiState.update { it.copy(loadingState = LoadingState.Success) }
-                    println("✅ Tum veriler basariyla yuklendi")
+                    println("✅ Tüm veriler başarıyla yüklendi")
                 }
             }
         }
@@ -441,7 +441,7 @@ constructor(
             checkStudentBorrowLimit(student)
         } else {
             _selectedStudent.value = null
-            showAlert("Ogrenci Bulunamadi", "Bu numaraya sahip ogrenci bulunamadi: $studentNumber")
+            showAlert("Öğrenci Bulunamadı", "Bu numaraya sahip öğrenci bulunamadı: $studentNumber")
         }
     }
 
@@ -464,7 +464,7 @@ constructor(
         } else {
             _selectedBookCopy.value = null
             _selectedBookTemplate.value = null
-            showAlert("Kitap Bulunamadi", "Bu barkoda sahip kitap bulunamadi: $barcode")
+            showAlert("Kitap Bulunamadı", "Bu barkoda sahip kitap bulunamadı: $barcode")
         }
     }
 
@@ -473,22 +473,22 @@ constructor(
             _borrowedBooks.value.filter { it.studentId == student.id && !it.isReturned }
         if (activeBorrows.size >= BorrowingRule.MAX_BOOKS_PER_STUDENT) {
             showAlert(
-                "Limit Asildi",
-                "${student.fullName} ogrencisi maksimum kitap limitine ulasti (${activeBorrows.size}/${BorrowingRule.MAX_BOOKS_PER_STUDENT})"
+                "Limit Aşıldı",
+                "${student.fullName} öğrencisi maksimum kitap limitine ulaştı (${activeBorrows.size}/${BorrowingRule.MAX_BOOKS_PER_STUDENT})"
             )
         }
     }
 
     private fun checkBookAvailability(bookCopy: BookCopy) {
         if (!bookCopy.isAvailable) {
-            showAlert("Kitap Musait Degil", "Bu kitap su anda oduncte. Barkod: ${bookCopy.barcode}")
+            showAlert("Kitap Müsait Değil", "Bu kitap şu anda ödünçte. Barkod: ${bookCopy.barcode}")
         }
     }
 
     fun selectBookFromTemplate(bookTemplate: BookTemplate) {
         val templateId = bookTemplate.id
         if (templateId == null) {
-            showAlert("Hata", "Gecersiz kitap bilgisi")
+            showAlert("Hata", "Geçersiz kitap bilgisi")
             return
         }
 
@@ -498,8 +498,8 @@ constructor(
         val firstAvailableCopy = availableCopies.firstOrNull()
         if (firstAvailableCopy == null) {
             showAlert(
-                "Musait Kopya Yok",
-                "'${bookTemplate.title}' kitabinin tum kopyalari oduncte. Lutfen baska bir kitap secin."
+                "Müsait Kopya Yok",
+                "'${bookTemplate.title}' kitabının tüm kopyaları ödünçte. Lütfen başka bir kitap seçin."
             )
             return
         }
@@ -512,12 +512,12 @@ constructor(
 
     fun borrowBook() {
         if (!networkManager.isOnline.value) {
-            showAlert("Baglanti Hatasi", "Odunc verme icin internet baglantisi gereklidir")
+            showAlert("Bağlantı Hatası", "Ödünç verme için internet bağlantısı gereklidir")
             return
         }
 
         if (!canManageBorrowing) {
-            showAlert("Yetki Hatasi", "Odunc verme yetkiniz yok")
+            showAlert("Yetki Hatası", "Ödünç verme yetkiniz yok")
             return
         }
 
@@ -526,21 +526,21 @@ constructor(
         val bookTemplate = _selectedBookTemplate.value
 
         if (student == null || bookCopy == null || bookTemplate == null) {
-            showAlert("Eksik Bilgi", "Lutfen ogrenci ve kitap bilgilerini kontrol edin")
+            showAlert("Eksik Bilgi", "Lütfen öğrenci ve kitap bilgilerini kontrol edin")
             return
         }
 
         // Final validasyonlar
         val validationResult = validateBorrowOperation(student, bookCopy, bookTemplate)
         if (!validationResult.first) {
-            showAlert("Odunc Verilemez", validationResult.second)
+            showAlert("Ödünç Verilemez", validationResult.second)
             return
         }
 
         val bookCopyId = bookCopy.id
         val studentId = student.id
         if (bookCopyId == null || studentId == null) {
-            showAlert("Hata", "Gecersiz veri")
+            showAlert("Hata", "Geçersiz veri")
             return
         }
 
@@ -554,7 +554,7 @@ constructor(
             )
 
         viewModelScope.launch {
-            // Odunc kaydi olustur
+            // Ödünç kaydı oluştur
             firebaseRepository
                 .createBorrowRecord(borrowRecord)
                 .onSuccess {
@@ -572,26 +572,26 @@ constructor(
                             clearBorrowForm()
                             loadData()
                             showAlert(
-                                "Basarili",
-                                "'${bookTemplate.title}' kitabi ${student.fullName} ogrencisine odunc verildi"
+                                "Başarılı",
+                                "'${bookTemplate.title}' kitabı ${student.fullName} öğrencisine ödünç verildi"
                             )
                             println(
-                                "✅ Kitap odunc verildi: ${bookTemplate.title} -> ${student.fullName}"
+                                "✅ Kitap ödünç verildi: ${bookTemplate.title} -> ${student.fullName}"
                             )
                         }
                         .onFailure { error ->
                             _uiState.update { it.copy(isBorrowingBook = false) }
                             showAlert(
-                                "Odunc Verme Hatasi",
-                                "Kitap odunc verilirken hata olustu: ${error.message}"
+                                "Ödünç Verme Hatası",
+                                "Kitap ödünç verilirken hata oluştu: ${error.message}"
                             )
                         }
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isBorrowingBook = false) }
                     showAlert(
-                        "Odunc Verme Hatasi",
-                        "Kitap odunc verilirken hata olustu: ${error.message}"
+                        "Ödünç Verme Hatası",
+                        "Kitap ödünç verilirken hata oluştu: ${error.message}"
                     )
                 }
         }
@@ -603,11 +603,11 @@ constructor(
         bookTemplate: BookTemplate
     ): Pair<Boolean, String> {
         if (student.id == null) {
-            return Pair(false, "Gecersiz ogrenci bilgisi")
+            return Pair(false, "Geçersiz öğrenci bilgisi")
         }
 
         if (!bookCopy.isAvailable) {
-            return Pair(false, "Bu kitap su anda musait degil")
+            return Pair(false, "Bu kitap şu anda müsait değil")
         }
 
         val studentActiveBorrows =
@@ -616,13 +616,13 @@ constructor(
         if (!BorrowingRule.canBorrowBook(studentActiveBorrows.size)) {
             return Pair(
                 false,
-                "Ogrenci maksimum kitap limitine ulasti (${studentActiveBorrows.size}/${BorrowingRule.MAX_BOOKS_PER_STUDENT})"
+                "Öğrenci maksimum kitap limitine ulaştı (${studentActiveBorrows.size}/${BorrowingRule.MAX_BOOKS_PER_STUDENT})"
             )
         }
 
         val templateId = bookTemplate.id
         if (templateId == null) {
-            return Pair(false, "Kitap kimligi bulunamadi")
+            return Pair(false, "Kitap kimliği bulunamadı")
         }
 
         if (!BorrowingRule.canBorrowSameBook(
@@ -631,7 +631,7 @@ constructor(
                 allBookCopies = _bookCopies.value
             )
         ) {
-            return Pair(false, "Ogrenci zaten bu kitaptan odunc almis")
+            return Pair(false, "Öğrenci zaten bu kitaptan ödünç almış")
         }
 
         return Pair(true, "")
@@ -643,23 +643,23 @@ constructor(
 
     fun returnBook(borrowRecord: BorrowedBook) {
         if (!networkManager.isOnline.value) {
-            showAlert("Baglanti Hatasi", "Iade islemi icin internet baglantisi gereklidir")
+            showAlert("Bağlantı Hatası", "İade işlemi için internet bağlantısı gereklidir")
             return
         }
 
         if (!canManageBorrowing) {
-            showAlert("Yetki Hatasi", "Iade islemi yetkiniz yok")
+            showAlert("Yetki Hatası", "İade işlemi yetkiniz yok")
             return
         }
 
         if (borrowRecord.isReturned) {
-            showAlert("Zaten Iade Edilmis", "Bu kitap zaten iade edilmis")
+            showAlert("Zaten İade Edilmiş", "Bu kitap zaten iade edilmiş")
             return
         }
 
         val borrowedBookId = borrowRecord.id
         if (borrowedBookId == null) {
-            showAlert("Hata", "Gecersiz odunc kaydi")
+            showAlert("Hata", "Geçersiz ödünç kaydı")
             return
         }
 
@@ -690,8 +690,8 @@ constructor(
                         }
 
                     showAlert(
-                        "Iade Basarili",
-                        "'${bookTemplate?.title ?: "Kitap"}' ${student?.fullName ?: "ogrenci"}'den iade alindi"
+                        "İade Başarılı",
+                        "'${bookTemplate?.title ?: "Kitap"}' ${student?.fullName ?: "öğrenci"}'den iade alındı"
                     )
                     println(
                         "✅ Kitap iade edildi: ${bookTemplate?.title ?: "Unknown"} <- ${student?.fullName ?: "Unknown"}"
@@ -700,8 +700,8 @@ constructor(
                 .onFailure { error ->
                     _uiState.update { it.copy(isReturningBook = false) }
                     showAlert(
-                        "Iade Hatasi",
-                        "Kitap iade edilirken hata olustu: ${error.message}"
+                        "İade Hatası",
+                        "Kitap iade edilirken hata oluştu: ${error.message}"
                     )
                 }
         }
@@ -951,5 +951,5 @@ data class MonthlyBorrowReport(
         }
 
     val displayText: String
-        get() = "$monthName $year: $totalBorrows odunc, $totalReturns iade"
+        get() = "$monthName $year: $totalBorrows ödünç, $totalReturns iade"
 }
