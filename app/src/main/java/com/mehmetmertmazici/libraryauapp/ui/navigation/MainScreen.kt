@@ -31,6 +31,7 @@ import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowBookScreen
 import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowedBooksScreen
 import com.mehmetmertmazici.libraryauapp.ui.scanner.BarcodeScannerScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.NetworkStatusBanner
+import com.mehmetmertmazici.libraryauapp.ui.admin.AdminManagementScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.AddStudentScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.StudentDetailScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.StudentListScreen
@@ -134,7 +135,7 @@ fun MainScreen(
                             )
                         }
                         composable(TabItem.Admin.route) {
-                            PlaceholderScreen(title = "Admin Yönetimi")
+                            AdminManagementScreen()
                         }
                         composable(TabItem.Profile.route) { PlaceholderScreen(title = "Profil") }
 
