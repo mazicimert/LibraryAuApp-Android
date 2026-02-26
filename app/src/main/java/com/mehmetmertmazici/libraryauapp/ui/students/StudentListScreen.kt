@@ -1,6 +1,7 @@
 package com.mehmetmertmazici.libraryauapp.ui.students
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -22,6 +23,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,21 +58,56 @@ fun StudentListScreen(
     if (uiState.showDeleteConfirmation) {
         AlertDialog(
             onDismissRequest = { viewModel.cancelDeleteStudent() },
-            title = { Text("Öğrenciyi Sil") },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Warning,
+                        contentDescription = null,
+                        tint = AnkaraDanger,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = "Öğrenciyi Sil",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             text = {
                 Text(
-                    "'${uiState.pendingDeleteStudentName}' isimli öğrenciyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+                    text = "'${uiState.pendingDeleteStudentName}' isimli öğrenciyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = { viewModel.confirmDeleteStudent() },
-                    colors = ButtonDefaults.textButtonColors(contentColor = AnkaraDanger)
-                ) { Text("Sil") }
+                    colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Sil", color = Color.White, fontWeight = FontWeight.Bold)
+                }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.cancelDeleteStudent() }) { Text("İptal") }
-            }
+                OutlinedButton(
+                    onClick = { viewModel.cancelDeleteStudent() },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                ) {
+                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -78,19 +115,48 @@ fun StudentListScreen(
     if (uiState.showExportSheet) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissExportSheet() },
-            title = { Text("Öğrenci Listesi Export") },
-            text = { Text("Öğrenci listesini CSV olarak dışa aktarmak istiyor musunuz?") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Share,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Öğrenci Listesi Export",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = "Öğrenci listesini CSV olarak dışa aktarmak istiyor musunuz?",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
-                        // CSV export logic will be handled by the parent
                         viewModel.dismissExportSheet()
-                    }
-                ) { Text("CSV olarak Export Et") }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("CSV olarak Export Et", fontWeight = FontWeight.Bold)
+                }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissExportSheet() }) { Text("İptal") }
-            }
+                TextButton(
+                    onClick = { viewModel.dismissExportSheet() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -98,11 +164,38 @@ fun StudentListScreen(
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
-            }
+                Button(
+                    onClick = { viewModel.dismissAlert() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 

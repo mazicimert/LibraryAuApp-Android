@@ -4,13 +4,16 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Assessment
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
@@ -41,8 +45,11 @@ import androidx.compose.material.icons.filled.Numbers
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCodeScanner
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Undo
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -52,6 +59,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -73,6 +81,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -117,23 +126,59 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
 
         AlertDialog(
             onDismissRequest = { showReturnConfirmation = false },
-            title = { Text("Kitap İade") },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Warning,
+                        contentDescription = null,
+                        tint = AnkaraDanger,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = "Kitap İade",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             text = {
                 Text(
-                    "'${bookInfo.second?.title ?: "Kitap"}' kitabını ${studentInfo?.fullName ?: "öğrenci"}'den iade almak istediğinizden emin misiniz?"
+                    text = "'${bookInfo.second?.title ?: "Kitap"}' kitabını ${studentInfo?.fullName ?: "öğrenci"}'den iade almak istediğinizden emin misiniz?",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         viewModel.returnBook(record)
                         showReturnConfirmation = false
-                    }
-                ) { Text("İade Al", color = AnkaraDanger) }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("İade Al", color = Color.White, fontWeight = FontWeight.Bold)
+                }
             },
             dismissButton = {
-                TextButton(onClick = { showReturnConfirmation = false }) { Text("İptal") }
-            }
+                OutlinedButton(
+                    onClick = { showReturnConfirmation = false },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                ) {
+                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -141,11 +186,38 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
-            }
+                Button(
+                    onClick = { viewModel.dismissAlert() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -154,18 +226,41 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
         val report = monthlyReportData!!
         AlertDialog(
             onDismissRequest = { showMonthlyReport = false },
-            title = { Text("Aylık Rapor") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Assessment,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Aylık Rapor",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             text = {
                 Text(
-                    "${report.monthName} ${report.year}\n\n" +
+                    text = "${report.monthName} ${report.year}\n\n" +
                             "Toplam Ödünç: ${report.totalBorrows}\n" +
                             "Toplam İade: ${report.totalReturns}\n" +
-                            "Aktif Ödünç: ${report.activeBorrows}"
+                            "Aktif Ödünç: ${report.activeBorrows}",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
             },
             confirmButton = {
-                TextButton(onClick = { showMonthlyReport = false }) { Text("Tamam") }
-            }
+                Button(
+                    onClick = { showMonthlyReport = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -681,6 +776,7 @@ private fun BorrowedBookRowView(
         Row(
             modifier = Modifier
                     .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
                     .padding(14.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -760,13 +856,37 @@ private fun BorrowedBookRowView(
                 StatusBadge(borrowRecord = borrowRecord)
             }
 
-            // Sağ taraf: Sadece chevron (iOS tarzı)
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Detay",
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                modifier = Modifier.size(24.dp)
-            )
+            // Sağ taraf: Chevron (iOS tarzı) ve İade Butonu
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxHeight()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = "Detay",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
+                    modifier = Modifier.size(24.dp)
+                )
+
+                if (canReturn) {
+                    Box(
+                        modifier = Modifier
+                            .size(32.dp)
+                            .clip(CircleShape)
+                            .background(AnkaraSuccess)
+                            .clickable { onReturn() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Undo,
+                            contentDescription = "İade Al",
+                            tint = Color.White,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
         }
     }
 }

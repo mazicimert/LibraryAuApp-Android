@@ -2,6 +2,7 @@ package com.mehmetmertmazici.libraryauapp.ui.books
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +30,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -65,26 +68,92 @@ fun BookListScreen(
     if (uiState.showAlert && uiState.pendingDeleteBookId != null) {
         AlertDialog(
             onDismissRequest = { viewModel.cancelDeleteBook() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Warning,
+                        contentDescription = null,
+                        tint = AnkaraDanger,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = { viewModel.confirmDeleteBookWithAllCopies() },
-                    colors = ButtonDefaults.textButtonColors(contentColor = AnkaraDanger)
-                ) { Text("Sil") }
+                    colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Sil", color = Color.White, fontWeight = FontWeight.Bold)
+                }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.cancelDeleteBook() }) { Text("İptal") }
-            }
+                OutlinedButton(
+                    onClick = { viewModel.cancelDeleteBook() },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                ) {
+                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     } else if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
-            }
+                Button(
+                    onClick = { viewModel.dismissAlert() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -504,6 +573,7 @@ fun BookRowView(book: BookTemplate, onClick: () -> Unit) {
                 modifier =
                     Modifier
                         .size(60.dp)
+                        .shadow(4.dp, RoundedCornerShape(12.dp))
                         .clip(RoundedCornerShape(12.dp))
                         .background(
                             brush =
@@ -514,8 +584,7 @@ fun BookRowView(book: BookTemplate, onClick: () -> Unit) {
                                             AnkaraLightBlue
                                         )
                                 )
-                        )
-                        .shadow(4.dp, RoundedCornerShape(12.dp)),
+                        ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

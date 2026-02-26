@@ -43,6 +43,9 @@ class AdminViewModel @Inject constructor(
     // MARK: - Computed Properties
     // ══════════════════════════════════════════════════════════════
 
+    val currentUserId: String?
+        get() = authRepository.currentUser.value?.uid
+
     val canManageAdmins: Boolean
         get() = authRepository.isSuperAdmin && networkManager.isOnline.value
 
@@ -198,7 +201,8 @@ class AdminViewModel @Inject constructor(
                 }
                 println("✅ Admin verileri yüklendi: ${allAdmins.size} admin, ${pendingAdmins.size} onay bekliyor")
             } else {
-                val error = allAdminsResult.exceptionOrNull() ?: pendingAdminsResult.exceptionOrNull()
+                val error =
+                    allAdminsResult.exceptionOrNull() ?: pendingAdminsResult.exceptionOrNull()
                 _uiState.update {
                     it.copy(
                         isLoading = false,

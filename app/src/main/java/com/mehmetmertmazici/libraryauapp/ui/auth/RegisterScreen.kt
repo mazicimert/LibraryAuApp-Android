@@ -45,20 +45,43 @@ fun RegisterScreen(
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         viewModel.dismissAlert()
                         if (uiState.alertTitle == "Kayıt Başarılı") {
                             onRegistrationSuccess()
                         }
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Tamam")
+                    Text("Tamam", fontWeight = FontWeight.Bold)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 

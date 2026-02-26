@@ -66,6 +66,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
@@ -99,7 +100,8 @@ import java.util.Locale
 @Composable
 fun BorrowBookScreen(
     viewModel: BorrowingViewModel = hiltViewModel(),
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onBorrowSuccess: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val borrowStudentNumber by viewModel.borrowStudentNumber.collectAsState()
@@ -135,13 +137,44 @@ fun BorrowBookScreen(
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) {
-                    Text("Tamam")
+                Button(
+                    onClick = {
+                        val wasSuccess = uiState.alertTitle == "Başarılı"
+                        viewModel.dismissAlert()
+                        if (wasSuccess) {
+                            onBorrowSuccess()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 

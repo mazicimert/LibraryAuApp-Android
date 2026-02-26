@@ -253,7 +253,8 @@ fun MainScreen(
                                         )
                         ) {
                             BorrowBookScreen(
-                                    onDismiss = { navController.popBackStack() }
+                                    onDismiss = { navController.popBackStack() },
+                                    onBorrowSuccess = { navController.popBackStack() }
                             )
                         }
 
