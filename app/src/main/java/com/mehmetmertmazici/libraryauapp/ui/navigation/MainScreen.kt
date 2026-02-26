@@ -290,32 +290,32 @@ private fun ModernBottomNavigationBar(
 ) {
     val isDark = isSystemInDarkTheme()
 
-    // Glassmorphism arka plan renkleri
+    // Glassmorphism arka plan — ekran arka planıyla uyumlu yarı-saydam gradient
     val barBackground =
             if (isDark) {
                 Brush.verticalGradient(
                         colors =
                                 listOf(
-                                        AnkaraBlue.copy(alpha = 0.85f),
-                                        Color(0xFF001A3D).copy(alpha = 0.95f)
+                                        Color(0xFF0A1929).copy(alpha = 0.75f),
+                                        Color(0xFF001A3D).copy(alpha = 0.85f)
                                 )
                 )
             } else {
                 Brush.verticalGradient(
                         colors =
                                 listOf(
-                                        Color.White.copy(alpha = 0.75f),
-                                        Color.White.copy(alpha = 0.90f)
+                                        Color.White.copy(alpha = 0.65f),
+                                        Color.White.copy(alpha = 0.80f)
                                 )
                 )
             }
 
-    // Üst kenarlık / ayırıcı çizgi rengi
+    // Üst kenarlık — çok ince ve yumuşak ayırıcı
     val borderColor =
             if (isDark) {
-                AnkaraLightBlue.copy(alpha = 0.25f)
+                AnkaraLightBlue.copy(alpha = 0.15f)
             } else {
-                AnkaraBlue.copy(alpha = 0.08f)
+                AnkaraBlue.copy(alpha = 0.06f)
             }
 
     // Seçili ikon ve metin renkleri
