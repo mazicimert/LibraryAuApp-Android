@@ -49,10 +49,10 @@ import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraLightBlue
  */
 @Composable
 fun MainScreen(
-        isSuperAdmin: Boolean,
-        isOnline: Boolean,
-        pendingAdminCount: Int = 0,
-        onNavigateToScreen: (Screen) -> Unit = {}
+    isSuperAdmin: Boolean,
+    isOnline: Boolean,
+    pendingAdminCount: Int = 0,
+    onNavigateToScreen: (Screen) -> Unit = {}
 ) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -60,81 +60,82 @@ fun MainScreen(
 
     // Tab items based on user role
     val tabItems =
-            remember(isSuperAdmin) {
-                if (isSuperAdmin) {
-                    listOf(
-                            TabItem.Books,
-                            TabItem.Students,
-                            TabItem.Borrowing,
-                            TabItem.Admin,
-                            TabItem.Profile
-                    )
-                } else {
-                    listOf(TabItem.Books, TabItem.Students, TabItem.Borrowing, TabItem.Profile)
-                }
+        remember(isSuperAdmin) {
+            if (isSuperAdmin) {
+                listOf(
+                    TabItem.Books,
+                    TabItem.Students,
+                    TabItem.Borrowing,
+                    TabItem.Admin,
+                    TabItem.Profile
+                )
+            } else {
+                listOf(TabItem.Books, TabItem.Students, TabItem.Borrowing, TabItem.Profile)
             }
+        }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
-                containerColor = Color.Transparent,
-                bottomBar = {
-                    ModernBottomNavigationBar(
-                            items = tabItems,
-                            currentRoute = currentRoute,
-                            pendingAdminCount = if (isSuperAdmin) pendingAdminCount else 0,
-                            onItemClick = { item ->
-                                if (currentRoute != item.route) {
-                                    navController.navigate(item.route) {
-                                        popUpTo(navController.graph.startDestinationId) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
+            containerColor = Color.Transparent,
+            bottomBar = {
+                ModernBottomNavigationBar(
+                    items = tabItems,
+                    currentRoute = currentRoute,
+                    pendingAdminCount = if (isSuperAdmin) pendingAdminCount else 0,
+                    onItemClick = { item ->
+                        if (currentRoute != item.route) {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
                                 }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                    )
-                }
+                        }
+                    }
+                )
+            }
         ) { paddingValues ->
             // Main content with AnkaraBackground
             AnkaraBackground {
                 Box(
-                        modifier =
-                                Modifier.fillMaxSize()
-                                        .padding(bottom = paddingValues.calculateBottomPadding())
-                                        .statusBarsPadding()
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(bottom = paddingValues.calculateBottomPadding())
+                            .statusBarsPadding()
                 ) {
                     NavHost(navController = navController, startDestination = TabItem.Books.route) {
                         composable(TabItem.Books.route) {
                             BookListScreen(
-                                    onBookClick = { book ->
-                                        navController.navigate(
-                                                Screen.BookDetail.createRoute(book.id ?: "")
-                                        )
-                                    },
-                                    onBarcodeScanner = {
-                                        navController.navigate(Screen.Scanner.route)
-                                    },
-                                    onAddBook = { navController.navigate(Screen.AddBook.route) }
+                                onBookClick = { book ->
+                                    navController.navigate(
+                                        Screen.BookDetail.createRoute(book.id ?: "")
+                                    )
+                                },
+                                onBarcodeScanner = {
+                                    navController.navigate(Screen.Scanner.route)
+                                },
+                                onAddBook = { navController.navigate(Screen.AddBook.route) }
                             )
                         }
                         composable(TabItem.Students.route) {
                             StudentListScreen(
-                                    onStudentClick = { student ->
-                                        navController.navigate(
-                                                Screen.StudentDetail.createRoute(student.id ?: "")
-                                        )
-                                    },
-                                    onAddStudent = {
-                                        navController.navigate(Screen.AddStudent.route)
-                                    }
+                                onStudentClick = { student ->
+                                    navController.navigate(
+                                        Screen.StudentDetail.createRoute(student.id ?: "")
+                                    )
+                                },
+                                onAddStudent = {
+                                    navController.navigate(Screen.AddStudent.route)
+                                }
                             )
                         }
                         composable(TabItem.Borrowing.route) {
                             BorrowedBooksScreen(
-                                    onBorrowBook = {
-                                        navController.navigate(Screen.BorrowBook.createRoute(""))
-                                    }
+                                onBorrowBook = {
+                                    navController.navigate(Screen.BorrowBook.createRoute(""))
+                                }
                             )
                         }
                         composable(TabItem.Admin.route) {
@@ -142,84 +143,84 @@ fun MainScreen(
                         }
                         composable(TabItem.Profile.route) {
                             ProfileScreen(
-                                    onNavigateToTrash = {
-                                        navController.navigate(Screen.Trash.route)
-                                    },
-                                    onNavigateToSettings = {
-                                        navController.navigate(Screen.Settings.route)
-                                    }
+                                onNavigateToTrash = {
+                                    navController.navigate(Screen.Trash.route)
+                                },
+                                onNavigateToSettings = {
+                                    navController.navigate(Screen.Settings.route)
+                                }
                             )
                         }
 
                         // BookDetail Screen
                         composable(
-                                route = Screen.BookDetail.route,
-                                arguments =
-                                        listOf(navArgument("bookId") { type = NavType.StringType })
+                            route = Screen.BookDetail.route,
+                            arguments =
+                                listOf(navArgument("bookId") { type = NavType.StringType })
                         ) { backStackEntry ->
                             val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
                             BookDetailScreen(
-                                    bookId = bookId,
-                                    onBack = { navController.popBackStack() },
-                                    onEditBook = {
-                                        navController.navigate(Screen.BookEdit.createRoute(bookId))
-                                    },
-                                    onAddCopy = {
-                                        navController.navigate(Screen.AddCopy.createRoute(bookId))
-                                    }
+                                bookId = bookId,
+                                onBack = { navController.popBackStack() },
+                                onEditBook = {
+                                    navController.navigate(Screen.BookEdit.createRoute(bookId))
+                                },
+                                onAddCopy = {
+                                    navController.navigate(Screen.AddCopy.createRoute(bookId))
+                                }
                             )
                         }
 
                         // AddBook Screen
                         composable(route = Screen.AddBook.route) {
                             AddBookScreen(
-                                    onBack = { navController.popBackStack() },
-                                    onBookAdded = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() },
+                                onBookAdded = { navController.popBackStack() }
                             )
                         }
 
                         // AddCopy Screen
                         composable(
-                                route = Screen.AddCopy.route,
-                                arguments =
-                                        listOf(navArgument("bookId") { type = NavType.StringType })
+                            route = Screen.AddCopy.route,
+                            arguments =
+                                listOf(navArgument("bookId") { type = NavType.StringType })
                         ) { backStackEntry ->
                             val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
                             AddCopyScreen(
-                                    bookId = bookId,
-                                    onBack = { navController.popBackStack() },
-                                    onCopyAdded = { navController.popBackStack() }
+                                bookId = bookId,
+                                onBack = { navController.popBackStack() },
+                                onCopyAdded = { navController.popBackStack() }
                             )
                         }
 
                         // BookEdit Screen
                         composable(
-                                route = Screen.BookEdit.route,
-                                arguments =
-                                        listOf(navArgument("bookId") { type = NavType.StringType })
+                            route = Screen.BookEdit.route,
+                            arguments =
+                                listOf(navArgument("bookId") { type = NavType.StringType })
                         ) { backStackEntry ->
                             val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
                             BookEditScreen(
-                                    bookId = bookId,
-                                    onBack = { navController.popBackStack() },
-                                    onBookUpdated = { navController.popBackStack() }
+                                bookId = bookId,
+                                onBack = { navController.popBackStack() },
+                                onBookUpdated = { navController.popBackStack() }
                             )
                         }
 
                         // StudentDetail Screen
                         composable(
-                                route = Screen.StudentDetail.route,
-                                arguments =
-                                        listOf(
-                                                navArgument("studentId") {
-                                                    type = NavType.StringType
-                                                }
-                                        )
+                            route = Screen.StudentDetail.route,
+                            arguments =
+                                listOf(
+                                    navArgument("studentId") {
+                                        type = NavType.StringType
+                                    }
+                                )
                         ) { backStackEntry ->
                             val studentId = backStackEntry.arguments?.getString("studentId") ?: ""
                             StudentDetailScreen(
-                                    studentId = studentId,
-                                    onBack = { navController.popBackStack() }
+                                studentId = studentId,
+                                onBack = { navController.popBackStack() }
                             )
                         }
 
@@ -231,44 +232,44 @@ fun MainScreen(
                         // Scanner Screen
                         composable(Screen.Scanner.route) {
                             BarcodeScannerScreen(
-                                    onBarcodeScanned = { barcode ->
-                                        navController.previousBackStackEntry
-                                                ?.savedStateHandle
-                                                ?.set("scannedBarcode", barcode)
-                                        navController.popBackStack()
-                                    },
-                                    onDismiss = { navController.popBackStack() }
+                                onBarcodeScanned = { barcode ->
+                                    navController.previousBackStackEntry
+                                        ?.savedStateHandle
+                                        ?.set("scannedBarcode", barcode)
+                                    navController.popBackStack()
+                                },
+                                onDismiss = { navController.popBackStack() }
                             )
                         }
 
                         // BorrowBook Screen
                         composable(
-                                route = Screen.BorrowBook.route,
-                                arguments =
-                                        listOf(
-                                                navArgument("studentId") {
-                                                    type = NavType.StringType
-                                                    defaultValue = ""
-                                                }
-                                        )
+                            route = Screen.BorrowBook.route,
+                            arguments =
+                                listOf(
+                                    navArgument("studentId") {
+                                        type = NavType.StringType
+                                        defaultValue = ""
+                                    }
+                                )
                         ) {
                             BorrowBookScreen(
-                                    onDismiss = { navController.popBackStack() },
-                                    onBorrowSuccess = { navController.popBackStack() }
+                                onDismiss = { navController.popBackStack() },
+                                onBorrowSuccess = { navController.popBackStack() }
                             )
                         }
 
                         // Trash Screen
                         composable(Screen.Trash.route) {
                             TrashScreen(
-                                    onBack = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() }
                             )
                         }
 
                         // Settings Screen
                         composable(Screen.Settings.route) {
                             SettingsScreen(
-                                    onBack = { navController.popBackStack() }
+                                onBack = { navController.popBackStack() }
                             )
                         }
                     }
@@ -284,116 +285,121 @@ fun MainScreen(
 /** Modern Bottom Navigation Bar Arka plan gradyanına uyumlu, glassmorphism efektli modern bar */
 @Composable
 private fun ModernBottomNavigationBar(
-        items: List<TabItem>,
-        currentRoute: String?,
-        pendingAdminCount: Int,
-        onItemClick: (TabItem) -> Unit
+    items: List<TabItem>,
+    currentRoute: String?,
+    pendingAdminCount: Int,
+    onItemClick: (TabItem) -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
 
     // Glassmorphism arka plan renkleri
     val barBackground =
-            if (isDark) {
-                Brush.verticalGradient(
-                        colors =
-                                listOf(
-                                        AnkaraBlue.copy(alpha = 0.85f),
-                                        Color(0xFF001A3D).copy(alpha = 0.95f)
-                                )
-                )
-            } else {
-                Brush.verticalGradient(
-                        colors =
-                                listOf(
-                                        Color.White.copy(alpha = 0.75f),
-                                        Color.White.copy(alpha = 0.90f)
-                                )
-                )
-            }
+        if (isDark) {
+            Brush.verticalGradient(
+                colors =
+                    listOf(
+                        AnkaraBlue.copy(alpha = 0.85f),
+                        Color(0xFF001A3D).copy(alpha = 0.95f)
+                    )
+            )
+        } else {
+            Brush.verticalGradient(
+                colors =
+                    listOf(
+                        Color.White.copy(alpha = 0.75f),
+                        Color.White.copy(alpha = 0.90f)
+                    )
+            )
+        }
 
     // Üst kenarlık / ayırıcı çizgi rengi
     val borderColor =
-            if (isDark) {
-                AnkaraLightBlue.copy(alpha = 0.25f)
-            } else {
-                AnkaraBlue.copy(alpha = 0.08f)
-            }
+        if (isDark) {
+            AnkaraLightBlue.copy(alpha = 0.25f)
+        } else {
+            AnkaraBlue.copy(alpha = 0.08f)
+        }
 
     // Seçili ikon ve metin renkleri
     val selectedColor = if (isDark) AnkaraLightBlue else AnkaraBlue
     val unselectedColor =
-            if (isDark) Color.White.copy(alpha = 0.50f) else AnkaraBlue.copy(alpha = 0.40f)
+        if (isDark) Color.White.copy(alpha = 0.50f) else AnkaraBlue.copy(alpha = 0.40f)
     val indicatorColor =
-            if (isDark) AnkaraLightBlue.copy(alpha = 0.15f) else AnkaraLightBlue.copy(alpha = 0.15f)
+        if (isDark) AnkaraLightBlue.copy(alpha = 0.15f) else AnkaraLightBlue.copy(alpha = 0.15f)
 
     Column {
         // İnce üst ayırıcı çizgi
-        Box(modifier = Modifier.fillMaxWidth().height(0.5.dp).background(borderColor))
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .height(0.5.dp)
+            .background(borderColor))
 
         // Navigation Bar
         NavigationBar(
-                modifier = Modifier.background(barBackground).navigationBarsPadding(),
-                containerColor = Color.Transparent,
-                tonalElevation = 0.dp
+            modifier = Modifier
+                .background(barBackground)
+                .navigationBarsPadding(),
+            containerColor = Color.Transparent,
+            tonalElevation = 0.dp
         ) {
             items.forEach { item ->
                 val isSelected = currentRoute == item.route
                 val showBadge = item == TabItem.Admin && pendingAdminCount > 0
 
                 NavigationBarItem(
-                        selected = isSelected,
-                        onClick = { onItemClick(item) },
-                        icon = {
-                            val icon = if (isSelected) item.selectedIcon else item.unselectedIcon
+                    selected = isSelected,
+                    onClick = { onItemClick(item) },
+                    icon = {
+                        val icon = if (isSelected) item.selectedIcon else item.unselectedIcon
 
-                            if (showBadge) {
-                                BadgedBox(
-                                        badge = {
-                                            Badge(
-                                                    containerColor =
-                                                            if (isDark) Color(0xFFFF6B6B)
-                                                            else MaterialTheme.colorScheme.error,
-                                                    contentColor = Color.White
-                                            ) {
-                                                Text(
-                                                        text = pendingAdminCount.toString(),
-                                                        fontSize = 10.sp,
-                                                        fontWeight = FontWeight.Bold
-                                                )
-                                            }
-                                        }
-                                ) {
-                                    Icon(
-                                            imageVector = icon,
-                                            contentDescription = item.title,
-                                            modifier = Modifier.size(24.dp)
-                                    )
+                        if (showBadge) {
+                            BadgedBox(
+                                badge = {
+                                    Badge(
+                                        containerColor =
+                                            if (isDark) Color(0xFFFF6B6B)
+                                            else MaterialTheme.colorScheme.error,
+                                        contentColor = Color.White
+                                    ) {
+                                        Text(
+                                            text = pendingAdminCount.toString(),
+                                            fontSize = 10.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
-                            } else {
+                            ) {
                                 Icon(
-                                        imageVector = icon,
-                                        contentDescription = item.title,
-                                        modifier = Modifier.size(24.dp)
+                                    imageVector = icon,
+                                    contentDescription = item.title,
+                                    modifier = Modifier.size(24.dp)
                                 )
                             }
-                        },
-                        label = {
-                            Text(
-                                    text = item.title,
-                                    fontSize = 11.sp,
-                                    fontWeight =
-                                            if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                    maxLines = 1
+                        } else {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = item.title,
+                                modifier = Modifier.size(24.dp)
                             )
-                        },
-                        colors =
-                                NavigationBarItemDefaults.colors(
-                                        selectedIconColor = selectedColor,
-                                        selectedTextColor = selectedColor,
-                                        unselectedIconColor = unselectedColor,
-                                        unselectedTextColor = unselectedColor,
-                                        indicatorColor = indicatorColor
-                                )
+                        }
+                    },
+                    label = {
+                        Text(
+                            text = item.title,
+                            fontSize = 11.sp,
+                            fontWeight =
+                                if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                            maxLines = 1
+                        )
+                    },
+                    colors =
+                        NavigationBarItemDefaults.colors(
+                            selectedIconColor = selectedColor,
+                            selectedTextColor = selectedColor,
+                            unselectedIconColor = unselectedColor,
+                            unselectedTextColor = unselectedColor,
+                            indicatorColor = indicatorColor
+                        )
                 )
             }
         }
@@ -402,49 +408,49 @@ private fun ModernBottomNavigationBar(
 
 /** Tab Items iOS tabItem karşılıkları */
 sealed class TabItem(
-        val route: String,
-        val title: String,
-        val selectedIcon: ImageVector,
-        val unselectedIcon: ImageVector
+    val route: String,
+    val title: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector
 ) {
     data object Books :
-            TabItem(
-                    route = Screen.Books.route,
-                    title = "Kitaplar",
-                    selectedIcon = Icons.Filled.MenuBook,
-                    unselectedIcon = Icons.Outlined.MenuBook
-            )
+        TabItem(
+            route = Screen.Books.route,
+            title = "Kitaplar",
+            selectedIcon = Icons.Filled.MenuBook,
+            unselectedIcon = Icons.Outlined.MenuBook
+        )
 
     data object Students :
-            TabItem(
-                    route = Screen.Students.route,
-                    title = "Öğrenciler",
-                    selectedIcon = Icons.Filled.Groups,
-                    unselectedIcon = Icons.Outlined.Groups
-            )
+        TabItem(
+            route = Screen.Students.route,
+            title = "Öğrenciler",
+            selectedIcon = Icons.Filled.Groups,
+            unselectedIcon = Icons.Outlined.Groups
+        )
 
     data object Borrowing :
-            TabItem(
-                    route = Screen.Borrowing.route,
-                    title = "Ödünçler",
-                    selectedIcon = Icons.Filled.Book,
-                    unselectedIcon = Icons.Outlined.Book
-            )
+        TabItem(
+            route = Screen.Borrowing.route,
+            title = "Ödünçler",
+            selectedIcon = Icons.Filled.Book,
+            unselectedIcon = Icons.Outlined.Book
+        )
 
     data object Admin :
-            TabItem(
-                    route = Screen.Admin.route,
-                    title = "Adminler",
-                    selectedIcon = Icons.Filled.AdminPanelSettings,
-                    unselectedIcon = Icons.Outlined.AdminPanelSettings
-            )
+        TabItem(
+            route = Screen.Admin.route,
+            title = "Adminler",
+            selectedIcon = Icons.Filled.AdminPanelSettings,
+            unselectedIcon = Icons.Outlined.AdminPanelSettings
+        )
 
     data object Profile :
-            TabItem(
-                    route = Screen.Profile.route,
-                    title = "Profil",
-                    selectedIcon = Icons.Filled.AccountCircle,
-                    unselectedIcon = Icons.Outlined.AccountCircle
-            )
+        TabItem(
+            route = Screen.Profile.route,
+            title = "Profil",
+            selectedIcon = Icons.Filled.AccountCircle,
+            unselectedIcon = Icons.Outlined.AccountCircle
+        )
 }
 

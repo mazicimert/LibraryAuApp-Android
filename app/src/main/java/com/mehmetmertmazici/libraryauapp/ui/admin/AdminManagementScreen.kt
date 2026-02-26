@@ -67,7 +67,7 @@ fun AdminManagementScreen(
                 title = {
                     Text(
                         text = "Admin Yönetimi",
-                        fontSize = 24.sp,
+                        style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -119,7 +119,9 @@ fun AdminManagementScreen(
             PullToRefreshBox(
                 isRefreshing = uiState.isLoading,
                 onRefresh = { viewModel.refreshAdminUsers() },
-                modifier = Modifier.weight(1f).fillMaxWidth()
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
             ) {
                 if (viewModel.showEmptyState) {
                     EmptyStateView(
@@ -300,7 +302,10 @@ fun AdminManagementScreen(
                         selectedAdmin = null
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outline
+                    )
                 ) {
                     Text("İptal Et", color = MaterialTheme.colorScheme.onSurface)
                 }

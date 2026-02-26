@@ -268,7 +268,7 @@ private fun HeaderSection(
     ) {
         Text(
             text = "Öğrenciler",
-            fontSize = 34.sp,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = colorScheme.onBackground
         )

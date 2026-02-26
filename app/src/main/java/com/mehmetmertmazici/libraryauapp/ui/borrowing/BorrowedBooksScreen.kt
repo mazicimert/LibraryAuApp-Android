@@ -406,7 +406,7 @@ private fun HeaderSection(
     ) {
         Text(
             text = "Ödünç Kitaplar",
-            style = MaterialTheme.typography.headlineLarge,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
         )

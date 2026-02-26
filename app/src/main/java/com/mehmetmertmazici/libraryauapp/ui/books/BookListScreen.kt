@@ -234,7 +234,7 @@ private fun HeaderSection(
         // Sol: Başlık
         Text(
             text = "Kitaplar",
-            fontSize = 28.sp,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = colorScheme.onBackground
         )
