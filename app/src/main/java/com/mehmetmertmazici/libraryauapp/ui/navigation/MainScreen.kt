@@ -32,6 +32,9 @@ import com.mehmetmertmazici.libraryauapp.ui.borrowing.BorrowedBooksScreen
 import com.mehmetmertmazici.libraryauapp.ui.scanner.BarcodeScannerScreen
 import com.mehmetmertmazici.libraryauapp.ui.components.NetworkStatusBanner
 import com.mehmetmertmazici.libraryauapp.ui.admin.AdminManagementScreen
+import com.mehmetmertmazici.libraryauapp.ui.profile.ProfileScreen
+import com.mehmetmertmazici.libraryauapp.ui.profile.SettingsScreen
+import com.mehmetmertmazici.libraryauapp.ui.trash.TrashScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.AddStudentScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.StudentDetailScreen
 import com.mehmetmertmazici.libraryauapp.ui.students.StudentListScreen
@@ -137,7 +140,16 @@ fun MainScreen(
                         composable(TabItem.Admin.route) {
                             AdminManagementScreen()
                         }
-                        composable(TabItem.Profile.route) { PlaceholderScreen(title = "Profil") }
+                        composable(TabItem.Profile.route) {
+                            ProfileScreen(
+                                    onNavigateToTrash = {
+                                        navController.navigate(Screen.Trash.route)
+                                    },
+                                    onNavigateToSettings = {
+                                        navController.navigate(Screen.Settings.route)
+                                    }
+                            )
+                        }
 
                         // BookDetail Screen
                         composable(
@@ -242,6 +254,20 @@ fun MainScreen(
                         ) {
                             BorrowBookScreen(
                                     onDismiss = { navController.popBackStack() }
+                            )
+                        }
+
+                        // Trash Screen
+                        composable(Screen.Trash.route) {
+                            TrashScreen(
+                                    onBack = { navController.popBackStack() }
+                            )
+                        }
+
+                        // Settings Screen
+                        composable(Screen.Settings.route) {
+                            SettingsScreen(
+                                    onBack = { navController.popBackStack() }
                             )
                         }
                     }
@@ -421,23 +447,3 @@ sealed class TabItem(
             )
 }
 
-/** Placeholder screen for tabs */
-@Composable
-private fun PlaceholderScreen(title: String) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                    text = title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = AnkaraBlue,
-                    fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                    text = "Bu ekran yakında eklenecek",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-            )
-        }
-    }
-}
