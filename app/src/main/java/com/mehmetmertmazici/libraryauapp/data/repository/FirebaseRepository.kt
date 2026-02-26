@@ -748,6 +748,25 @@ constructor(
         }
     }
 
+    /**
+     * Silinen kitap kopyalarının sayısını getir
+     * iOS Karşılığı: getDeletedCopyCount(for:)
+     */
+    suspend fun fetchDeletedBookCopyCount(bookTemplateId: String): Result<Int> {
+        return try {
+            val snapshot =
+                firestore
+                    .collection(Collections.BOOK_COPIES)
+                    .whereEqualTo("bookTemplateId", bookTemplateId)
+                    .whereEqualTo("isDeleted", true)
+                    .get()
+                    .await()
+            Result.success(snapshot.documents.size)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     /** Kitap şablonunu ve kopyalarını geri yükle */
     suspend fun restoreBookTemplate(id: String): Result<Unit> {
         return try {
