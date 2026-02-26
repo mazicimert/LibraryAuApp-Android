@@ -82,8 +82,15 @@ fun LibraryAuTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composa
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
+
+            // Edge-to-edge: İçeriğin system bar'ların arkasına uzanmasını sağla
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+
+            // System bar'ları tamamen şeffaf yap — ekran arka planı kesintisiz görünsün
             window.statusBarColor = Color.Transparent.toArgb()
             window.navigationBarColor = Color.Transparent.toArgb()
+
+            // Status bar / navigation bar ikon renklerini tema'ya göre ayarla
             WindowCompat.getInsetsController(window, view).apply {
                 isAppearanceLightStatusBars = !darkTheme
                 isAppearanceLightNavigationBars = !darkTheme
