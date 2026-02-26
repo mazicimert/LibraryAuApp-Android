@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +64,13 @@ fun AdminManagementScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             // Top App Bar
             TopAppBar(
-                title = { },
+                title = {
+                    Text(
+                        text = "Admin Yönetimi",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
                 actions = {
                     // Toplu onaylama butonu
                     if (viewModel.hasPendingApprovals) {
@@ -92,13 +99,6 @@ fun AdminManagementScreen(
                 )
             )
 
-            // Header Section
-            HeaderSection(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 4.dp)
-            )
-
             // Pending Approval Banner
             if (viewModel.hasPendingApprovals) {
                 PendingApprovalBanner(
@@ -116,40 +116,47 @@ fun AdminManagementScreen(
             )
 
             // Admin List Section
-            if (viewModel.showEmptyState) {
-                EmptyStateView(
-                    icon = Icons.Filled.AdminPanelSettings,
-                    title = "Admin Bulunamadı",
-                    message = viewModel.emptyStateMessage,
-                    actionTitle = if (viewModel.canManageAdmins) "İlk Admini Ekle" else null,
-                    onAction = if (viewModel.canManageAdmins) {
-                        { viewModel.openAddAdminForm() }
-                    } else null,
-                    modifier = Modifier.weight(1f)
-                )
-            } else {
-                AdminListSection(
-                    pendingAdmins = uiState.pendingAdmins,
-                    approvedAdmins = uiState.approvedAdmins,
-                    currentUserId = viewModel.uiState.value.let {
-                        // Get current user id from auth
-                        null // Will be handled via composable
-                    },
-                    onApprove = { admin -> viewModel.approveAdmin(admin) },
-                    onReject = { admin ->
-                        selectedAdmin = admin
-                        showRejectConfirmation = true
-                    },
-                    onRoleChange = { admin, isSuperAdmin ->
-                        viewModel.updateAdminRole(admin, isSuperAdmin)
-                    },
-                    onDelete = { admin ->
-                        selectedAdmin = admin
-                        showRejectConfirmation = true
-                    },
-                    onRefresh = { viewModel.refreshAdminUsers() },
-                    modifier = Modifier.weight(1f)
-                )
+            PullToRefreshBox(
+                isRefreshing = uiState.isLoading,
+                onRefresh = { viewModel.refreshAdminUsers() },
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                if (viewModel.showEmptyState) {
+                    EmptyStateView(
+                        icon = Icons.Filled.AdminPanelSettings,
+                        title = "Admin Bulunamadı",
+                        message = viewModel.emptyStateMessage,
+                        actionTitle = if (viewModel.canManageAdmins) "İlk Admini Ekle" else null,
+                        onAction = if (viewModel.canManageAdmins) {
+                            { viewModel.openAddAdminForm() }
+                        } else null,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                    )
+                } else {
+                    AdminListSection(
+                        pendingAdmins = uiState.pendingAdmins,
+                        approvedAdmins = uiState.approvedAdmins,
+                        currentUserId = viewModel.currentUserId,
+                        onApprove = { admin -> viewModel.approveAdmin(admin) },
+                        onReject = { admin ->
+                            selectedAdmin = admin
+                            showRejectConfirmation = true
+                        },
+                        onRoleChange = { admin, isSuperAdmin ->
+                            viewModel.updateAdminRole(admin, isSuperAdmin)
+                        },
+                        onDelete = { admin ->
+                            selectedAdmin = admin
+                            showRejectConfirmation = true
+                        },
+                        onRefresh = { viewModel.refreshAdminUsers() },
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
         }
     }
@@ -190,25 +197,50 @@ fun AdminManagementScreen(
     if (showBulkApprovalConfirmation) {
         AlertDialog(
             onDismissRequest = { showBulkApprovalConfirmation = false },
-            title = { Text("Toplu Onaylama") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.CheckCircle,
+                    contentDescription = null,
+                    tint = AnkaraSuccess,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Toplu Onaylama",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             text = {
-                Text("${viewModel.pendingAdminCount} admin onaylanacak. Devam etmek istediğinizden emin misiniz?")
+                Text(
+                    text = "${viewModel.pendingAdminCount} admin kalıcı olarak onaylanacak. Devam etmek istediğinizden emin misiniz?",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         viewModel.performBulkApproval()
                         showBulkApprovalConfirmation = false
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = AnkaraSuccess),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Tüm Bekleyen Adminleri Onayla")
+                    Text("Tümünü Onayla", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showBulkApprovalConfirmation = false }) {
-                    Text("İptal")
+                TextButton(
+                    onClick = { showBulkApprovalConfirmation = false },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -219,32 +251,66 @@ fun AdminManagementScreen(
                 showRejectConfirmation = false
                 selectedAdmin = null
             },
-            title = { Text("Admin Reddet") },
+            icon = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Warning,
+                        contentDescription = null,
+                        tint = AnkaraDanger,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            },
+            title = {
+                Text(
+                    text = "Admin Reddet",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             text = {
-                Text("'${selectedAdmin?.displayName}' adminini reddetmek istediğinizden emin misiniz? Bu işlem, kullanıcının başvurusunu kalıcı olarak silecektir.")
+                Text(
+                    text = "'${selectedAdmin?.displayName}' adminini reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve başvuru kalıcı olarak silinir.",
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
             },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         selectedAdmin?.let { viewModel.performRejectAdmin(it) }
                         showRejectConfirmation = false
                         selectedAdmin = null
                     },
-                    colors = ButtonDefaults.textButtonColors(contentColor = AnkaraDanger)
+                    colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Reddet")
+                    Text("Evet, Reddet", color = Color.White, fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
-                TextButton(
+                OutlinedButton(
                     onClick = {
                         showRejectConfirmation = false
                         selectedAdmin = null
-                    }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    border = androidx.compose.foundation.BorderStroke(
+                        1.dp,
+                        MaterialTheme.colorScheme.outline
+                    )
                 ) {
-                    Text("İptal")
+                    Text("İptal Et", color = MaterialTheme.colorScheme.onSurface)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -252,30 +318,61 @@ fun AdminManagementScreen(
     if (uiState.showPasswordVerification) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissPasswordVerification() },
-            title = { Text("Şifrenizi Girin") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = "Şifrenizi Girin",
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Devam etmek için lütfen şifrenizi girin")
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Devam etmek için lütfen şifrenizi girin.",
+                        textAlign = TextAlign.Center
+                    )
                     OutlinedTextField(
                         value = uiState.superAdminPassword,
                         onValueChange = { viewModel.updateSuperAdminPassword(it) },
                         label = { Text("Süper Admin Şifresi") },
                         visualTransformation = PasswordVisualTransformation(),
                         singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = { viewModel.addNewAdmin() }) {
-                    Text("Onayla")
+                Button(
+                    onClick = { viewModel.addNewAdmin() },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                ) {
+                    Text("Onayla", fontWeight = FontWeight.Bold)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissPasswordVerification() }) {
-                    Text("İptal")
+                TextButton(
+                    onClick = { viewModel.dismissPasswordVerification() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 
@@ -283,13 +380,38 @@ fun AdminManagementScreen(
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) {
-                    Text("Tamam")
+                Button(
+                    onClick = { viewModel.dismissAlert() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 }
@@ -300,26 +422,13 @@ fun AdminManagementScreen(
 
 @Composable
 private fun HeaderSection(modifier: Modifier = Modifier) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = "Admin Yönetimi",
-            fontSize = 34.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        // Fallback icon
-        Icon(
-            imageVector = Icons.Filled.AccountBalance,
-            contentDescription = null,
-            tint = AnkaraLightBlue,
-            modifier = Modifier.size(36.dp)
-        )
-    }
+    Text(
+        text = "Admin Yönetimi",
+        fontSize = 34.sp,
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground,
+        modifier = modifier.fillMaxWidth()
+    )
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -389,50 +498,38 @@ private fun StatisticsSection(
     statistics: AdminStatistics,
     modifier: Modifier = Modifier
 ) {
-    LazyRow(
+    Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item {
-            AdminStatCard(
-                icon = Icons.Filled.Groups,
-                title = "Toplam",
-                value = "${statistics.total}",
-                color = Color(0xFF2196F3) // blue
-            )
-        }
-        item {
-            AdminStatCard(
-                icon = Icons.Filled.VerifiedUser,
-                title = "Onaylı",
-                value = "${statistics.approved}",
-                color = AnkaraSuccess
-            )
-        }
-        item {
-            AdminStatCard(
-                icon = Icons.Filled.HourglassTop,
-                title = "Bekleyen",
-                value = "${statistics.pending}",
-                color = Color(0xFFFFA500) // orange
-            )
-        }
-        item {
-            AdminStatCard(
-                icon = Icons.Filled.Star,
-                title = "Süper Admin",
-                value = "${statistics.superAdmins}",
-                color = Color(0xFF9C27B0) // purple
-            )
-        }
-        item {
-            AdminStatCard(
-                icon = Icons.Filled.AdminPanelSettings,
-                title = "Admin",
-                value = "${statistics.regularAdmins}",
-                color = Color(0xFF3F51B5) // indigo
-            )
-        }
+        AdminStatCard(
+            icon = Icons.Filled.Groups,
+            title = "Toplam",
+            value = "${statistics.total}",
+            color = Color(0xFF2196F3),
+            modifier = Modifier.weight(1f)
+        )
+        AdminStatCard(
+            icon = Icons.Filled.VerifiedUser,
+            title = "Onaylı",
+            value = "${statistics.approved}",
+            color = AnkaraSuccess,
+            modifier = Modifier.weight(1f)
+        )
+        AdminStatCard(
+            icon = Icons.Filled.HourglassTop,
+            title = "Bekleyen",
+            value = "${statistics.pending}",
+            color = Color(0xFFFFA500),
+            modifier = Modifier.weight(1f)
+        )
+        AdminStatCard(
+            icon = Icons.Filled.Star,
+            title = "Süper Admin",
+            value = "${statistics.superAdmins}",
+            color = Color(0xFF9C27B0),
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -441,24 +538,24 @@ private fun AdminStatCard(
     icon: ImageVector,
     title: String,
     value: String,
-    color: Color
+    color: Color,
+    modifier: Modifier = Modifier
 ) {
     val isDark = isSystemInDarkTheme()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier
-            .widthIn(min = 80.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(color.copy(alpha = if (isDark) 0.1f else 0.2f))
-            .padding(vertical = 12.dp, horizontal = 16.dp)
+            .padding(vertical = 10.dp, horizontal = 4.dp)
     ) {
         Icon(
             imageVector = icon,
             contentDescription = null,
             tint = color,
-            modifier = Modifier.size(28.dp)
+            modifier = Modifier.size(24.dp)
         )
         Text(
             text = value,
@@ -468,8 +565,10 @@ private fun AdminStatCard(
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            maxLines = 1
         )
     }
 }
@@ -609,14 +708,13 @@ private fun PendingAdminRowView(
             // Avatar
             Box(
                 modifier = Modifier
-                    .size(60.dp)
-                    .shadow(4.dp, CircleShape)
+                    .size(48.dp)
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
                                 Color(0xFFFFA500),
-                                Color(0xFFFFA500).copy(alpha = 0.7f)
+                                Color(0xFFFF8C00)
                             )
                         )
                     ),
@@ -624,7 +722,7 @@ private fun PendingAdminRowView(
             ) {
                 Text(
                     text = admin.displayName.take(1).uppercase(),
-                    fontSize = 24.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White
                 )
@@ -664,42 +762,51 @@ private fun PendingAdminRowView(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-            }
 
-            // Aksiyon butonları
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                // Onayla butonu
-                IconButton(
-                    onClick = onApprove,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(AnkaraSuccess)
+                // Aksiyon butonları
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(top = 4.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = "Onayla",
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
-                }
+                    // Onayla butonu
+                    Button(
+                        onClick = onApprove,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = AnkaraSuccess,
+                            contentColor = Color.White
+                        ),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        modifier = Modifier.height(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Onayla", fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    }
 
-                // Reddet butonu
-                IconButton(
-                    onClick = onReject,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(AnkaraDanger)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Reddet",
-                        tint = Color.White,
-                        modifier = Modifier.size(18.dp)
-                    )
+                    // Reddet butonu
+                    OutlinedButton(
+                        onClick = onReject,
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = AnkaraDanger
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, AnkaraDanger),
+                        modifier = Modifier.height(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "Reddet", fontSize = 12.sp, fontWeight = FontWeight.Medium)
+                    }
                 }
             }
         }
@@ -742,14 +849,13 @@ private fun ApprovedAdminRowView(
             // Avatar
             Box(
                 modifier = Modifier
-                    .size(60.dp)
-                    .shadow(4.dp, CircleShape)
+                    .size(48.dp)
                     .clip(CircleShape)
                     .background(
                         Brush.linearGradient(
                             colors = listOf(
                                 roleColor,
-                                roleColor.copy(alpha = 0.7f)
+                                roleColor.copy(alpha = 0.8f)
                             )
                         )
                     ),
@@ -1133,7 +1239,8 @@ private fun AddAdminSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         Column(
             modifier = Modifier
@@ -1316,7 +1423,9 @@ private fun AddAdminSheet(
                                 imageVector = if (uiState.newAdminIsSuperAdmin) Icons.Filled.Star
                                 else Icons.Filled.AdminPanelSettings,
                                 contentDescription = null,
-                                tint = if (uiState.newAdminIsSuperAdmin) Color(0xFF9C27B0) else Color(0xFF2196F3)
+                                tint = if (uiState.newAdminIsSuperAdmin) Color(0xFF9C27B0) else Color(
+                                    0xFF2196F3
+                                )
                             )
                             Text(
                                 text = "Süper Admin",
@@ -1365,7 +1474,10 @@ private fun AddAdminSheet(
                     ),
                     border = CardDefaults.outlinedCardBorder().copy(
                         brush = Brush.linearGradient(
-                            colors = listOf(AnkaraDanger.copy(alpha = 0.3f), AnkaraDanger.copy(alpha = 0.3f))
+                            colors = listOf(
+                                AnkaraDanger.copy(alpha = 0.3f),
+                                AnkaraDanger.copy(alpha = 0.3f)
+                            )
                         )
                     )
                 ) {

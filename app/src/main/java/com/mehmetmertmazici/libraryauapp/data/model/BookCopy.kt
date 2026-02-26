@@ -2,6 +2,7 @@ package com.mehmetmertmazici.libraryauapp.data.model
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.PropertyName
 
 /**
  * BookCopy Model
@@ -15,10 +16,14 @@ data class BookCopy(
     val bookId: Int = 0,
     val barcode: String = "",
     val copyNumber: Int = 0,
-    val isAvailable: Boolean = true,
+    @get:PropertyName("isAvailable")
+    @set:PropertyName("isAvailable")
+    var isAvailable: Boolean = true,
     val bookTemplateId: String = "",
     val createdAt: Timestamp = Timestamp.now(),
-    val isDeleted: Boolean = false,
+    @get:PropertyName("isDeleted")
+    @set:PropertyName("isDeleted")
+    var isDeleted: Boolean = false,
     val deletedAt: Timestamp? = null
 ) {
     /**

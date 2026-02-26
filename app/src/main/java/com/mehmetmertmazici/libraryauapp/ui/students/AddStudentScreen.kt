@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -54,18 +55,43 @@ fun AddStudentScreen(
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = {
-                    viewModel.dismissAlert()
-                    if (uiState.alertTitle == "Başarılı") {
-                        onDismiss()
-                    }
-                }) {
-                    Text("Tamam")
+                Button(
+                    onClick = {
+                        viewModel.dismissAlert()
+                        if (uiState.alertTitle == "Başarılı") {
+                            onDismiss()
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
                 }
-            }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 

@@ -2,11 +2,16 @@ package com.mehmetmertmazici.libraryauapp.ui.books
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -39,11 +44,38 @@ fun BookEditScreen(
     if (uiState.showAlert) {
         AlertDialog(
             onDismissRequest = { viewModel.dismissAlert() },
-            title = { Text(uiState.alertTitle) },
-            text = { Text(uiState.alertMessage) },
+            icon = {
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(36.dp)
+                )
+            },
+            title = {
+                Text(
+                    text = uiState.alertTitle,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            text = {
+                Text(
+                    text = uiState.alertMessage,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
             confirmButton = {
-                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
-            }
+                Button(
+                    onClick = { viewModel.dismissAlert() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Tamam", fontWeight = FontWeight.Bold)
+                }
+            },
+            shape = RoundedCornerShape(24.dp)
         )
     }
 

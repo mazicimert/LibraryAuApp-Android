@@ -34,9 +34,11 @@ sealed class Screen(val route: String) {
     data object AddCopy : Screen("add_copy/{bookId}") {
         fun createRoute(bookId: String) = "add_copy/$bookId"
     }
+
     data object BookEdit : Screen("book_edit/{bookId}") {
         fun createRoute(bookId: String) = "book_edit/$bookId"
     }
+
     data object AddStudent : Screen("add_student")
     data object Scanner : Screen("scanner")
     data object Trash : Screen("trash")

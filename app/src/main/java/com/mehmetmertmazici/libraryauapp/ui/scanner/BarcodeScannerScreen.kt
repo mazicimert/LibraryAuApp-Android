@@ -197,9 +197,13 @@ fun BarcodeScannerScreen(
                                                 )
                                                 toneGen.startTone(ToneGenerator.TONE_PROP_ACK, 150)
                                                 toneGen.release()
-                                            } catch (_: Exception) { }
+                                            } catch (_: Exception) {
+                                            }
 
-                                            Log.d("BarcodeScanner", "Barkod basariyla tarandi: $barcode")
+                                            Log.d(
+                                                "BarcodeScanner",
+                                                "Barkod basariyla tarandi: $barcode"
+                                            )
                                             onBarcodeScanned(barcode)
                                             onDismiss()
                                         },
