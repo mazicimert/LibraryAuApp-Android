@@ -1,10 +1,7 @@
 package com.mehmetmertmazici.libraryauapp.ui.borrowing
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +27,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Assessment
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
@@ -67,6 +64,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,7 +79,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -128,10 +125,11 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
             onDismissRequest = { showReturnConfirmation = false },
             icon = {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(AnkaraDanger.copy(alpha = 0.1f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -152,7 +150,8 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
             },
             text = {
                 Text(
-                    text = "'${bookInfo.second?.title ?: "Kitap"}' kitabını ${studentInfo?.fullName ?: "öğrenci"}'den iade almak istediğinizden emin misiniz?",
+                    text =
+                        "'${bookInfo.second?.title ?: "Kitap"}' kitabını ${studentInfo?.fullName ?: "öğrenci"}'den iade almak istediğinizden emin misiniz?",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -165,18 +164,14 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("İade Al", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                ) { Text("İade Al", color = Color.White, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 OutlinedButton(
                     onClick = { showReturnConfirmation = false },
                     modifier = Modifier.fillMaxWidth(),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
-                }
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurface) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -213,9 +208,7 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
                 Button(
                     onClick = { viewModel.dismissAlert() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -244,10 +237,11 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
             },
             text = {
                 Text(
-                    text = "${report.monthName} ${report.year}\n\n" +
-                            "Toplam Ödünç: ${report.totalBorrows}\n" +
-                            "Toplam İade: ${report.totalReturns}\n" +
-                            "Aktif Ödünç: ${report.activeBorrows}",
+                    text =
+                        "${report.monthName} ${report.year}\n\n" +
+                                "Toplam Ödünç: ${report.totalBorrows}\n" +
+                                "Toplam İade: ${report.totalReturns}\n" +
+                                "Aktif Ödünç: ${report.activeBorrows}",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -256,9 +250,7 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
                 Button(
                     onClick = { showMonthlyReport = false },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -292,6 +284,11 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
             )
         }
     }
+
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    // Pull-to-refresh bittiğinde isRefreshing'i sıfırla
+    LaunchedEffect(uiState.isLoading) { if (!uiState.isLoading) isRefreshing = false }
 
     LoadingOverlay(isLoading = viewModel.showLoadingIndicator, message = "Yükleniyor...") {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -339,8 +336,11 @@ fun BorrowedBooksScreen(viewModel: BorrowingViewModel = hiltViewModel(), onBorro
 
             // Borrowed Books List
             PullToRefreshBox(
-                isRefreshing = uiState.isLoading,
-                onRefresh = { viewModel.refreshData() },
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    isRefreshing = true
+                    viewModel.refreshData()
+                },
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (viewModel.showEmptyState) {
@@ -399,8 +399,8 @@ private fun HeaderSection(
 ) {
     Row(
         modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -465,9 +465,9 @@ private fun OverdueWarningBanner(message: String, onViewOverdue: () -> Unit) {
     Row(
         modifier =
             Modifier
-                    .fillMaxWidth()
-                    .background(AnkaraDanger.copy(alpha = 0.1f))
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                .fillMaxWidth()
+                .background(AnkaraDanger.copy(alpha = 0.1f))
+                .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -491,8 +491,8 @@ private fun OverdueWarningBanner(message: String, onViewOverdue: () -> Unit) {
                 color = Color.White,
                 modifier =
                     Modifier
-                            .background(AnkaraDanger, RoundedCornerShape(6.dp))
-                            .padding(horizontal = 12.dp, vertical = 4.dp)
+                        .background(AnkaraDanger, RoundedCornerShape(6.dp))
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
             )
         }
     }
@@ -588,61 +588,63 @@ private fun FilterChip(
     icon: ImageVector? = null,
     onClick: () -> Unit
 ) {
-    val backgroundColor by
-    animateColorAsState(
-        targetValue =
-            if (isSelected) AnkaraBlue
-            else MaterialTheme.colorScheme.surfaceVariant,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-        label = "chipBg"
-    )
-    val contentColor by
-    animateColorAsState(
-        targetValue =
-            if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
-        animationSpec = spring(stiffness = Spring.StiffnessMedium),
-        label = "chipContent"
-    )
+    val colorScheme = MaterialTheme.colorScheme
 
-    Row(
+    val backgroundColor =
+        if (isSelected) {
+            Brush.linearGradient(colors = listOf(AnkaraBlue, AnkaraLightBlue))
+        } else {
+            Brush.linearGradient(
+                colors =
+                    listOf(
+                        colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                        colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    )
+            )
+        }
+
+    Box(
         modifier =
             Modifier
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(backgroundColor)
-                    .clickable(onClick = onClick)
-                    .padding(horizontal = 16.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(6.dp),
-        verticalAlignment = Alignment.CenterVertically
+                .clip(RoundedCornerShape(20.dp))
+                .background(backgroundColor)
+                .clickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
-        // iOS-style leading icon
-        if (icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(16.dp)
-            )
-        }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
-            color = contentColor
-        )
-        if (count != null) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (isSelected) {
+                Icon(
+                    imageVector = Icons.Default.CheckCircle,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(16.dp)
+                )
+            } else if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = colorScheme.onSurface,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
             Text(
-                text = "($count)",
-                style = MaterialTheme.typography.labelSmall,
-                color = contentColor.copy(alpha = 0.8f)
+                text = title,
+                fontSize = 14.sp,
+                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                color = if (isSelected) Color.White else colorScheme.onBackground
             )
-        }
-        if (isSelected) {
-            Icon(
-                imageVector = Icons.Default.CheckCircle,
-                contentDescription = null,
-                tint = contentColor,
-                modifier = Modifier.size(14.dp)
-            )
+            if (count != null) {
+                Text(
+                    text = "($count)",
+                    fontSize = 12.sp,
+                    color =
+                        if (isSelected) Color.White.copy(alpha = 0.8f)
+                        else colorScheme.onSurfaceVariant
+                )
+            }
         }
     }
 }
@@ -712,10 +714,10 @@ private fun EnhancedStatCard(title: String, value: String, color: Color, subtitl
     Column(
         modifier =
             Modifier
-                    .width(80.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(color.copy(alpha = 0.12f))
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                .width(80.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .background(color.copy(alpha = 0.12f))
+                .padding(vertical = 12.dp, horizontal = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
@@ -767,17 +769,17 @@ private fun BorrowedBookRowView(
 
     Card(
         modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onViewDetails),
+            .fillMaxWidth()
+            .clickable(onClick = onViewDetails),
         shape = RoundedCornerShape(18.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Row(
             modifier = Modifier
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Min)
-                    .padding(14.dp),
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .padding(14.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -785,9 +787,9 @@ private fun BorrowedBookRowView(
             Box(
                 modifier =
                     Modifier
-                            .size(56.dp)
-                            .clip(RoundedCornerShape(14.dp))
-                            .background(Brush.linearGradient(statusGradientColors)),
+                        .size(56.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(Brush.linearGradient(statusGradientColors)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -871,11 +873,12 @@ private fun BorrowedBookRowView(
 
                 if (canReturn) {
                     Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(CircleShape)
-                            .background(AnkaraSuccess)
-                            .clickable { onReturn() },
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(AnkaraSuccess)
+                                .clickable { onReturn() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -914,9 +917,9 @@ private fun StatusBadge(borrowRecord: BorrowedBook) {
     Row(
         modifier =
             Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(backgroundColor)
-                    .padding(horizontal = 10.dp, vertical = 4.dp),
+                .clip(RoundedCornerShape(8.dp))
+                .background(backgroundColor)
+                .padding(horizontal = 10.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -961,9 +964,9 @@ private fun BorrowDetailSheet(
 
     Column(
         modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(24.dp),
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         // Başlık
@@ -1212,8 +1215,8 @@ private fun MostBorrowedBooksSheet(viewModel: BorrowingViewModel, onDismiss: () 
 
     Column(
         modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp),
+            .fillMaxWidth()
+            .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         // Baslik
@@ -1235,8 +1238,8 @@ private fun MostBorrowedBooksSheet(viewModel: BorrowingViewModel, onDismiss: () 
         if (mostBorrowed.isEmpty()) {
             Box(
                 modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 32.dp),
+                    .fillMaxWidth()
+                    .padding(vertical = 32.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -1269,16 +1272,16 @@ private fun MostBorrowedBooksSheet(viewModel: BorrowingViewModel, onDismiss: () 
 
                     Row(
                         modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         // Siralama
                         Box(
                             modifier = Modifier
-                                    .size(36.dp)
-                                    .background(rankColor, CircleShape),
+                                .size(36.dp)
+                                .background(rankColor, CircleShape),
                             contentAlignment = Alignment.Center
                         ) {
                             Text(

@@ -47,55 +47,61 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-        onNavigateToTrash: () -> Unit,
-        onNavigateToSettings: () -> Unit,
-        viewModel: ProfileViewModel = hiltViewModel()
+    onNavigateToTrash: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val adminUser by viewModel.currentAdminUser.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    LoadingOverlay(isLoading = uiState.isLoggingOut, message = "Çıkış yapılıyor...") {
         Column(modifier = Modifier.fillMaxSize()) {
 
             // TopAppBar — "Profil" başlığı solda, action ikonları sağda
             TopAppBar(
-                    title = {
-                        Text(
-                                text = "Profil",
-                                style = MaterialTheme.typography.headlineMedium,
-                                fontWeight = FontWeight.Bold
-                        )
-                    },
-                    actions = {
-                        // Süper Admin için Çöp Kutusu butonu
-                        if (viewModel.isSuperAdmin) {
-                            IconButton(onClick = onNavigateToTrash) {
-                                Icon(
-                                        imageVector = Icons.Filled.Delete,
-                                        contentDescription = "Çöp Kutusu",
-                                        tint = AnkaraLightBlue
-                                )
-                            }
-                        }
-                        // Ayarlar butonu
-                        IconButton(onClick = onNavigateToSettings) {
+                title = {
+                    Text(
+                        text = "Profil",
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                },
+                actions = {
+                    // Süper Admin için Çöp Kutusu butonu
+                    if (viewModel.isSuperAdmin) {
+                        IconButton(onClick = onNavigateToTrash) {
                             Icon(
-                                    imageVector = Icons.Filled.Settings,
-                                    contentDescription = "Ayarlar",
-                                    tint = AnkaraLightBlue
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Çöp Kutusu",
+                                tint = AnkaraLightBlue,
+                                modifier = Modifier.size(26.dp)
                             )
                         }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
+                    }
+                    // Ayarlar butonu
+                    IconButton(onClick = onNavigateToSettings) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Ayarlar",
+                            tint = AnkaraLightBlue,
+                            modifier = Modifier.size(26.dp)
+                        )
+                    }
+                },
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
             )
 
             // Content
             Column(
-                    modifier =
-                            Modifier.fillMaxSize()
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(horizontal = 16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp)
             ) {
                 val currentUser = adminUser
                 if (currentUser != null) {
@@ -106,8 +112,8 @@ fun ProfileScreen(
 
                     // Ağ durumu bölümü
                     NetworkStatusSection(
-                            isOnline = isOnline,
-                            syncStatusInfo = viewModel.syncStatusInfo
+                        isOnline = isOnline,
+                        syncStatusInfo = viewModel.syncStatusInfo
                     )
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -118,19 +124,18 @@ fun ProfileScreen(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     // Çıkış butonu
-                    LogoutButton(onClick = { viewModel.showLogoutConfirmation() })
+                    LogoutButton(
+                        onClick = { viewModel.showLogoutConfirmation() }
+                    )
 
                     Spacer(modifier = Modifier.height(30.dp))
                 } else {
                     // Kullanıcı bilgisi yüklenemedi
-                    UserLoadErrorView(onRetryLogin = { viewModel.performLogout() })
+                    UserLoadErrorView(
+                        onRetryLogin = { viewModel.performLogout() }
+                    )
                 }
             }
-        }
-
-        // Loading overlay
-        if (uiState.isLoggingOut) {
-            LoadingOverlay(message = "Çıkış yapılıyor...")
         }
     }
 
@@ -139,32 +144,35 @@ fun ProfileScreen(
     // Logout confirmation
     if (uiState.showLogoutConfirmation) {
         AlertDialog(
-                onDismissRequest = { viewModel.dismissLogoutConfirmation() },
-                title = { Text("Çıkış Yap") },
-                text = { Text("Çıkış yapmak istediğinizden emin misiniz?") },
-                confirmButton = {
-                    TextButton(
-                            onClick = { viewModel.performLogout() },
-                            colors = ButtonDefaults.textButtonColors(contentColor = AnkaraDanger)
-                    ) { Text("Çıkış Yap") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.dismissLogoutConfirmation() }) {
-                        Text("İptal")
-                    }
+            onDismissRequest = { viewModel.dismissLogoutConfirmation() },
+            title = { Text("Çıkış Yap") },
+            text = { Text("Çıkış yapmak istediğinizden emin misiniz?") },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.performLogout() },
+                    colors =
+                        ButtonDefaults.textButtonColors(
+                            contentColor = AnkaraDanger
+                        )
+                ) { Text("Çıkış Yap") }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissLogoutConfirmation() }) {
+                    Text("İptal")
                 }
+            }
         )
     }
 
     // Generic alert
     if (uiState.showAlert) {
         AlertDialog(
-                onDismissRequest = { viewModel.dismissAlert() },
-                title = { Text(uiState.alertTitle) },
-                text = { Text(uiState.alertMessage) },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
-                }
+            onDismissRequest = { viewModel.dismissAlert() },
+            title = { Text(uiState.alertTitle) },
+            text = { Text(uiState.alertMessage) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
+            }
         )
     }
 }
@@ -175,37 +183,43 @@ fun ProfileScreen(
 
 @Composable
 private fun UserProfileSection(adminUser: AdminUser) {
-    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Profil ikonu — gradient daire
         Box(
-                modifier =
-                        Modifier.size(110.dp)
-                                .shadow(
-                                        elevation = 12.dp,
-                                        shape = CircleShape,
-                                        ambientColor = AnkaraBlue.copy(alpha = 0.4f),
-                                        spotColor = AnkaraLightBlue.copy(alpha = 0.3f)
+            modifier =
+                Modifier
+                    .size(110.dp)
+                    .shadow(
+                        elevation = 12.dp,
+                        shape = CircleShape,
+                        ambientColor = AnkaraBlue.copy(alpha = 0.4f),
+                        spotColor = AnkaraLightBlue.copy(alpha = 0.3f)
+                    )
+                    .clip(CircleShape)
+                    .background(
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    AnkaraBlue,
+                                    AnkaraLightBlue,
+                                    AnkaraLightBlue.copy(
+                                        alpha = 0.85f
+                                    )
                                 )
-                                .clip(CircleShape)
-                                .background(
-                                        Brush.verticalGradient(
-                                                colors =
-                                                        listOf(
-                                                                AnkaraBlue,
-                                                                AnkaraLightBlue,
-                                                                AnkaraLightBlue.copy(alpha = 0.85f)
-                                                        )
-                                        )
-                                ),
-                contentAlignment = Alignment.Center
+                        )
+                    ),
+            contentAlignment = Alignment.Center
         ) {
             Icon(
-                    imageVector = Icons.Filled.Person,
-                    contentDescription = "Profil",
-                    tint = Color.White,
-                    modifier = Modifier.size(54.dp)
+                imageVector = Icons.Filled.Person,
+                contentDescription = "Profil",
+                tint = Color.White,
+                modifier = Modifier.size(54.dp)
             )
         }
 
@@ -213,19 +227,19 @@ private fun UserProfileSection(adminUser: AdminUser) {
 
         // Kullanıcı adı
         Text(
-                text = adminUser.displayName,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+            text = adminUser.displayName,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(modifier = Modifier.height(4.dp))
 
         // E-posta
         Text(
-                text = adminUser.email,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+            text = adminUser.email,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -233,16 +247,17 @@ private fun UserProfileSection(adminUser: AdminUser) {
         // Rol rozeti
         val roleColor = if (adminUser.isSuperAdmin) Color(0xFF9C27B0) else AnkaraBlue
         Text(
-                text = adminUser.roleText,
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.SemiBold,
-                color = roleColor,
-                modifier =
-                        Modifier.background(
-                                        color = roleColor.copy(alpha = 0.12f),
-                                        shape = RoundedCornerShape(12.dp)
-                                )
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
+            text = adminUser.roleText,
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = roleColor,
+            modifier =
+                Modifier
+                    .background(
+                        color = roleColor.copy(alpha = 0.12f),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
         )
     }
 }
@@ -252,79 +267,89 @@ private fun NetworkStatusSection(isOnline: Boolean, syncStatusInfo: String) {
     val isDark = isSystemInDarkTheme()
 
     Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            border =
-                    BorderStroke(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    ),
-            colors =
-                    CardDefaults.cardColors(
-                            containerColor =
-                                    if (isDark) {
-                                        MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
-                                    } else {
-                                        MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
-                                    }
-                    ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isDark) {
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            4.dp
+                        )
+                    } else {
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            1.dp
+                        )
+                    }
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                    text = "Bağlantı Durumu",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                text = "Bağlantı Durumu",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(12.dp))
 
             Row(
-                    modifier =
-                            Modifier.fillMaxWidth()
-                                    .background(
-                                            color =
-                                                    MaterialTheme.colorScheme.surface.copy(
-                                                            alpha = 0.5f
-                                                    ),
-                                            shape = RoundedCornerShape(10.dp)
-                                    )
-                                    .padding(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            color =
+                                MaterialTheme.colorScheme.surface
+                                    .copy(alpha = 0.5f),
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .padding(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // Status icon
                 val statusColor = if (isOnline) AnkaraSuccess else AnkaraDanger
                 Box(
-                        modifier =
-                                Modifier.size(40.dp)
-                                        .background(
-                                                color = statusColor.copy(alpha = 0.1f),
-                                                shape = RoundedCornerShape(8.dp)
-                                        ),
-                        contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .size(40.dp)
+                            .background(
+                                color =
+                                    statusColor.copy(
+                                        alpha = 0.1f
+                                    ),
+                                shape = RoundedCornerShape(8.dp)
+                            ),
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
-                            imageVector = if (isOnline) Icons.Filled.Wifi else Icons.Filled.WifiOff,
-                            contentDescription = "Ağ durumu",
-                            tint = statusColor,
-                            modifier = Modifier.size(22.dp)
+                        imageVector =
+                            if (isOnline) Icons.Filled.Wifi
+                            else Icons.Filled.WifiOff,
+                        contentDescription = "Ağ durumu",
+                        tint = statusColor,
+                        modifier = Modifier.size(22.dp)
                     )
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                            text = if (isOnline) "Çevrimiçi" else "Çevrimdışı",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onBackground
+                        text = if (isOnline) "Çevrimiçi" else "Çevrimdışı",
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                            text = syncStatusInfo,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            maxLines = 2
+                        text = syncStatusInfo,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 2
                     )
                 }
             }
@@ -337,43 +362,50 @@ private fun UserStatsSection(adminUser: AdminUser) {
     val isDark = isSystemInDarkTheme()
 
     Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            border =
-                    BorderStroke(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-                    ),
-            colors =
-                    CardDefaults.cardColors(
-                            containerColor =
-                                    if (isDark) {
-                                        MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
-                                    } else {
-                                        MaterialTheme.colorScheme.surfaceColorAtElevation(1.dp)
-                                    }
-                    ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+            ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    if (isDark) {
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            4.dp
+                        )
+                    } else {
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            1.dp
+                        )
+                    }
+            ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                    text = "Hesap Bilgileri",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
+                text = "Hesap Bilgileri",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             // Hesap Türü
-            val roleColor = if (adminUser.isSuperAdmin) Color(0xFF9C27B0) else Color(0xFF2196F3)
+            val roleColor =
+                if (adminUser.isSuperAdmin) Color(0xFF9C27B0) else Color(0xFF2196F3)
             InfoRow(
-                    icon = if (adminUser.isSuperAdmin) Icons.Filled.Star else Icons.Filled.Badge,
-                    iconColor = roleColor,
-                    label = "Hesap Türü",
-                    value = if (adminUser.isSuperAdmin) "Süper Admin" else "Admin",
-                    valueColor = roleColor,
-                    showBadge = true
+                icon =
+                    if (adminUser.isSuperAdmin) Icons.Filled.Star
+                    else Icons.Filled.Badge,
+                iconColor = roleColor,
+                label = "Hesap Türü",
+                value = if (adminUser.isSuperAdmin) "Süper Admin" else "Admin",
+                valueColor = roleColor,
+                showBadge = true
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
@@ -381,14 +413,14 @@ private fun UserStatsSection(adminUser: AdminUser) {
             // Durum
             val statusColor = if (adminUser.isActive) AnkaraSuccess else AnkaraWarning
             InfoRow(
-                    icon =
-                            if (adminUser.isActive) Icons.Filled.CheckCircle
-                            else Icons.Filled.Schedule,
-                    iconColor = statusColor,
-                    label = "Durum",
-                    value = if (adminUser.isActive) "Aktif" else "Beklemede",
-                    valueColor = statusColor,
-                    showBadge = false
+                icon =
+                    if (adminUser.isActive) Icons.Filled.CheckCircle
+                    else Icons.Filled.Schedule,
+                iconColor = statusColor,
+                label = "Durum",
+                value = if (adminUser.isActive) "Aktif" else "Beklemede",
+                valueColor = statusColor,
+                showBadge = false
             )
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
@@ -396,19 +428,19 @@ private fun UserStatsSection(adminUser: AdminUser) {
             // Kayıt Tarihi
             val dateFormat = SimpleDateFormat("dd MMMM yyyy", Locale("tr"))
             val dateText =
-                    try {
-                        dateFormat.format(adminUser.createdAt.toDate())
-                    } catch (e: Exception) {
-                        "Bilinmiyor"
-                    }
+                try {
+                    dateFormat.format(adminUser.createdAt.toDate())
+                } catch (e: Exception) {
+                    "Bilinmiyor"
+                }
 
             InfoRow(
-                    icon = Icons.Filled.CalendarToday,
-                    iconColor = Color(0xFF2196F3),
-                    label = "Kayıt Tarihi",
-                    value = dateText,
-                    valueColor = MaterialTheme.colorScheme.onBackground,
-                    showBadge = false
+                icon = Icons.Filled.CalendarToday,
+                iconColor = Color(0xFF2196F3),
+                label = "Kayıt Tarihi",
+                value = dateText,
+                valueColor = MaterialTheme.colorScheme.onBackground,
+                showBadge = false
             )
         }
     }
@@ -416,28 +448,28 @@ private fun UserStatsSection(adminUser: AdminUser) {
 
 @Composable
 private fun InfoRow(
-        icon: ImageVector,
-        iconColor: Color,
-        label: String,
-        value: String,
-        valueColor: Color,
-        showBadge: Boolean
+    icon: ImageVector,
+    iconColor: Color,
+    label: String,
+    value: String,
+    valueColor: Color,
+    showBadge: Boolean
 ) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                    imageVector = icon,
-                    contentDescription = label,
-                    tint = iconColor,
-                    modifier = Modifier.size(20.dp)
+                imageVector = icon,
+                contentDescription = label,
+                tint = iconColor,
+                modifier = Modifier.size(20.dp)
             )
             Text(
-                    text = label,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
 
@@ -445,23 +477,24 @@ private fun InfoRow(
 
         if (showBadge) {
             Text(
-                    text = value,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Medium,
-                    color = valueColor,
-                    modifier =
-                            Modifier.background(
-                                            color = valueColor.copy(alpha = 0.1f),
-                                            shape = RoundedCornerShape(6.dp)
-                                    )
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                text = value,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                color = valueColor,
+                modifier =
+                    Modifier
+                        .background(
+                            color = valueColor.copy(alpha = 0.1f),
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
             )
         } else {
             Text(
-                    text = value,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontWeight = FontWeight.Medium,
-                    color = valueColor
+                text = value,
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.Medium,
+                color = valueColor
             )
         }
     }
@@ -472,30 +505,32 @@ private fun LogoutButton(onClick: () -> Unit) {
     val errorColor = MaterialTheme.colorScheme.error
 
     OutlinedButton(
-            onClick = onClick,
-            modifier = Modifier.fillMaxWidth().height(52.dp),
-            shape = RoundedCornerShape(16.dp),
-            border = BorderStroke(1.5.dp, errorColor),
-            colors =
-                    ButtonDefaults.outlinedButtonColors(
-                            contentColor = errorColor,
-                            containerColor = errorColor.copy(alpha = 0.08f)
-                    )
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(52.dp),
+        shape = RoundedCornerShape(16.dp),
+        border = BorderStroke(1.5.dp, errorColor),
+        colors =
+            ButtonDefaults.outlinedButtonColors(
+                contentColor = errorColor,
+                containerColor = errorColor.copy(alpha = 0.08f)
+            )
     ) {
         Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                    imageVector = Icons.AutoMirrored.Filled.Logout,
-                    contentDescription = "Çıkış",
-                    tint = errorColor
+                imageVector = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = "Çıkış",
+                tint = errorColor
             )
             Text(
-                    text = "Çıkış Yap",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = errorColor
+                text = "Çıkış Yap",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = errorColor
             )
         }
     }
@@ -504,47 +539,49 @@ private fun LogoutButton(onClick: () -> Unit) {
 @Composable
 private fun UserLoadErrorView(onRetryLogin: () -> Unit) {
     Column(
-            modifier = Modifier.fillMaxWidth().padding(top = 80.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 80.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-                imageVector = Icons.Filled.Warning,
-                contentDescription = "Hata",
-                tint = AnkaraWarning,
-                modifier = Modifier.size(60.dp)
+            imageVector = Icons.Filled.Warning,
+            contentDescription = "Hata",
+            tint = AnkaraWarning,
+            modifier = Modifier.size(60.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-                text = "Kullanıcı Bilgisi Yüklenemedi",
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.Bold
+            text = "Kullanıcı Bilgisi Yüklenemedi",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-                text = "Lütfen internet bağlantınızı kontrol edin ve tekrar giriş yapın",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 32.dp)
+            text = "Lütfen internet bağlantınızı kontrol edin ve tekrar giriş yapın",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(horizontal = 32.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
-                onClick = onRetryLogin,
-                colors = ButtonDefaults.buttonColors(containerColor = AnkaraBlue),
-                shape = RoundedCornerShape(10.dp)
+            onClick = onRetryLogin,
+            colors = ButtonDefaults.buttonColors(containerColor = AnkaraBlue),
+            shape = RoundedCornerShape(10.dp)
         ) {
             Text(
-                    text = "Tekrar Giriş Yap",
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                text = "Tekrar Giriş Yap",
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
         }
     }
@@ -560,11 +597,11 @@ private const val APP_BUILD_NUMBER = "1"
 private const val DEVELOPER_NAME = "Mehmet Mert Mazıcı"
 private const val DEVELOPER_EMAIL = "libraryau.app@gmail.com"
 private const val PRIVACY_POLICY_URL =
-        "https://tree-bottle-a85.notion.site/A-K-t-phane-Gizlilik-Politikas-2bfc4029a7aa80148b30c8bc1e3fff05"
+    "https://tree-bottle-a85.notion.site/A-K-t-phane-Gizlilik-Politikas-2bfc4029a7aa80148b30c8bc1e3fff05"
 private const val TERMS_OF_SERVICE_URL =
-        "https://tree-bottle-a85.notion.site/A-K-t-phane-Kullan-m-Ko-ullar-2bfc4029a7aa80338cccea31715f1b66"
+    "https://tree-bottle-a85.notion.site/A-K-t-phane-Kullan-m-Ko-ullar-2bfc4029a7aa80338cccea31715f1b66"
 private const val SUPPORT_URL =
-        "https://tree-bottle-a85.notion.site/A-K-t-phane-Yard-m-Merkezi-2bfc4029a7aa8078a7e2e151ba7e1071"
+    "https://tree-bottle-a85.notion.site/A-K-t-phane-Yard-m-Merkezi-2bfc4029a7aa8078a7e2e151ba7e1071"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -583,81 +620,114 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
 
     AnkaraBackground {
         Scaffold(
-                containerColor = Color.Transparent,
-                topBar = {
-                    TopAppBar(
-                            title = { Text("Ayarlar") },
-                            navigationIcon = {
-                                IconButton(onClick = onBack) {
-                                    Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Geri"
-                                    )
-                                }
-                            },
-                            colors =
-                                    TopAppBarDefaults.topAppBarColors(
-                                            containerColor = Color.Transparent
-                                    )
-                    )
-                }
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = { Text("Ayarlar") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector =
+                                    Icons.AutoMirrored.Filled
+                                        .ArrowBack,
+                                contentDescription = "Geri"
+                            )
+                        }
+                    },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        )
+                )
+            }
         ) { paddingValues ->
             Column(
-                    modifier =
-                            Modifier.fillMaxSize()
-                                    .padding(paddingValues)
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // ── Uygulama Section ──
                 SettingsSectionHeader(title = "UYGULAMA")
 
                 Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        border =
-                                BorderStroke(
-                                        width = 1.dp,
-                                        color =
-                                                MaterialTheme.colorScheme.outlineVariant.copy(
-                                                        alpha = 0.5f
-                                                )
-                                ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.5f
+                                    )
+                        ),
+                    elevation =
+                        CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme.colorScheme.surface
+                        )
                 ) {
                     Column {
                         // Hakkında
                         SettingsRow(
-                                icon = Icons.Filled.Info,
-                                iconColor = Color(0xFF2196F3),
-                                title = "Hakkında",
-                                onClick = { showAbout = true }
+                            icon = Icons.Filled.Info,
+                            iconColor = Color(0xFF2196F3),
+                            title = "Hakkında",
+                            onClick = { showAbout = true }
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 60.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 60.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.4f
+                                    )
                         )
                         // Gizlilik Politikası
                         SettingsRow(
-                                icon = Icons.Filled.PrivacyTip,
-                                iconColor = Color(0xFF9C27B0),
-                                title = "Gizlilik Politikası",
-                                isExternal = true,
-                                onClick = { uriHandler.openUri(PRIVACY_POLICY_URL) }
+                            icon = Icons.Filled.PrivacyTip,
+                            iconColor = Color(0xFF9C27B0),
+                            title = "Gizlilik Politikası",
+                            isExternal = true,
+                            onClick = {
+                                uriHandler.openUri(
+                                    PRIVACY_POLICY_URL
+                                )
+                            }
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 60.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 60.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.4f
+                                    )
                         )
                         // Kullanım Koşulları
                         SettingsRow(
-                                icon = Icons.Filled.Description,
-                                iconColor = AnkaraWarning,
-                                title = "Kullanım Koşulları",
-                                isExternal = true,
-                                onClick = { uriHandler.openUri(TERMS_OF_SERVICE_URL) }
+                            icon = Icons.Filled.Description,
+                            iconColor = AnkaraWarning,
+                            title = "Kullanım Koşulları",
+                            isExternal = true,
+                            onClick = {
+                                uriHandler.openUri(
+                                    TERMS_OF_SERVICE_URL
+                                )
+                            }
                         )
                     }
                 }
@@ -666,57 +736,78 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
                 SettingsSectionHeader(title = "DESTEK")
 
                 Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        border =
-                                BorderStroke(
-                                        width = 1.dp,
-                                        color =
-                                                MaterialTheme.colorScheme.outlineVariant.copy(
-                                                        alpha = 0.5f
-                                                )
-                                ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.5f
+                                    )
+                        ),
+                    elevation =
+                        CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme.colorScheme.surface
+                        )
                 ) {
                     Column {
                         // Yardım Merkezi
                         SettingsRow(
-                                icon = Icons.Filled.Help,
-                                iconColor = AnkaraSuccess,
-                                title = "Yardım Merkezi",
-                                isExternal = true,
-                                onClick = { uriHandler.openUri(SUPPORT_URL) }
+                            icon = Icons.Filled.Help,
+                            iconColor = AnkaraSuccess,
+                            title = "Yardım Merkezi",
+                            isExternal = true,
+                            onClick = {
+                                uriHandler.openUri(SUPPORT_URL)
+                            }
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 60.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 60.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.4f
+                                    )
                         )
                         // Bize Ulaşın
                         SettingsRow(
-                                icon = Icons.Filled.Email,
-                                iconColor = Color.Red,
-                                title = "Bize Ulaşın",
-                                isExternal = true,
-                                onClick = {
-                                    val subject = "AÜ Kütüphane - Destek Talebi"
-                                    val body =
-                                            "\n\n---\nUygulama: AÜ Kütüphane\nVersiyon: $APP_VERSION\nCihaz: ${Build.MODEL}\nAndroid: ${Build.VERSION.RELEASE}"
-                                    val encodedSubject = Uri.encode(subject)
-                                    val encodedBody = Uri.encode(body)
-                                    val intent =
-                                            Intent(Intent.ACTION_SENDTO).apply {
-                                                data =
-                                                        Uri.parse(
-                                                                "mailto:$DEVELOPER_EMAIL?subject=$encodedSubject&body=$encodedBody"
-                                                        )
-                                            }
-                                    try {
-                                        context.startActivity(intent)
-                                    } catch (_: Exception) {
-                                        // No email client
-                                    }
+                            icon = Icons.Filled.Email,
+                            iconColor = Color.Red,
+                            title = "Bize Ulaşın",
+                            isExternal = true,
+                            onClick = {
+                                val subject =
+                                    "AÜ Kütüphane - Destek Talebi"
+                                val body =
+                                    "\n\n---\nUygulama: AÜ Kütüphane\nVersiyon: $APP_VERSION\nCihaz: ${Build.MODEL}\nAndroid: ${Build.VERSION.RELEASE}"
+                                val encodedSubject =
+                                    Uri.encode(subject)
+                                val encodedBody = Uri.encode(body)
+                                val intent =
+                                    Intent(Intent.ACTION_SENDTO)
+                                        .apply {
+                                            data =
+                                                Uri.parse(
+                                                    "mailto:$DEVELOPER_EMAIL?subject=$encodedSubject&body=$encodedBody"
+                                                )
+                                        }
+                                try {
+                                    context.startActivity(
+                                        intent
+                                    )
+                                } catch (_: Exception) {
+                                    // No email client
                                 }
+                            }
                         )
                     }
                 }
@@ -725,30 +816,36 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
                 SettingsSectionHeader(title = "HESAP YÖNETİMİ")
 
                 Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors =
-                                CardDefaults.cardColors(
-                                        containerColor =
-                                                MaterialTheme.colorScheme.errorContainer.copy(
-                                                        alpha = 0.3f
-                                                )
-                                ),
-                        border =
-                                BorderStroke(
-                                        width = 1.dp,
-                                        color = MaterialTheme.colorScheme.error.copy(alpha = 0.2f)
-                                ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme.colorScheme
+                                    .errorContainer.copy(
+                                        alpha = 0.3f
+                                    )
+                        ),
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                MaterialTheme.colorScheme.error
+                                    .copy(alpha = 0.2f)
+                        ),
+                    elevation =
+                        CardDefaults.cardElevation(defaultElevation = 0.dp)
                 ) {
                     SettingsRow(
-                            icon = Icons.Filled.Delete,
-                            iconColor = MaterialTheme.colorScheme.error,
-                            title = "Hesabı Sil",
-                            titleColor = MaterialTheme.colorScheme.error,
-                            isDanger = true,
-                            enabled = isOnline && !uiState.isCheckingDeletion,
-                            onClick = { viewModel.checkAndShowDeleteConfirmation() }
+                        icon = Icons.Filled.Delete,
+                        iconColor = MaterialTheme.colorScheme.error,
+                        title = "Hesabı Sil",
+                        titleColor = MaterialTheme.colorScheme.error,
+                        isDanger = true,
+                        enabled = isOnline && !uiState.isCheckingDeletion,
+                        onClick = {
+                            viewModel.checkAndShowDeleteConfirmation()
+                        }
                     )
                 }
 
@@ -756,19 +853,27 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
 
                 // ── Versiyon Section ──
                 Column(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                            text = "AÜ Kütüphane · $APP_VERSION ($APP_BUILD_NUMBER)",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        text =
+                            "AÜ Kütüphane · $APP_VERSION ($APP_BUILD_NUMBER)",
+                        style = MaterialTheme.typography.labelSmall,
+                        color =
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                                .copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                            text = DEVELOPER_NAME,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                        text = DEVELOPER_NAME,
+                        style = MaterialTheme.typography.labelSmall,
+                        color =
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                                .copy(alpha = 0.4f)
                     )
                 }
             }
@@ -779,13 +884,13 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
     if (uiState.isCheckingDeletion) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Card(
-                    shape = RoundedCornerShape(10.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                shape = RoundedCornerShape(10.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
                 Row(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(24.dp))
                     Text("Kontrol ediliyor...")
@@ -800,83 +905,96 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
         val canDelete = uiState.canDeleteAccount
 
         AlertDialog(
-                onDismissRequest = { viewModel.dismissDeleteConfirmation() },
-                title = {
-                    Text(if (isSuperAdmin && !canDelete) "İşlem Yapılamıyor" else "Hesabı Sil")
-                },
-                text = {
-                    Text(
-                            if (isSuperAdmin && !canDelete) {
-                                "Sistemde tek süper admin olduğunuz için hesabınızı silemezsiniz. Önce başka bir süper admin eklemeniz gerekmektedir."
-                            } else {
-                                "Hesabınızı silmek üzeresiniz. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?"
-                            }
-                    )
-                },
-                confirmButton = {
+            onDismissRequest = { viewModel.dismissDeleteConfirmation() },
+            title = {
+                Text(
+                    if (isSuperAdmin && !canDelete) "İşlem Yapılamıyor"
+                    else "Hesabı Sil"
+                )
+            },
+            text = {
+                Text(
                     if (isSuperAdmin && !canDelete) {
-                        TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) {
-                            Text("Tamam")
-                        }
+                        "Sistemde tek süper admin olduğunuz için hesabınızı silemezsiniz. Önce başka bir süper admin eklemeniz gerekmektedir."
                     } else {
-                        TextButton(
-                                onClick = { viewModel.showPasswordPrompt() },
-                                colors =
-                                        ButtonDefaults.textButtonColors(contentColor = AnkaraDanger)
-                        ) { Text("Devam Et") }
+                        "Hesabınızı silmek üzeresiniz. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?"
                     }
-                },
-                dismissButton = {
-                    if (canDelete || !isSuperAdmin) {
-                        TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) {
-                            Text("İptal")
-                        }
-                    }
+                )
+            },
+            confirmButton = {
+                if (isSuperAdmin && !canDelete) {
+                    TextButton(
+                        onClick = { viewModel.dismissDeleteConfirmation() }
+                    ) { Text("Tamam") }
+                } else {
+                    TextButton(
+                        onClick = { viewModel.showPasswordPrompt() },
+                        colors =
+                            ButtonDefaults.textButtonColors(
+                                contentColor = AnkaraDanger
+                            )
+                    ) { Text("Devam Et") }
                 }
+            },
+            dismissButton = {
+                if (canDelete || !isSuperAdmin) {
+                    TextButton(
+                        onClick = { viewModel.dismissDeleteConfirmation() }
+                    ) { Text("İptal") }
+                }
+            }
         )
     }
 
     // ── Password Prompt Dialog ──
     if (uiState.showPasswordPrompt) {
         AlertDialog(
-                onDismissRequest = { viewModel.dismissPasswordPrompt() },
-                title = { Text("Şifrenizi Girin") },
-                text = {
-                    Column {
-                        Text("Hesabınızı silmek için şifrenizi girmeniz gerekiyor")
-                        Spacer(modifier = Modifier.height(16.dp))
-                        OutlinedTextField(
-                                value = uiState.deleteAccountPassword,
-                                onValueChange = { viewModel.updateDeletePassword(it) },
-                                label = { Text("Şifre") },
-                                singleLine = true,
-                                modifier = Modifier.fillMaxWidth(),
-                                visualTransformation = PasswordVisualTransformation()
-                        )
-                    }
-                },
-                confirmButton = {
-                    TextButton(
-                            onClick = { viewModel.performDeleteAccount() },
-                            colors = ButtonDefaults.textButtonColors(contentColor = AnkaraDanger),
-                            enabled = uiState.deleteAccountPassword.isNotEmpty()
-                    ) { Text("Hesabı Sil") }
-                },
-                dismissButton = {
-                    TextButton(onClick = { viewModel.dismissPasswordPrompt() }) { Text("İptal") }
+            onDismissRequest = { viewModel.dismissPasswordPrompt() },
+            title = { Text("Şifrenizi Girin") },
+            text = {
+                Column {
+                    Text("Hesabınızı silmek için şifrenizi girmeniz gerekiyor")
+                    Spacer(modifier = Modifier.height(16.dp))
+                    OutlinedTextField(
+                        value = uiState.deleteAccountPassword,
+                        onValueChange = {
+                            viewModel.updateDeletePassword(it)
+                        },
+                        label = { Text("Şifre") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        visualTransformation =
+                            PasswordVisualTransformation()
+                    )
                 }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { viewModel.performDeleteAccount() },
+                    colors =
+                        ButtonDefaults.textButtonColors(
+                            contentColor = AnkaraDanger
+                        ),
+                    enabled = uiState.deleteAccountPassword.isNotEmpty()
+                ) { Text("Hesabı Sil") }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.dismissPasswordPrompt() }) {
+                    Text("İptal")
+                }
+            }
         )
     }
 
     // ── Generic Alert ──
     if (uiState.showAlert) {
         AlertDialog(
-                onDismissRequest = { viewModel.dismissAlert() },
-                title = { Text(uiState.alertTitle) },
-                text = { Text(uiState.alertMessage) },
-                confirmButton = {
-                    TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
-                }
+            onDismissRequest = { viewModel.dismissAlert() },
+            title = { Text(uiState.alertTitle) },
+            text = { Text(uiState.alertMessage) },
+            confirmButton = {
+                TextButton(onClick = { viewModel.dismissAlert() }) { Text("Tamam") }
+            }
         )
     }
 }
@@ -884,61 +1002,68 @@ fun SettingsScreen(onBack: () -> Unit, viewModel: ProfileViewModel = hiltViewMod
 @Composable
 private fun SettingsSectionHeader(title: String) {
     Text(
-            text = title,
-            style = MaterialTheme.typography.labelMedium,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            letterSpacing = 1.sp,
-            modifier = Modifier.padding(start = 4.dp, top = 8.dp)
+        text = title,
+        style = MaterialTheme.typography.labelMedium,
+        fontWeight = FontWeight.SemiBold,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        letterSpacing = 1.sp,
+        modifier = Modifier.padding(start = 4.dp, top = 8.dp)
     )
 }
 
 @Composable
 private fun SettingsRow(
-        icon: ImageVector,
-        iconColor: Color,
-        title: String,
-        titleColor: Color = MaterialTheme.colorScheme.onBackground,
-        isExternal: Boolean = false,
-        isDanger: Boolean = false,
-        enabled: Boolean = true,
-        onClick: () -> Unit
+    icon: ImageVector,
+    iconColor: Color,
+    title: String,
+    titleColor: Color = MaterialTheme.colorScheme.onBackground,
+    isExternal: Boolean = false,
+    isDanger: Boolean = false,
+    enabled: Boolean = true,
+    onClick: () -> Unit
 ) {
     Row(
-            modifier =
-                    Modifier.fillMaxWidth()
-                            .clickable(enabled = enabled) { onClick() }
-                            .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable(enabled = enabled) { onClick() }
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = if (enabled) iconColor else iconColor.copy(alpha = 0.5f),
-                modifier = Modifier.size(22.dp)
+            imageVector = icon,
+            contentDescription = title,
+            tint = if (enabled) iconColor else iconColor.copy(alpha = 0.5f),
+            modifier = Modifier.size(22.dp)
         )
         Spacer(modifier = Modifier.width(14.dp))
         Text(
-                text = title,
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (isDanger) FontWeight.SemiBold else FontWeight.Normal,
-                color = if (enabled) titleColor else titleColor.copy(alpha = 0.5f),
-                modifier = Modifier.weight(1f)
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (isDanger) FontWeight.SemiBold else FontWeight.Normal,
+            color = if (enabled) titleColor else titleColor.copy(alpha = 0.5f),
+            modifier = Modifier.weight(1f)
         )
         // Sağ taraf ikonu
         if (isExternal) {
             Icon(
-                    imageVector = Icons.Filled.OpenInNew,
-                    contentDescription = "Dış bağlantı",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                    modifier = Modifier.size(16.dp)
+                imageVector = Icons.Filled.OpenInNew,
+                contentDescription = "Dış bağlantı",
+                tint =
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                        alpha = 0.5f
+                    ),
+                modifier = Modifier.size(16.dp)
             )
         } else if (!isDanger) {
             Icon(
-                    imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
-                    modifier = Modifier.size(20.dp)
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = null,
+                tint =
+                    MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                        alpha = 0.4f
+                    ),
+                modifier = Modifier.size(20.dp)
             )
         }
     }
@@ -954,105 +1079,138 @@ private fun SettingsRow(
 fun AboutScreen(onBack: () -> Unit) {
     AnkaraBackground {
         Scaffold(
-                containerColor = Color.Transparent,
-                topBar = {
-                    TopAppBar(
-                            title = { Text("Hakkında") },
-                            navigationIcon = {
-                                IconButton(onClick = onBack) {
-                                    Icon(
-                                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                            contentDescription = "Geri"
-                                    )
-                                }
-                            },
-                            colors =
-                                    TopAppBarDefaults.topAppBarColors(
-                                            containerColor = Color.Transparent
-                                    )
-                    )
-                }
+            containerColor = Color.Transparent,
+            topBar = {
+                TopAppBar(
+                    title = { Text("Hakkında") },
+                    navigationIcon = {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                imageVector =
+                                    Icons.AutoMirrored.Filled
+                                        .ArrowBack,
+                                contentDescription = "Geri"
+                            )
+                        }
+                    },
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        )
+                )
+            }
         ) { paddingValues ->
             Column(
-                    modifier =
-                            Modifier.fillMaxSize()
-                                    .padding(paddingValues)
-                                    .verticalScroll(rememberScrollState())
-                                    .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // ── Header ──
                 Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        border =
-                                BorderStroke(
-                                        width = 1.dp,
-                                        color =
-                                                MaterialTheme.colorScheme.outlineVariant.copy(
-                                                        alpha = 0.5f
-                                                )
-                                ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.5f
+                                    )
+                        ),
+                    elevation =
+                        CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme.colorScheme.surface
+                        )
                 ) {
                     Column(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 28.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 28.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         // Gradient app icon
                         Box(
-                                modifier =
-                                        Modifier.size(64.dp)
-                                                .clip(RoundedCornerShape(16.dp))
-                                                .background(
-                                                        Brush.linearGradient(
-                                                                colors =
-                                                                        listOf(
-                                                                                AnkaraBlue,
-                                                                                AnkaraLightBlue
-                                                                        )
-                                                        )
-                                                ),
-                                contentAlignment = Alignment.Center
+                            modifier =
+                                Modifier
+                                    .size(64.dp)
+                                    .clip(
+                                        RoundedCornerShape(
+                                            16.dp
+                                        )
+                                    )
+                                    .background(
+                                        Brush.linearGradient(
+                                            colors =
+                                                listOf(
+                                                    AnkaraBlue,
+                                                    AnkaraLightBlue
+                                                )
+                                        )
+                                    ),
+                            contentAlignment = Alignment.Center
                         ) {
                             Icon(
-                                    imageVector = Icons.Filled.MenuBook,
-                                    contentDescription = "App Icon",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(32.dp)
+                                imageVector = Icons.Filled.MenuBook,
+                                contentDescription = "App Icon",
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
                             )
                         }
 
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                                text = "AÜ Kütüphane",
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                            text = "AÜ Kütüphane",
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))
 
                         Text(
-                                text = "Kütüphane Yönetim Sistemi",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = "Kütüphane Yönetim Sistemi",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .onSurfaceVariant
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                                text = "v$APP_VERSION ($APP_BUILD_NUMBER)",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Medium,
-                                color = AnkaraLightBlue,
-                                modifier =
-                                        Modifier.background(
-                                                        color = AnkaraLightBlue.copy(alpha = 0.1f),
-                                                        shape = RoundedCornerShape(8.dp)
-                                                )
-                                                .padding(horizontal = 12.dp, vertical = 4.dp)
+                            text = "v$APP_VERSION ($APP_BUILD_NUMBER)",
+                            style =
+                                MaterialTheme.typography
+                                    .labelMedium,
+                            fontWeight = FontWeight.Medium,
+                            color = AnkaraLightBlue,
+                            modifier =
+                                Modifier
+                                    .background(
+                                        color =
+                                            AnkaraLightBlue
+                                                .copy(
+                                                    alpha =
+                                                        0.1f
+                                                ),
+                                        shape =
+                                            RoundedCornerShape(
+                                                8.dp
+                                            )
+                                    )
+                                    .padding(
+                                        horizontal = 12.dp,
+                                        vertical = 4.dp
+                                    )
                         )
                     }
                 }
@@ -1061,65 +1219,106 @@ fun AboutScreen(onBack: () -> Unit) {
                 SettingsSectionHeader(title = "ÖZELLİKLER")
 
                 Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        border =
-                                BorderStroke(
-                                        width = 1.dp,
-                                        color =
-                                                MaterialTheme.colorScheme.outlineVariant.copy(
-                                                        alpha = 0.5f
-                                                )
-                                ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.5f
+                                    )
+                        ),
+                    elevation =
+                        CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme.colorScheme.surface
+                        )
                 ) {
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         FeatureRow(
-                                icon = Icons.Filled.MenuBook,
-                                iconColor = Color(0xFF2196F3),
-                                title = "Kitap Yönetimi",
-                                description = "Kitap ekleme, düzenleme ve silme"
+                            icon = Icons.Filled.MenuBook,
+                            iconColor = Color(0xFF2196F3),
+                            title = "Kitap Yönetimi",
+                            description =
+                                "Kitap ekleme, düzenleme ve silme"
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 56.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 56.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.3f
+                                    )
                         )
                         FeatureRow(
-                                icon = Icons.Filled.Groups,
-                                iconColor = AnkaraSuccess,
-                                title = "Öğrenci Yönetimi",
-                                description = "Öğrenci kayıtları ve takibi"
+                            icon = Icons.Filled.Groups,
+                            iconColor = AnkaraSuccess,
+                            title = "Öğrenci Yönetimi",
+                            description = "Öğrenci kayıtları ve takibi"
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 56.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 56.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.3f
+                                    )
                         )
                         FeatureRow(
-                                icon = Icons.Filled.SwapHoriz,
-                                iconColor = Color(0xFFFF9800),
-                                title = "Ödünç Takibi",
-                                description = "Kitap ödünç alma ve iade işlemleri"
+                            icon = Icons.Filled.SwapHoriz,
+                            iconColor = Color(0xFFFF9800),
+                            title = "Ödünç Takibi",
+                            description =
+                                "Kitap ödünç alma ve iade işlemleri"
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 56.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 56.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.3f
+                                    )
                         )
                         FeatureRow(
-                                icon = Icons.Filled.BarChart,
-                                iconColor = Color(0xFF9C27B0),
-                                title = "Raporlama",
-                                description = "Detaylı istatistikler ve raporlar"
+                            icon = Icons.Filled.BarChart,
+                            iconColor = Color(0xFF9C27B0),
+                            title = "Raporlama",
+                            description =
+                                "Detaylı istatistikler ve raporlar"
                         )
                         HorizontalDivider(
-                                modifier = Modifier.padding(start = 56.dp, end = 16.dp),
-                                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                            modifier =
+                                Modifier.padding(
+                                    start = 56.dp,
+                                    end = 16.dp
+                                ),
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.3f
+                                    )
                         )
                         FeatureRow(
-                                icon = Icons.Filled.WifiOff,
-                                iconColor = AnkaraWarning,
-                                title = "Çevrimdışı Mod",
-                                description = "İnternet olmadan da çalışır"
+                            icon = Icons.Filled.WifiOff,
+                            iconColor = AnkaraWarning,
+                            title = "Çevrimdışı Mod",
+                            description = "İnternet olmadan da çalışır"
                         )
                     }
                 }
@@ -1128,44 +1327,57 @@ fun AboutScreen(onBack: () -> Unit) {
                 SettingsSectionHeader(title = "HAKKINDA")
 
                 Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        border =
-                                BorderStroke(
-                                        width = 1.dp,
-                                        color =
-                                                MaterialTheme.colorScheme.outlineVariant.copy(
-                                                        alpha = 0.5f
-                                                )
-                                ),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    border =
+                        BorderStroke(
+                            width = 1.dp,
+                            color =
+                                MaterialTheme.colorScheme
+                                    .outlineVariant.copy(
+                                        alpha = 0.5f
+                                    )
+                        ),
+                    elevation =
+                        CardDefaults.cardElevation(defaultElevation = 0.dp),
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor =
+                                MaterialTheme.colorScheme.surface
+                        )
                 ) {
                     Text(
-                            text =
-                                    "LibraryAu, Ankara Üniversitesi Yazılım Mühendisliği Bölümü için geliştirilmiş modern bir kütüphane yönetim sistemidir. Sadece yönetici kullanımına özel olarak tasarlanmış olup, Firebase altyapısı ile güvenli, hızlı ve profesyonel bir yönetim deneyimi sunar.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            lineHeight = 20.sp,
-                            modifier = Modifier.padding(16.dp)
+                        text =
+                            "LibraryAu, Ankara Üniversitesi Yazılım Mühendisliği Bölümü için geliştirilmiş modern bir kütüphane yönetim sistemidir. Sadece yönetici kullanımına özel olarak tasarlanmış olup, Firebase altyapısı ile güvenli, hızlı ve profesyonel bir yönetim deneyimi sunar.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        lineHeight = 20.sp,
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
 
                 // ── Credits ──
                 Column(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                            text = "$DEVELOPER_NAME tarafından geliştirildi",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                        text = "$DEVELOPER_NAME tarafından geliştirildi",
+                        style = MaterialTheme.typography.labelSmall,
+                        color =
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                                .copy(alpha = 0.6f)
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                            text = "© 2025 · Tüm hakları saklıdır",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                        text = "© 2025 · Tüm hakları saklıdır",
+                        style = MaterialTheme.typography.labelSmall,
+                        color =
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                                .copy(alpha = 0.4f)
                     )
                 }
             }
@@ -1176,27 +1388,29 @@ fun AboutScreen(onBack: () -> Unit) {
 @Composable
 private fun FeatureRow(icon: ImageVector, iconColor: Color, title: String, description: String) {
     Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-                imageVector = icon,
-                contentDescription = title,
-                tint = iconColor,
-                modifier = Modifier.size(22.dp)
+            imageVector = icon,
+            contentDescription = title,
+            tint = iconColor,
+            modifier = Modifier.size(22.dp)
         )
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                    text = title,
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.Medium
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Medium
             )
             Text(
-                    text = description,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = description,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

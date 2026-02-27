@@ -17,10 +17,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -79,9 +79,7 @@ fun AddBookScreen(
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -92,9 +90,7 @@ fun AddBookScreen(
             TopAppBar(
                 title = { Text("Yeni Kitap Ekle") },
                 navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("İptal", color = AnkaraLightBlue)
-                    }
+                    TextButton(onClick = onBack) { Text("İptal", color = AnkaraLightBlue) }
                 },
                 actions = {
                     TextButton(
@@ -117,11 +113,9 @@ fun AddBookScreen(
         }
     ) { paddingValues ->
         AnkaraBackground {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)) {
+            LoadingOverlay(isLoading = uiState.isAddingBook, message = "Kitap ekleniyor...") {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
@@ -184,11 +178,6 @@ fun AddBookScreen(
                     }
 
                     item { Spacer(modifier = Modifier.height(32.dp)) }
-                }
-
-                // Loading overlay
-                if (uiState.isAddingBook) {
-                    LoadingOverlay(message = "Kitap ekleniyor...")
                 }
             }
         }

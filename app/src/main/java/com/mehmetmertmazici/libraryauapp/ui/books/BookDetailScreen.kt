@@ -1,7 +1,7 @@
 package com.mehmetmertmazici.libraryauapp.ui.books
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -74,10 +74,11 @@ fun BookDetailScreen(
             onDismissRequest = { viewModel.cancelDeleteCopy() },
             icon = {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(AnkaraDanger.copy(alpha = 0.1f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -98,9 +99,10 @@ fun BookDetailScreen(
             },
             text = {
                 Text(
-                    text = "'${currentBook.title}' kitabının #${copy?.copyNumber ?: ""} numaralı kopyasını silmek istediğinizden emin misiniz?\n\n" +
-                            "Barkod: ${copy?.displayBarcode ?: ""}\n\n" +
-                            "Bu işlem geri alınamaz.",
+                    text =
+                        "'${currentBook.title}' kitabının #${copy?.copyNumber ?: ""} numaralı kopyasını silmek istediğinizden emin misiniz?\n\n" +
+                                "Barkod: ${copy?.displayBarcode ?: ""}\n\n" +
+                                "Bu işlem geri alınamaz.",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -110,18 +112,14 @@ fun BookDetailScreen(
                     onClick = { viewModel.confirmDeleteCopy() },
                     colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Sil", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Sil", color = Color.White, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 OutlinedButton(
                     onClick = { viewModel.cancelDeleteCopy() },
                     modifier = Modifier.fillMaxWidth(),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
-                }
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurface) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -158,9 +156,7 @@ fun BookDetailScreen(
                 Button(
                     onClick = { viewModel.dismissAlert() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -213,14 +209,20 @@ fun BookDetailScreen(
         AnkaraBackground {
             val colorScheme = MaterialTheme.colorScheme
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)) {
+                var isRefreshing by remember { mutableStateOf(false) }
+
+                // Pull-to-refresh bittiğinde isRefreshing'i sıfırla
+                LaunchedEffect(uiState.isLoading) { if (!uiState.isLoading) isRefreshing = false }
+
                 PullToRefreshBox(
-                    isRefreshing = uiState.isLoading,
-                    onRefresh = { currentBook.id?.let { viewModel.loadBookCopies(it) } }
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        isRefreshing = true
+                        currentBook.id?.let { viewModel.loadBookCopies(it) }
+                    }
                 ) {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
@@ -465,14 +467,16 @@ fun BookCopyRowView(copy: BookCopy, onDelete: () -> Unit, canDelete: Boolean) {
         else AnkaraDanger.copy(alpha = 0.15f)
     val statusForegroundColor = if (copy.isAvailable) AnkaraLightBlue else AnkaraDanger
     val borderColor =
-        if (copy.isAvailable) colorScheme.onSurfaceVariant.copy(alpha = 0.2f) else AnkaraDanger.copy(
-            alpha = 0.3f
-        )
+        if (copy.isAvailable) colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
+        else AnkaraDanger.copy(alpha = 0.3f)
 
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = colorScheme.surface.copy(alpha = 0.9f)),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = colorScheme.surface.copy(alpha = 0.9f)
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(

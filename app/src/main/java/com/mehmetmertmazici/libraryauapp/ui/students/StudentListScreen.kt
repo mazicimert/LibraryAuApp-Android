@@ -1,7 +1,7 @@
 package com.mehmetmertmazici.libraryauapp.ui.students
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,8 +23,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,10 +60,11 @@ fun StudentListScreen(
             onDismissRequest = { viewModel.cancelDeleteStudent() },
             icon = {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(AnkaraDanger.copy(alpha = 0.1f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -84,7 +85,8 @@ fun StudentListScreen(
             },
             text = {
                 Text(
-                    text = "'${uiState.pendingDeleteStudentName}' isimli öğrenciyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
+                    text =
+                        "'${uiState.pendingDeleteStudentName}' isimli öğrenciyi silmek istediğinize emin misiniz? Bu işlem geri alınamaz.",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -94,18 +96,14 @@ fun StudentListScreen(
                     onClick = { viewModel.confirmDeleteStudent() },
                     colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Sil", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Sil", color = Color.White, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 OutlinedButton(
                     onClick = { viewModel.cancelDeleteStudent() },
                     modifier = Modifier.fillMaxWidth(),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
-                }
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurface) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -140,21 +138,15 @@ fun StudentListScreen(
             },
             confirmButton = {
                 Button(
-                    onClick = {
-                        viewModel.dismissExportSheet()
-                    },
+                    onClick = { viewModel.dismissExportSheet() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("CSV olarak Export Et", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("CSV olarak Export Et", fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 TextButton(
                     onClick = { viewModel.dismissExportSheet() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -191,16 +183,14 @@ fun StudentListScreen(
                 Button(
                     onClick = { viewModel.dismissAlert() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
     }
 
     AnkaraBackground {
-        Box(modifier = Modifier.fillMaxSize()) {
+        LoadingOverlay(isLoading = uiState.isLoading, message = "Yükleniyor...") {
             Column(modifier = Modifier.fillMaxSize()) {
                 // ── Header Section ──
                 HeaderSection(
@@ -238,11 +228,6 @@ fun StudentListScreen(
                     onRefresh = { viewModel.refreshStudents() },
                     onAddStudent = onAddStudent
                 )
-            }
-
-            // Loading overlay
-            if (uiState.isLoading) {
-                LoadingOverlay(message = "Yükleniyor...")
             }
         }
     }
@@ -283,8 +268,8 @@ private fun HeaderSection(
                     Icon(
                         imageVector = Icons.Default.Share,
                         contentDescription = "Export",
-                        tint = AnkaraBlue,
-                        modifier = Modifier.size(28.dp)
+                        tint = AnkaraLightBlue,
+                        modifier = Modifier.size(26.dp)
                     )
                 }
             }
@@ -295,8 +280,8 @@ private fun HeaderSection(
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Öğrenci Ekle",
-                        tint = AnkaraBlue,
-                        modifier = Modifier.size(32.dp)
+                        tint = AnkaraLightBlue,
+                        modifier = Modifier.size(26.dp)
                     )
                 }
             }
@@ -324,10 +309,7 @@ private fun SearchSection(
             value = searchText,
             onValueChange = onSearchTextChange,
             placeholder = {
-                Text(
-                    "Öğrenci ara (ad, soyad, no)...",
-                    color = colorScheme.onSurfaceVariant
-                )
+                Text("Öğrenci ara (ad, soyad, no)...", color = colorScheme.onSurfaceVariant)
             },
             leadingIcon = {
                 Icon(
@@ -408,6 +390,11 @@ private fun StudentListSection(
     onRefresh: () -> Unit,
     onAddStudent: () -> Unit
 ) {
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    // Pull-to-refresh bittiğinde isRefreshing'i sıfırla
+    LaunchedEffect(isLoading) { if (!isLoading) isRefreshing = false }
+
     if (showEmptyState) {
         EmptyStateView(
             icon = Icons.Filled.People,
@@ -418,8 +405,11 @@ private fun StudentListSection(
         )
     } else {
         PullToRefreshBox(
-            isRefreshing = isLoading,
-            onRefresh = onRefresh,
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                onRefresh()
+            },
             modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn(
@@ -576,15 +566,17 @@ fun StudentRowView(
                         modifier =
                             Modifier
                                 .size(32.dp)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(AnkaraDanger)
+                                .background(
+                                    color = AnkaraDanger.copy(alpha = 0.1f),
+                                    shape = RoundedCornerShape(8.dp)
+                                )
                                 .clickable { onDelete() },
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "Sil",
-                            tint = Color.White,
+                            tint = AnkaraDanger.copy(alpha = 0.7f),
                             modifier = Modifier.size(18.dp)
                         )
                     }

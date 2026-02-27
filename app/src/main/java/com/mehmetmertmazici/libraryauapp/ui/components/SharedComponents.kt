@@ -14,8 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,7 +30,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,15 +43,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraColors
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraDanger
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraLightBlue
 import com.mehmetmertmazici.libraryauapp.ui.theme.AnkaraWarning
 import kotlinx.coroutines.delay
 
 /**
- * SharedComponents
- * Uygulama genelinde kullanılan ortak UI bileşenleri
+ * SharedComponents Uygulama genelinde kullanılan ortak UI bileşenleri
  *
  * iOS Karşılığı: SharedComponents.swift
  */
@@ -62,6 +59,10 @@ import kotlinx.coroutines.delay
 // iOS Karşılığı: LoadingOverlayView + loadingOverlay() modifier
 // ══════════════════════════════════════════════════════════════
 
+/**
+ * Birleşik LoadingOverlay composable'ı. Wrapper versiyonu: content'i sarar ve isLoading true
+ * olduğunda overlay gösterir.
+ */
 @Composable
 fun LoadingOverlay(
     isLoading: Boolean,
@@ -71,35 +72,60 @@ fun LoadingOverlay(
     Box(modifier = Modifier.fillMaxSize()) {
         content()
 
-        AnimatedVisibility(
-            visible = isLoading,
-            enter = fadeIn(),
-            exit = fadeOut()
+        AnimatedVisibility(visible = isLoading, enter = fadeIn(), exit = fadeOut()) {
+            LoadingOverlayContent(message = message)
+        }
+    }
+}
+
+/**
+ * Bağımsız LoadingOverlay composable'ı. Doğrudan overlay göstermek için kullanılır (wrapper
+ * olmadan).
+ */
+@Composable
+fun LoadingOverlay(message: String = "Yükleniyor...") {
+    LoadingOverlayContent(message = message)
+}
+
+/** Ortak loading overlay içeriği — modern, sade, theme-aware tasarım. */
+@Composable
+private fun LoadingOverlayContent(message: String) {
+    val colorScheme = MaterialTheme.colorScheme
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorScheme.scrim.copy(alpha = 0.32f)),
+        contentAlignment = Alignment.Center
+    ) {
+        androidx.compose.material3.Card(
+            modifier = Modifier.padding(32.dp),
+            shape = RoundedCornerShape(20.dp),
+            colors =
+                androidx.compose.material3.CardDefaults.cardColors(
+                    containerColor = colorScheme.surface
+                ),
+            elevation =
+                androidx.compose.material3.CardDefaults.cardElevation(
+                    defaultElevation = 6.dp
+                )
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.3f)),
-                contentAlignment = Alignment.Center
+            Column(
+                modifier = Modifier.padding(horizontal = 36.dp, vertical = 28.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Color.Black.copy(alpha = 0.7f))
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    CircularProgressIndicator(
-                        color = Color.White,
-                        modifier = Modifier.size(40.dp)
-                    )
-                    Text(
-                        text = message,
-                        color = Color.White,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                CircularProgressIndicator(
+                    color = AnkaraLightBlue,
+                    strokeWidth = 3.dp,
+                    modifier = Modifier.size(44.dp)
+                )
+                Text(
+                    text = message,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                    color = colorScheme.onSurfaceVariant
+                )
             }
         }
     }
@@ -111,9 +137,7 @@ fun LoadingOverlay(
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-fun LoadingView(
-    modifier: Modifier = Modifier
-) {
+fun LoadingView(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -144,11 +168,7 @@ fun LoadingView(
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-fun ErrorView(
-    message: String,
-    onRetry: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+fun ErrorView(message: String, onRetry: () -> Unit, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -189,9 +209,10 @@ fun ErrorView(
             // Tekrar dene butonu
             Button(
                 onClick = onRetry,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.primary
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
                 shape = RoundedCornerShape(10.dp)
             ) {
                 Icon(
@@ -200,10 +221,7 @@ fun ErrorView(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Tekrar Dene",
-                    style = MaterialTheme.typography.labelLarge
-                )
+                Text(text = "Tekrar Dene", style = MaterialTheme.typography.labelLarge)
             }
         }
     }
@@ -223,10 +241,7 @@ fun EmptyStateView(
     onAction: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -259,16 +274,12 @@ fun EmptyStateView(
             if (actionTitle != null && onAction != null) {
                 Button(
                     onClick = onAction,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
                     shape = RoundedCornerShape(10.dp)
-                ) {
-                    Text(
-                        text = actionTitle,
-                        style = MaterialTheme.typography.labelLarge
-                    )
-                }
+                ) { Text(text = actionTitle, style = MaterialTheme.typography.labelLarge) }
             }
         }
     }
@@ -280,25 +291,17 @@ fun EmptyStateView(
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-fun StatCard(
-    title: String,
-    value: String,
-    color: Color,
-    modifier: Modifier = Modifier
-) {
+fun StatCard(title: String, value: String, color: Color, modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(color.copy(alpha = 0.1f))
-            .padding(vertical = 8.dp, horizontal = 12.dp),
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(color.copy(alpha = 0.1f))
+                .padding(vertical = 8.dp, horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleLarge,
-            color = color
-        )
+        Text(text = value, style = MaterialTheme.typography.titleLarge, color = color)
         Text(
             text = title,
             style = MaterialTheme.typography.labelSmall,
@@ -328,25 +331,28 @@ fun CustomButton(
     style: CustomButtonStyle = CustomButtonStyle.PRIMARY,
     enabled: Boolean = true
 ) {
-    val backgroundColor = when (style) {
-        CustomButtonStyle.PRIMARY -> MaterialTheme.colorScheme.primary
-        CustomButtonStyle.SECONDARY -> Color.Gray.copy(alpha = 0.2f)
-        CustomButtonStyle.DESTRUCTIVE -> AnkaraDanger.copy(alpha = 0.1f)
-        CustomButtonStyle.OUTLINE -> Color.Transparent
-    }
+    val backgroundColor =
+        when (style) {
+            CustomButtonStyle.PRIMARY -> MaterialTheme.colorScheme.primary
+            CustomButtonStyle.SECONDARY -> Color.Gray.copy(alpha = 0.2f)
+            CustomButtonStyle.DESTRUCTIVE -> AnkaraDanger.copy(alpha = 0.1f)
+            CustomButtonStyle.OUTLINE -> Color.Transparent
+        }
 
-    val contentColor = when (style) {
-        CustomButtonStyle.PRIMARY -> Color.White
-        CustomButtonStyle.SECONDARY -> MaterialTheme.colorScheme.onBackground
-        CustomButtonStyle.DESTRUCTIVE -> AnkaraDanger
-        CustomButtonStyle.OUTLINE -> MaterialTheme.colorScheme.primary
-    }
+    val contentColor =
+        when (style) {
+            CustomButtonStyle.PRIMARY -> Color.White
+            CustomButtonStyle.SECONDARY -> MaterialTheme.colorScheme.onBackground
+            CustomButtonStyle.DESTRUCTIVE -> AnkaraDanger
+            CustomButtonStyle.OUTLINE -> MaterialTheme.colorScheme.primary
+        }
 
-    val borderColor = when (style) {
-        CustomButtonStyle.DESTRUCTIVE -> AnkaraDanger
-        CustomButtonStyle.OUTLINE -> MaterialTheme.colorScheme.primary
-        else -> Color.Transparent
-    }
+    val borderColor =
+        when (style) {
+            CustomButtonStyle.DESTRUCTIVE -> AnkaraDanger
+            CustomButtonStyle.OUTLINE -> MaterialTheme.colorScheme.primary
+            else -> Color.Transparent
+        }
 
     when (style) {
         CustomButtonStyle.OUTLINE -> {
@@ -355,27 +361,30 @@ fun CustomButton(
                 enabled = enabled,
                 shape = RoundedCornerShape(10.dp),
                 modifier = modifier
-            ) {
-                ButtonContent(icon, title, contentColor)
-            }
+            ) { ButtonContent(icon, title, contentColor) }
         }
+
         else -> {
             Button(
                 onClick = onClick,
                 enabled = enabled,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = backgroundColor,
-                    contentColor = contentColor
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = backgroundColor,
+                        contentColor = contentColor
+                    ),
                 shape = RoundedCornerShape(10.dp),
-                modifier = modifier.then(
-                    if (borderColor != Color.Transparent) {
-                        Modifier.border(1.dp, borderColor, RoundedCornerShape(10.dp))
-                    } else Modifier
-                )
-            ) {
-                ButtonContent(icon, title, contentColor)
-            }
+                modifier =
+                    modifier.then(
+                        if (borderColor != Color.Transparent) {
+                            Modifier.border(
+                                1.dp,
+                                borderColor,
+                                RoundedCornerShape(10.dp)
+                            )
+                        } else Modifier
+                    )
+            ) { ButtonContent(icon, title, contentColor) }
         }
     }
 }
@@ -395,10 +404,7 @@ private fun ButtonContent(icon: ImageVector?, title: String, contentColor: Color
             )
             Spacer(modifier = Modifier.width(8.dp))
         }
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge
-        )
+        Text(text = title, style = MaterialTheme.typography.labelLarge)
     }
 }
 
@@ -408,10 +414,7 @@ private fun ButtonContent(icon: ImageVector?, title: String, contentColor: Color
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-fun NetworkStatusBanner(
-    isOnline: Boolean,
-    modifier: Modifier = Modifier
-) {
+fun NetworkStatusBanner(isOnline: Boolean, modifier: Modifier = Modifier) {
     var showBanner by remember { mutableStateOf(!isOnline) }
 
     // Online durumu değiştiğinde banner'ı güncelle
@@ -431,10 +434,12 @@ fun NetworkStatusBanner(
         modifier = modifier
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(AnkaraWarning)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(AnkaraWarning)
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -450,10 +455,7 @@ fun NetworkStatusBanner(
                 color = Color.White,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(
-                onClick = { showBanner = false },
-                modifier = Modifier.size(24.dp)
-            ) {
+            IconButton(onClick = { showBanner = false }, modifier = Modifier.size(24.dp)) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Kapat",

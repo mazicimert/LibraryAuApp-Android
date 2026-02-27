@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -24,10 +23,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,17 +35,13 @@ import com.mehmetmertmazici.libraryauapp.ui.components.LoadingOverlay
 import com.mehmetmertmazici.libraryauapp.ui.theme.*
 
 /**
- * AddStudentScreen
- * Yeni öğrenci ekleme ekranı
+ * AddStudentScreen Yeni öğrenci ekleme ekranı
  *
  * iOS Karşılığı: AddStudentView.swift
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddStudentScreen(
-    viewModel: AddStudentViewModel = hiltViewModel(),
-    onDismiss: () -> Unit
-) {
+fun AddStudentScreen(viewModel: AddStudentViewModel = hiltViewModel(), onDismiss: () -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
     val colorScheme = MaterialTheme.colorScheme
     val focusManager = LocalFocusManager.current
@@ -87,9 +82,7 @@ fun AddStudentScreen(
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -97,9 +90,7 @@ fun AddStudentScreen(
 
     // Help sheet
     if (uiState.showHelpSheet) {
-        ValidationHelpSheet(
-            onDismiss = { viewModel.dismissHelpSheet() }
-        )
+        ValidationHelpSheet(onDismiss = { viewModel.dismissHelpSheet() })
     }
 
     AnkaraBackground {
@@ -129,23 +120,25 @@ fun AddStudentScreen(
                         ) {
                             Text(
                                 "Kaydet",
-                                color = if (uiState.isFormValid) AnkaraLightBlue else colorScheme.onSurfaceVariant
+                                color =
+                                    if (uiState.isFormValid) AnkaraLightBlue
+                                    else colorScheme.onSurfaceVariant
                             )
                         }
                     },
-                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                        containerColor = Color.Transparent
-                    )
+                    colors =
+                        TopAppBarDefaults.centerAlignedTopAppBarColors(
+                            containerColor = Color.Transparent
+                        )
                 )
             }
         ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
+            LoadingOverlay(
+                isLoading = uiState.isAddingStudent,
+                message = "Öğrenci kaydediliyor..."
             ) {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
@@ -175,9 +168,7 @@ fun AddStudentScreen(
 
                     // ── Validasyon Hataları Section ──
                     if (uiState.validationErrors.isNotEmpty()) {
-                        item {
-                            ValidationErrorsSection(errors = uiState.validationErrors)
-                        }
+                        item { ValidationErrorsSection(errors = uiState.validationErrors) }
                     }
 
                     // ── Önizleme Section ──
@@ -192,16 +183,9 @@ fun AddStudentScreen(
                     }
 
                     // ── Yardım Section ──
-                    item {
-                        HelpSection(onClick = { viewModel.showHelpSheet() })
-                    }
+                    item { HelpSection(onClick = { viewModel.showHelpSheet() }) }
 
                     item { Spacer(modifier = Modifier.height(32.dp)) }
-                }
-
-                // Loading overlay
-                if (uiState.isAddingStudent) {
-                    LoadingOverlay(message = "Öğrenci kaydediliyor...")
                 }
             }
         }
@@ -223,13 +207,13 @@ private fun PersonalInfoSection(
             value = name,
             onValueChange = onNameChange,
             placeholder = "Öğrenci adı",
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            )
+            keyboardOptions =
+                KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next
+                ),
+            keyboardActions =
+                KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
         )
 
         HorizontalDivider(
@@ -243,13 +227,13 @@ private fun PersonalInfoSection(
             value = surname,
             onValueChange = onSurnameChange,
             placeholder = "Öğrenci soyadı",
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            )
+            keyboardOptions =
+                KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Words,
+                    imeAction = ImeAction.Next
+                ),
+            keyboardActions =
+                KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
         )
     }
 }
@@ -271,15 +255,16 @@ private fun ContactInfoSection(
             value = studentNumber,
             onValueChange = onStudentNumberChange,
             placeholder = "22291001",
-            textColor = if (studentNumber.isNotEmpty() && !isStudentNumberValid)
-                AnkaraDanger else null,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            )
+            textColor =
+                if (studentNumber.isNotEmpty() && !isStudentNumberValid) AnkaraDanger
+                else null,
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+            keyboardActions =
+                KeyboardActions(onNext = { focusManager.moveFocus(FocusDirection.Down) })
         )
 
         HorizontalDivider(
@@ -293,16 +278,15 @@ private fun ContactInfoSection(
             value = email,
             onValueChange = onEmailChange,
             placeholder = "ornek@gmail.com",
-            textColor = if (email.isNotEmpty() && isEmailValid)
-                AnkaraLightBlue else if (email.isNotEmpty() && !isEmailValid)
-                AnkaraDanger else null,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { focusManager.clearFocus() }
-            )
+            textColor =
+                if (email.isNotEmpty() && isEmailValid) AnkaraLightBlue
+                else if (email.isNotEmpty() && !isEmailValid) AnkaraDanger else null,
+            keyboardOptions =
+                KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done
+                ),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
         )
     }
 }
@@ -311,9 +295,7 @@ private fun ContactInfoSection(
 // MARK: - iOS-Style Grouped Form Components
 // ══════════════════════════════════════════════════════════════
 
-/**
- * iOS Settings-like grouped section with a solid background card
- */
+/** iOS Settings-like grouped section with a solid background card */
 @Composable
 private fun GroupedFormSection(
     title: String,
@@ -352,13 +334,9 @@ private fun GroupedFormSection(
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = colorScheme.surface
-            ),
+            colors = CardDefaults.cardColors(containerColor = colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
-        ) {
-            Column(content = content)
-        }
+        ) { Column(content = content) }
 
         // Footer
         if (footer != null) {
@@ -372,9 +350,7 @@ private fun GroupedFormSection(
     }
 }
 
-/**
- * iOS Settings-style form row: label on the left, borderless text input on the right
- */
+/** iOS Settings-style form row: label on the left, borderless text input on the right */
 @Composable
 private fun iOSFormFieldRow(
     label: String,
@@ -412,10 +388,7 @@ private fun iOSFormFieldRow(
             singleLine = true,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            textStyle = TextStyle(
-                fontSize = 16.sp,
-                color = resolvedTextColor
-            ),
+            textStyle = TextStyle(fontSize = 16.sp, color = resolvedTextColor),
             cursorBrush = SolidColor(AnkaraLightBlue),
             modifier = Modifier.weight(1f),
             decorationBox = { innerTextField ->
@@ -455,11 +428,7 @@ private fun ValidationErrorsSection(errors: List<String>) {
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    error,
-                    fontSize = 14.sp,
-                    color = AnkaraDanger
-                )
+                Text(error, fontSize = 14.sp, color = AnkaraDanger)
             }
             if (index < errors.size - 1) {
                 HorizontalDivider(
@@ -485,15 +454,14 @@ private fun PreviewSection(
 
     FormSection(title = "ÖNİZLEME") {
         // Profile preview
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             // Avatar
             Box(
-                modifier = Modifier
-                    .size(60.dp)
-                    .clip(CircleShape)
-                    .background(AnkaraSuccess.copy(alpha = 0.1f)),
+                modifier =
+                    Modifier
+                        .size(60.dp)
+                        .clip(CircleShape)
+                        .background(AnkaraSuccess.copy(alpha = 0.1f)),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -548,9 +516,7 @@ private fun PreviewSection(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Status indicator
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             if (isFormValid) {
                 Icon(
                     imageVector = Icons.Filled.VerifiedUser,
@@ -559,11 +525,7 @@ private fun PreviewSection(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    "Kaydetmeye hazır",
-                    fontSize = 12.sp,
-                    color = AnkaraSuccess
-                )
+                Text("Kaydetmeye hazır", fontSize = 12.sp, color = AnkaraSuccess)
             } else {
                 Icon(
                     imageVector = Icons.Filled.Warning,
@@ -572,11 +534,7 @@ private fun PreviewSection(
                     modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    "Eksik bilgiler var",
-                    fontSize = 12.sp,
-                    color = AnkaraWarning
-                )
+                Text("Eksik bilgiler var", fontSize = 12.sp, color = AnkaraWarning)
             }
         }
     }
@@ -591,9 +549,10 @@ private fun HelpSection(onClick: () -> Unit) {
             .fillMaxWidth()
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = colorScheme.surfaceVariant.copy(alpha = 0.5f)
-        )
+        colors =
+            CardDefaults.cardColors(
+                containerColor = colorScheme.surfaceVariant.copy(alpha = 0.5f)
+            )
     ) {
         Row(
             modifier = Modifier
@@ -634,15 +593,10 @@ private fun HelpSection(onClick: () -> Unit) {
 private fun ValidationHelpSheet(onDismiss: () -> Unit) {
     val colorScheme = MaterialTheme.colorScheme
 
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        containerColor = colorScheme.surface
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
+    ModalBottomSheet(onDismissRequest = onDismiss, containerColor = colorScheme.surface) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)) {
             Text(
                 text = "Yardım",
                 fontSize = 20.sp,
@@ -706,9 +660,7 @@ private fun ValidationHelpSheet(onDismiss: () -> Unit) {
                 onClick = onDismiss,
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(containerColor = AnkaraBlue)
-            ) {
-                Text("Kapat")
-            }
+            ) { Text("Kapat") }
 
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -746,11 +698,7 @@ private fun HelpRowItem(
                 fontWeight = FontWeight.Medium,
                 color = colorScheme.onBackground
             )
-            Text(
-                text = description,
-                fontSize = 12.sp,
-                color = colorScheme.onSurfaceVariant
-            )
+            Text(text = description, fontSize = 12.sp, color = colorScheme.onSurfaceVariant)
         }
     }
 }

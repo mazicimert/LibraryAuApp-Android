@@ -18,7 +18,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mehmetmertmazici.libraryauapp.data.model.BookCopy
 import com.mehmetmertmazici.libraryauapp.data.model.BookTemplate
 import com.mehmetmertmazici.libraryauapp.ui.components.LoadingOverlay
 import com.mehmetmertmazici.libraryauapp.ui.theme.*
@@ -78,9 +77,7 @@ fun AddCopyScreen(
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -91,17 +88,11 @@ fun AddCopyScreen(
             TopAppBar(
                 title = { Text("Yeni Kopya Ekle") },
                 navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("İptal", color = AnkaraLightBlue)
-                    }
+                    TextButton(onClick = onBack) { Text("İptal", color = AnkaraLightBlue) }
                 },
                 actions = {
                     TextButton(
-                        onClick = {
-                            viewModel.addCopies {
-                                onCopyAdded()
-                            }
-                        },
+                        onClick = { viewModel.addCopies { onCopyAdded() } },
                         enabled = uiState.isFormValid && !uiState.isAddingCopies
                     ) {
                         Text(
@@ -120,19 +111,15 @@ fun AddCopyScreen(
         }
     ) { paddingValues ->
         AnkaraBackground {
-            Box(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)) {
+            LoadingOverlay(isLoading = uiState.isAddingCopies, message = "Kopyalar ekleniyor...") {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     // ── Kitap Bilgisi Section ──
                     item {
-                        uiState.bookTemplate?.let { book ->
-                            BookInfoSection(bookTemplate = book)
-                        }
+                        uiState.bookTemplate?.let { book -> BookInfoSection(bookTemplate = book) }
                     }
 
                     // ── Mevcut Durumu Section ──
@@ -202,11 +189,6 @@ fun AddCopyScreen(
                     }
 
                     item { Spacer(modifier = Modifier.height(32.dp)) }
-                }
-
-                // Loading overlay
-                if (uiState.isAddingCopies) {
-                    LoadingOverlay(message = "Kopyalar ekleniyor...")
                 }
             }
         }

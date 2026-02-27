@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -20,7 +19,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -41,16 +39,13 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 /**
- * AdminManagementScreen
- * Admin kullanıcı yönetimi ekranı (Sadece Süper Admin için)
+ * AdminManagementScreen Admin kullanıcı yönetimi ekranı (Sadece Süper Admin için)
  *
  * iOS Karşılığı: AdminManagementView.swift
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminManagementScreen(
-    viewModel: AdminViewModel = hiltViewModel()
-) {
+fun AdminManagementScreen(viewModel: AdminViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val isOnline by viewModel.isOnline.collectAsState()
 
@@ -59,6 +54,11 @@ fun AdminManagementScreen(
     var showBulkApprovalConfirmation by remember { mutableStateOf(false) }
     var selectedAdmin by remember { mutableStateOf<AdminUser?>(null) }
     var showRejectConfirmation by remember { mutableStateOf(false) }
+
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    // Pull-to-refresh bittiğinde isRefreshing'i sıfırla
+    LaunchedEffect(uiState.isLoading) { if (!uiState.isLoading) isRefreshing = false }
 
     LoadingOverlay(isLoading = viewModel.showLoadingIndicator) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -78,7 +78,8 @@ fun AdminManagementScreen(
                             Icon(
                                 imageVector = Icons.Filled.CheckCircle,
                                 contentDescription = "Toplu Onayla",
-                                tint = AnkaraLightBlue
+                                tint = AnkaraLightBlue,
+                                modifier = Modifier.size(26.dp)
                             )
                         }
                     }
@@ -89,14 +90,13 @@ fun AdminManagementScreen(
                             Icon(
                                 imageVector = Icons.Filled.Add,
                                 contentDescription = "Yeni Admin Ekle",
-                                tint = AnkaraLightBlue
+                                tint = AnkaraLightBlue,
+                                modifier = Modifier.size(26.dp)
                             )
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)
             )
 
             // Pending Approval Banner
@@ -117,8 +117,11 @@ fun AdminManagementScreen(
 
             // Admin List Section
             PullToRefreshBox(
-                isRefreshing = uiState.isLoading,
-                onRefresh = { viewModel.refreshAdminUsers() },
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    isRefreshing = true
+                    viewModel.refreshAdminUsers()
+                },
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
@@ -128,10 +131,12 @@ fun AdminManagementScreen(
                         icon = Icons.Filled.AdminPanelSettings,
                         title = "Admin Bulunamadı",
                         message = viewModel.emptyStateMessage,
-                        actionTitle = if (viewModel.canManageAdmins) "İlk Admini Ekle" else null,
-                        onAction = if (viewModel.canManageAdmins) {
-                            { viewModel.openAddAdminForm() }
-                        } else null,
+                        actionTitle =
+                            if (viewModel.canManageAdmins) "İlk Admini Ekle" else null,
+                        onAction =
+                            if (viewModel.canManageAdmins) {
+                                { viewModel.openAddAdminForm() }
+                            } else null,
                         modifier = Modifier
                             .fillMaxSize()
                             .verticalScroll(rememberScrollState())
@@ -215,7 +220,8 @@ fun AdminManagementScreen(
             },
             text = {
                 Text(
-                    text = "${viewModel.pendingAdminCount} admin kalıcı olarak onaylanacak. Devam etmek istediğinizden emin misiniz?",
+                    text =
+                        "${viewModel.pendingAdminCount} admin kalıcı olarak onaylanacak. Devam etmek istediğinizden emin misiniz?",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -228,17 +234,13 @@ fun AdminManagementScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = AnkaraSuccess),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tümünü Onayla", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tümünü Onayla", color = Color.White, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 TextButton(
                     onClick = { showBulkApprovalConfirmation = false },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -253,10 +255,11 @@ fun AdminManagementScreen(
             },
             icon = {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    modifier =
+                        Modifier
+                            .size(48.dp)
+                            .clip(CircleShape)
+                            .background(AnkaraDanger.copy(alpha = 0.1f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -277,7 +280,8 @@ fun AdminManagementScreen(
             },
             text = {
                 Text(
-                    text = "'${selectedAdmin?.displayName}' adminini reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve başvuru kalıcı olarak silinir.",
+                    text =
+                        "'${selectedAdmin?.displayName}' adminini reddetmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve başvuru kalıcı olarak silinir.",
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -291,9 +295,7 @@ fun AdminManagementScreen(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Evet, Reddet", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Evet, Reddet", color = Color.White, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 OutlinedButton(
@@ -302,13 +304,12 @@ fun AdminManagementScreen(
                         selectedAdmin = null
                     },
                     modifier = Modifier.fillMaxWidth(),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline
-                    )
-                ) {
-                    Text("İptal Et", color = MaterialTheme.colorScheme.onSurface)
-                }
+                    border =
+                        androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outline
+                        )
+                ) { Text("İptal Et", color = MaterialTheme.colorScheme.onSurface) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -359,18 +360,17 @@ fun AdminManagementScreen(
                 Button(
                     onClick = { viewModel.addNewAdmin() },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                ) {
-                    Text("Onayla", fontWeight = FontWeight.Bold)
-                }
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary
+                        )
+                ) { Text("Onayla", fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 TextButton(
                     onClick = { viewModel.dismissPasswordVerification() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurfaceVariant) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -407,9 +407,7 @@ fun AdminManagementScreen(
                 Button(
                     onClick = { viewModel.dismissAlert() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -436,15 +434,13 @@ private fun HeaderSection(modifier: Modifier = Modifier) {
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-private fun PendingApprovalBanner(
-    notification: String,
-    onViewClick: () -> Unit
-) {
+private fun PendingApprovalBanner(notification: String, onViewClick: () -> Unit) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFFFA500).copy(alpha = 0.1f))
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color(0xFFFFA500).copy(alpha = 0.1f))
+                .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -471,10 +467,11 @@ private fun PendingApprovalBanner(
 
         Button(
             onClick = onViewClick,
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFFA500),
-                contentColor = Color.White
-            ),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFFA500),
+                    contentColor = Color.White
+                ),
             shape = RoundedCornerShape(8.dp),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
         ) {
@@ -494,14 +491,8 @@ private fun PendingApprovalBanner(
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-private fun StatisticsSection(
-    statistics: AdminStatistics,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+private fun StatisticsSection(statistics: AdminStatistics, modifier: Modifier = Modifier) {
+    Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         AdminStatCard(
             icon = Icons.Filled.Groups,
             title = "Toplam",
@@ -546,10 +537,11 @@ private fun AdminStatCard(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
-        modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .background(color.copy(alpha = if (isDark) 0.1f else 0.2f))
-            .padding(vertical = 10.dp, horizontal = 4.dp)
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(12.dp))
+                .background(color.copy(alpha = if (isDark) 0.1f else 0.2f))
+                .padding(vertical = 10.dp, horizontal = 4.dp)
     ) {
         Icon(
             imageVector = icon,
@@ -637,12 +629,7 @@ private fun AdminListSection(
 }
 
 @Composable
-private fun SectionHeader(
-    icon: ImageVector,
-    title: String,
-    color: Color,
-    count: Int
-) {
+private fun SectionHeader(icon: ImageVector, title: String, color: Color, count: Int) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -668,10 +655,11 @@ private fun SectionHeader(
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White,
-            modifier = Modifier
-                .clip(RoundedCornerShape(10.dp))
-                .background(color)
-                .padding(horizontal = 8.dp, vertical = 2.dp)
+            modifier =
+                Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(color)
+                    .padding(horizontal = 8.dp, vertical = 2.dp)
         )
     }
 }
@@ -681,11 +669,7 @@ private fun SectionHeader(
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-private fun PendingAdminRowView(
-    admin: AdminUser,
-    onApprove: () -> Unit,
-    onReject: () -> Unit
-) {
+private fun PendingAdminRowView(admin: AdminUser, onApprove: () -> Unit, onReject: () -> Unit) {
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale("tr")) }
 
     Card(
@@ -693,9 +677,10 @@ private fun PendingAdminRowView(
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -707,17 +692,19 @@ private fun PendingAdminRowView(
         ) {
             // Avatar
             Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                Color(0xFFFFA500),
-                                Color(0xFFFF8C00)
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.linearGradient(
+                                colors =
+                                    listOf(
+                                        Color(0xFFFFA500),
+                                        Color(0xFFFF8C00)
+                                    )
                             )
-                        )
-                    ),
+                        ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -771,10 +758,11 @@ private fun PendingAdminRowView(
                     // Onayla butonu
                     Button(
                         onClick = onApprove,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = AnkaraSuccess,
-                            contentColor = Color.White
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = AnkaraSuccess,
+                                contentColor = Color.White
+                            ),
                         shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
                         modifier = Modifier.height(32.dp)
@@ -793,9 +781,10 @@ private fun PendingAdminRowView(
                         onClick = onReject,
                         shape = RoundedCornerShape(8.dp),
                         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(
-                            contentColor = AnkaraDanger
-                        ),
+                        colors =
+                            ButtonDefaults.outlinedButtonColors(
+                                contentColor = AnkaraDanger
+                            ),
                         border = androidx.compose.foundation.BorderStroke(1.dp, AnkaraDanger),
                         modifier = Modifier.height(32.dp)
                     ) {
@@ -834,9 +823,10 @@ private fun ApprovedAdminRowView(
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 4.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -848,17 +838,19 @@ private fun ApprovedAdminRowView(
         ) {
             // Avatar
             Box(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .background(
-                        Brush.linearGradient(
-                            colors = listOf(
-                                roleColor,
-                                roleColor.copy(alpha = 0.8f)
+                modifier =
+                    Modifier
+                        .size(48.dp)
+                        .clip(CircleShape)
+                        .background(
+                            Brush.linearGradient(
+                                colors =
+                                    listOf(
+                                        roleColor,
+                                        roleColor.copy(alpha = 0.8f)
+                                    )
                             )
-                        )
-                    ),
+                        ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -890,10 +882,11 @@ private fun ApprovedAdminRowView(
                             fontSize = 11.sp,
                             fontWeight = FontWeight.Bold,
                             color = roleColor,
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(roleColor.copy(alpha = 0.1f))
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
+                            modifier =
+                                Modifier
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(roleColor.copy(alpha = 0.1f))
+                                    .padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                     }
                 }
@@ -912,10 +905,11 @@ private fun ApprovedAdminRowView(
                     fontSize = 11.sp,
                     fontWeight = FontWeight.Medium,
                     color = Color.White,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(roleColor)
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                    modifier =
+                        Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(roleColor)
+                            .padding(horizontal = 8.dp, vertical = 2.dp)
                 )
             }
 
@@ -924,10 +918,11 @@ private fun ApprovedAdminRowView(
                 Box {
                     IconButton(
                         onClick = { showMenu = true },
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(AnkaraLightBlue.copy(alpha = 0.1f))
+                        modifier =
+                            Modifier
+                                .size(32.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(AnkaraLightBlue.copy(alpha = 0.1f))
                     ) {
                         Icon(
                             imageVector = Icons.Filled.MoreVert,
@@ -937,10 +932,7 @@ private fun ApprovedAdminRowView(
                         )
                     }
 
-                    DropdownMenu(
-                        expanded = showMenu,
-                        onDismissRequest = { showMenu = false }
-                    ) {
+                    DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                         DropdownMenuItem(
                             text = {
                                 Text(
@@ -950,8 +942,9 @@ private fun ApprovedAdminRowView(
                             },
                             leadingIcon = {
                                 Icon(
-                                    imageVector = if (admin.isSuperAdmin) Icons.Filled.Person
-                                    else Icons.Filled.Star,
+                                    imageVector =
+                                        if (admin.isSuperAdmin) Icons.Filled.Person
+                                        else Icons.Filled.Star,
                                     contentDescription = null
                                 )
                             },
@@ -962,9 +955,7 @@ private fun ApprovedAdminRowView(
                         )
                         HorizontalDivider()
                         DropdownMenuItem(
-                            text = {
-                                Text("Admini Sil", color = AnkaraDanger)
-                            },
+                            text = { Text("Admini Sil", color = AnkaraDanger) },
                             leadingIcon = {
                                 Icon(
                                     imageVector = Icons.Filled.Delete,
@@ -1010,18 +1001,14 @@ private fun PendingApprovalsSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = onDismiss) {
-                    Text("Kapat")
-                }
+                TextButton(onClick = onDismiss) { Text("Kapat") }
                 Text(
                     text = "Onay Bekleyenler",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 if (pendingAdmins.isNotEmpty()) {
-                    TextButton(onClick = onBulkApprove) {
-                        Text("Tümünü Onayla")
-                    }
+                    TextButton(onClick = onBulkApprove) { Text("Tümünü Onayla") }
                 } else {
                     Spacer(modifier = Modifier.width(80.dp))
                 }
@@ -1081,11 +1068,7 @@ private fun PendingApprovalsSheet(
 // ══════════════════════════════════════════════════════════════
 
 @Composable
-private fun PendingAdminDetailCard(
-    admin: AdminUser,
-    onApprove: () -> Unit,
-    onReject: () -> Unit
-) {
+private fun PendingAdminDetailCard(admin: AdminUser, onApprove: () -> Unit, onReject: () -> Unit) {
     val dateFormat = remember { SimpleDateFormat("dd.MM.yyyy", Locale("tr")) }
 
     Card(
@@ -1103,10 +1086,11 @@ private fun PendingAdminDetailCard(
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clip(CircleShape)
-                        .background(Color(0xFFFFA500).copy(alpha = 0.2f)),
+                    modifier =
+                        Modifier
+                            .size(60.dp)
+                            .clip(CircleShape)
+                            .background(Color(0xFFFFA500).copy(alpha = 0.2f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -1139,14 +1123,8 @@ private fun PendingAdminDetailCard(
                     icon = Icons.Filled.CalendarToday,
                     text = "Kayıt: ${dateFormat.format(admin.createdAt.toDate())}"
                 )
-                InfoRow(
-                    icon = Icons.Filled.Email,
-                    text = admin.email
-                )
-                InfoRow(
-                    icon = Icons.Filled.AdminPanelSettings,
-                    text = "Rol: Admin"
-                )
+                InfoRow(icon = Icons.Filled.Email, text = admin.email)
+                InfoRow(icon = Icons.Filled.AdminPanelSettings, text = "Rol: Admin")
             }
 
             // Action Buttons
@@ -1157,10 +1135,11 @@ private fun PendingAdminDetailCard(
                 Button(
                     onClick = onApprove,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = AnkaraSuccess,
-                        contentColor = Color.White
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = AnkaraSuccess,
+                            contentColor = Color.White
+                        ),
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(
@@ -1175,10 +1154,11 @@ private fun PendingAdminDetailCard(
                 Button(
                     onClick = onReject,
                     modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = AnkaraDanger,
-                        contentColor = Color.White
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = AnkaraDanger,
+                            contentColor = Color.White
+                        ),
                     shape = RoundedCornerShape(10.dp)
                 ) {
                     Icon(
@@ -1195,10 +1175,7 @@ private fun PendingAdminDetailCard(
 }
 
 @Composable
-private fun InfoRow(
-    icon: ImageVector,
-    text: String
-) {
+private fun InfoRow(icon: ImageVector, text: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -1243,11 +1220,12 @@ private fun AddAdminSheet(
         containerColor = MaterialTheme.colorScheme.background
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 32.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 32.dp)
         ) {
             // Header with close button
             Row(
@@ -1255,9 +1233,7 @@ private fun AddAdminSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = onDismiss) {
-                    Text("İptal")
-                }
+                TextButton(onClick = onDismiss) { Text("İptal") }
                 Text(
                     text = "Yeni Admin Ekle",
                     style = MaterialTheme.typography.titleMedium,
@@ -1306,9 +1282,11 @@ private fun AddAdminSheet(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-                ),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -1321,9 +1299,7 @@ private fun AddAdminSheet(
                         onValueChange = onDisplayNameChange,
                         label = { Text("Ad Soyad *") },
                         placeholder = { Text("Adınız Soyadınız") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Person, contentDescription = null)
-                        },
+                        leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -1334,9 +1310,7 @@ private fun AddAdminSheet(
                         onValueChange = onEmailChange,
                         label = { Text("E-posta *") },
                         placeholder = { Text("admin@example.com") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Email, contentDescription = null)
-                        },
+                        leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null) },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
@@ -1348,20 +1322,22 @@ private fun AddAdminSheet(
                         onValueChange = onPasswordChange,
                         label = { Text("Şifre *") },
                         placeholder = { Text("En az 6 karakter") },
-                        leadingIcon = {
-                            Icon(Icons.Filled.Lock, contentDescription = null)
-                        },
+                        leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null) },
                         trailingIcon = {
                             IconButton(onClick = { showPassword = !showPassword }) {
                                 Icon(
-                                    imageVector = if (showPassword) Icons.Filled.VisibilityOff
-                                    else Icons.Filled.Visibility,
-                                    contentDescription = if (showPassword) "Şifreyi Gizle" else "Şifreyi Göster"
+                                    imageVector =
+                                        if (showPassword) Icons.Filled.VisibilityOff
+                                        else Icons.Filled.Visibility,
+                                    contentDescription =
+                                        if (showPassword) "Şifreyi Gizle"
+                                        else "Şifreyi Göster"
                                 )
                             }
                         },
-                        visualTransformation = if (showPassword) VisualTransformation.None
-                        else PasswordVisualTransformation(),
+                        visualTransformation =
+                            if (showPassword) VisualTransformation.None
+                            else PasswordVisualTransformation(),
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -1378,11 +1354,7 @@ private fun AddAdminSheet(
                             tint = AnkaraBlue
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "Şifre gereksinimleri",
-                            fontSize = 12.sp,
-                            color = AnkaraBlue
-                        )
+                        Text(text = "Şifre gereksinimleri", fontSize = 12.sp, color = AnkaraBlue)
                     }
                 }
             }
@@ -1401,9 +1373,11 @@ private fun AddAdminSheet(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
-                ),
+                colors =
+                    CardDefaults.cardColors(
+                        containerColor =
+                            MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp)
+                    ),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -1420,12 +1394,13 @@ private fun AddAdminSheet(
                             horizontalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Icon(
-                                imageVector = if (uiState.newAdminIsSuperAdmin) Icons.Filled.Star
-                                else Icons.Filled.AdminPanelSettings,
+                                imageVector =
+                                    if (uiState.newAdminIsSuperAdmin) Icons.Filled.Star
+                                    else Icons.Filled.AdminPanelSettings,
                                 contentDescription = null,
-                                tint = if (uiState.newAdminIsSuperAdmin) Color(0xFF9C27B0) else Color(
-                                    0xFF2196F3
-                                )
+                                tint =
+                                    if (uiState.newAdminIsSuperAdmin) Color(0xFF9C27B0)
+                                    else Color(0xFF2196F3)
                             )
                             Text(
                                 text = "Süper Admin",
@@ -1436,9 +1411,8 @@ private fun AddAdminSheet(
                         Switch(
                             checked = uiState.newAdminIsSuperAdmin,
                             onCheckedChange = onIsSuperAdminChange,
-                            colors = SwitchDefaults.colors(
-                                checkedTrackColor = Color(0xFF9C27B0)
-                            )
+                            colors =
+                                SwitchDefaults.colors(checkedTrackColor = Color(0xFF9C27B0))
                         )
                     }
 
@@ -1455,7 +1429,8 @@ private fun AddAdminSheet(
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
-                            text = "Süper adminler tüm yetkilere sahiptir ve diğer adminleri yönetebilir.",
+                            text =
+                                "Süper adminler tüm yetkilere sahiptir ve diğer adminleri yönetebilir.",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -1469,17 +1444,26 @@ private fun AddAdminSheet(
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = AnkaraDanger.copy(alpha = 0.1f)
-                    ),
-                    border = CardDefaults.outlinedCardBorder().copy(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                AnkaraDanger.copy(alpha = 0.3f),
-                                AnkaraDanger.copy(alpha = 0.3f)
+                    colors =
+                        CardDefaults.cardColors(
+                            containerColor = AnkaraDanger.copy(alpha = 0.1f)
+                        ),
+                    border =
+                        CardDefaults.outlinedCardBorder()
+                            .copy(
+                                brush =
+                                    Brush.linearGradient(
+                                        colors =
+                                            listOf(
+                                                AnkaraDanger.copy(
+                                                    alpha = 0.3f
+                                                ),
+                                                AnkaraDanger.copy(
+                                                    alpha = 0.3f
+                                                )
+                                            )
+                                    )
                             )
-                        )
-                    )
                 ) {
                     Column(
                         modifier = Modifier.padding(16.dp),
@@ -1502,9 +1486,7 @@ private fun AddAdminSheet(
                             )
                         }
                         formErrors.forEach { error ->
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                                 Text("•", color = AnkaraDanger)
                                 Text(
                                     text = error,
@@ -1527,10 +1509,11 @@ private fun AddAdminSheet(
                     .height(50.dp),
                 enabled = isFormValid && !uiState.isAddingAdmin,
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = AnkaraBlue,
-                    disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
-                )
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = AnkaraBlue,
+                        disabledContainerColor = Color.Gray.copy(alpha = 0.6f)
+                    )
             ) {
                 if (uiState.isAddingAdmin) {
                     CircularProgressIndicator(
@@ -1545,10 +1528,7 @@ private fun AddAdminSheet(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Admin Ekle",
-                        fontWeight = FontWeight.SemiBold
-                    )
+                    Text(text = "Admin Ekle", fontWeight = FontWeight.SemiBold)
                 }
             }
         }
@@ -1559,13 +1539,9 @@ private fun AddAdminSheet(
         AlertDialog(
             onDismissRequest = { showPasswordRequirements = false },
             title = { Text("Şifre Gereksinimleri") },
-            text = {
-                Text("• En az 6 karakter\n• En az bir harf\n• En az bir rakam")
-            },
+            text = { Text("• En az 6 karakter\n• En az bir harf\n• En az bir rakam") },
             confirmButton = {
-                TextButton(onClick = { showPasswordRequirements = false }) {
-                    Text("Tamam")
-                }
+                TextButton(onClick = { showPasswordRequirements = false }) { Text("Tamam") }
             }
         )
     }

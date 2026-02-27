@@ -1,10 +1,9 @@
 package com.mehmetmertmazici.libraryauapp.ui.books
 
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,16 +22,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +36,6 @@ import com.mehmetmertmazici.libraryauapp.data.model.BookTemplate
 import com.mehmetmertmazici.libraryauapp.ui.components.EmptyStateView
 import com.mehmetmertmazici.libraryauapp.ui.components.LoadingOverlay
 import com.mehmetmertmazici.libraryauapp.ui.theme.*
-import kotlin.math.roundToInt
 
 /**
  * BookListScreen Ana kitap listesi ekranı
@@ -70,10 +65,13 @@ fun BookListScreen(
             onDismissRequest = { viewModel.cancelDeleteBook() },
             icon = {
                 Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(AnkaraDanger.copy(alpha = 0.1f)),
+                    modifier =
+                        Modifier
+                                .size(48.dp)
+                                .clip(CircleShape)
+                                .background(
+                                        AnkaraDanger.copy(alpha = 0.1f)
+                                ),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
@@ -102,20 +100,23 @@ fun BookListScreen(
             confirmButton = {
                 Button(
                     onClick = { viewModel.confirmDeleteBookWithAllCopies() },
-                    colors = ButtonDefaults.buttonColors(containerColor = AnkaraDanger),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = AnkaraDanger
+                        ),
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Sil", color = Color.White, fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Sil", color = Color.White, fontWeight = FontWeight.Bold) }
             },
             dismissButton = {
                 OutlinedButton(
                     onClick = { viewModel.cancelDeleteBook() },
                     modifier = Modifier.fillMaxWidth(),
-                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
-                ) {
-                    Text("İptal", color = MaterialTheme.colorScheme.onSurface)
-                }
+                    border =
+                        BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outline
+                        )
+                ) { Text("İptal", color = MaterialTheme.colorScheme.onSurface) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -149,15 +150,13 @@ fun BookListScreen(
                 Button(
                     onClick = { viewModel.dismissAlert() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    LoadingOverlay(isLoading = uiState.isLoading, message = "Yükleniyor...") {
         Column(modifier = Modifier.fillMaxSize()) {
             // ── Header Section ──
             HeaderSection(
@@ -196,18 +195,10 @@ fun BookListScreen(
                 onAddBook = onAddBook
             )
         }
-
-        // Loading overlay
-        if (uiState.isLoading) {
-            LoadingOverlay(message = "Yükleniyor...")
-        }
     }
 }
 
-/**
- * Header Section
- * Sol: Başlık, Sağ: Aksiyon butonları
- */
+/** Header Section Sol: Başlık, Sağ: Aksiyon butonları */
 @Composable
 private fun HeaderSection(
     onBarcodeScanner: () -> Unit,
@@ -218,16 +209,12 @@ private fun HeaderSection(
     val colorScheme = MaterialTheme.colorScheme
     val isDark = isSystemInDarkTheme()
 
-    // Buton arka plan renkleri
-    val buttonBg =
-        if (isDark) AnkaraLightBlue.copy(alpha = 0.15f) else AnkaraBlue.copy(alpha = 0.08f)
-    val buttonTint = if (isDark) AnkaraLightBlue else AnkaraBlue
-
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 12.dp, bottom = 8.dp),
+        modifier =
+            Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 12.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -245,39 +232,28 @@ private fun HeaderSection(
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Barkod tarayıcı butonu
-            IconButton(
-                onClick = onBarcodeScanner,
-                modifier = Modifier
-                    .size(40.dp)
-                    .clip(RoundedCornerShape(10.dp))
-                    .background(buttonBg)
-            ) {
+            IconButton(onClick = onBarcodeScanner) {
                 Icon(
                     imageVector = Icons.Filled.QrCodeScanner,
                     contentDescription = "Barkod Tara",
-                    tint = buttonTint,
-                    modifier = Modifier.size(20.dp)
+                    tint = AnkaraLightBlue,
+                    modifier = Modifier.size(26.dp)
                 )
             }
 
             // Kitap ekle butonu
             if (canAddBooks) {
-                IconButton(
-                    onClick = onAddBook,
-                    enabled = isOnline,
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(
-                            if (isOnline) AnkaraBlue
-                            else colorScheme.onSurfaceVariant.copy(alpha = 0.2f)
-                        )
-                ) {
+                IconButton(onClick = onAddBook, enabled = isOnline) {
                     Icon(
                         imageVector = Icons.Filled.Add,
                         contentDescription = "Kitap Ekle",
-                        tint = if (isOnline) Color.White else colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
+                        tint =
+                            if (isOnline) AnkaraLightBlue
+                            else
+                                colorScheme.onSurfaceVariant.copy(
+                                    alpha = 0.4f
+                                ),
+                        modifier = Modifier.size(26.dp)
                     )
                 }
             }
@@ -299,9 +275,9 @@ private fun SearchAndFilterSection(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(top = 8.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         // Search bar
@@ -309,7 +285,10 @@ private fun SearchAndFilterSection(
             value = searchText,
             onValueChange = onSearchTextChange,
             placeholder = {
-                Text("Kitap, yazar veya ISBN ara...", color = colorScheme.onSurfaceVariant)
+                Text(
+                    "Kitap, yazar veya ISBN ara...",
+                    color = colorScheme.onSurfaceVariant
+                )
             },
             leadingIcon = {
                 Icon(
@@ -336,7 +315,7 @@ private fun SearchAndFilterSection(
             shape = RoundedCornerShape(10.dp),
             colors =
                 OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = AnkaraBlue,
+                    focusedBorderColor = AnkaraLightBlue,
                     unfocusedBorderColor = Color.Transparent,
                     focusedContainerColor =
                         colorScheme.surfaceVariant.copy(alpha = 0.5f),
@@ -383,10 +362,10 @@ private fun CategoryFilterChip(category: String, isSelected: Boolean, onSelect: 
     Box(
         modifier =
             Modifier
-                .clip(RoundedCornerShape(20.dp))
-                .background(backgroundColor)
-                .clickable { onSelect() }
-                .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(backgroundColor)
+                    .clickable { onSelect() }
+                    .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -403,7 +382,8 @@ private fun CategoryFilterChip(category: String, isSelected: Boolean, onSelect: 
             Text(
                 text = category,
                 fontSize = 14.sp,
-                fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
+                fontWeight =
+                    if (isSelected) FontWeight.SemiBold else FontWeight.Medium,
                 color = if (isSelected) Color.White else colorScheme.onBackground
             )
         }
@@ -416,8 +396,8 @@ private fun StatisticsSection(count: Int, isOnline: Boolean) {
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 4.dp),
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 4.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -457,6 +437,11 @@ private fun BookListSection(
     onRefresh: () -> Unit,
     onAddBook: () -> Unit
 ) {
+    var isRefreshing by remember { mutableStateOf(false) }
+
+    // Pull-to-refresh bittiğinde isRefreshing'i sıfırla
+    LaunchedEffect(isLoading) { if (!isLoading) isRefreshing = false }
+
     if (showEmptyState) {
         EmptyStateView(
             icon = Icons.Filled.MenuBook,
@@ -467,8 +452,11 @@ private fun BookListSection(
         )
     } else {
         PullToRefreshBox(
-            isRefreshing = isLoading,
-            onRefresh = onRefresh,
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                onRefresh()
+            },
             modifier = Modifier.fillMaxSize()
         ) {
             LazyColumn(
@@ -477,7 +465,7 @@ private fun BookListSection(
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(books, key = { it.id ?: it.hashCode() }) { book ->
-                    SwipeableBookRow(
+                    BookRowView(
                         book = book,
                         onClick = { onBookClick(book) },
                         onDelete = { onDeleteBook(book) }
@@ -489,102 +477,45 @@ private fun BookListSection(
 }
 
 @Composable
-private fun SwipeableBookRow(book: BookTemplate, onClick: () -> Unit, onDelete: () -> Unit) {
-    var offsetX by remember { mutableFloatStateOf(0f) }
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(100.dp)
-    ) {
-        // Delete background
-        if (offsetX < 0) {
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(AnkaraDanger)
-                        .clickable {
-                            onDelete()
-                            offsetX = 0f
-                        },
-                contentAlignment = Alignment.CenterEnd
-            ) {
-                Row(
-                    modifier = Modifier.padding(end = 32.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Sil",
-                        tint = Color.White
-                    )
-                    Text(text = "Sil", color = Color.White, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-
-        // Book row content
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .offset { IntOffset(offsetX.roundToInt(), 0) }
-                    .pointerInput(Unit) {
-                        detectHorizontalDragGestures(
-                            onDragEnd = {
-                                offsetX = if (offsetX < -100f) -100f else 0f
-                            },
-                            onHorizontalDrag = { _, dragAmount ->
-                                val newOffset = offsetX + dragAmount
-                                offsetX = newOffset.coerceIn(-200f, 0f)
-                            }
-                        )
-                    }
-        ) { BookRowView(book = book, onClick = onClick) }
-    }
-}
-
-@Composable
-fun BookRowView(book: BookTemplate, onClick: () -> Unit) {
+fun BookRowView(book: BookTemplate, onClick: () -> Unit, onDelete: (() -> Unit)? = null) {
     val colorScheme = MaterialTheme.colorScheme
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onClick() },
+                .fillMaxWidth()
+                .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
-        colors =
-            CardDefaults.cardColors(
-                containerColor = colorScheme.surface.copy(alpha = 0.9f)
+        colors = CardDefaults.cardColors(containerColor = colorScheme.surface),
+        border =
+            BorderStroke(
+                width = 1.dp,
+                color = colorScheme.outlineVariant.copy(alpha = 0.5f)
             ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 16.dp),
+            modifier =
+                Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Book icon
             Box(
                 modifier =
                     Modifier
-                        .size(60.dp)
-                        .shadow(4.dp, RoundedCornerShape(12.dp))
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(
-                            brush =
-                                Brush.linearGradient(
-                                    colors =
-                                        listOf(
-                                            AnkaraBlue,
-                                            AnkaraLightBlue
-                                        )
-                                )
-                        ),
+                            .size(56.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(
+                                    brush =
+                                            Brush.linearGradient(
+                                                    colors =
+                                                            listOf(
+                                                                    AnkaraBlue,
+                                                                    AnkaraLightBlue
+                                                            )
+                                            )
+                            ),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -638,31 +569,77 @@ fun BookRowView(book: BookTemplate, onClick: () -> Unit) {
                         color = AnkaraLightBlue,
                         modifier =
                             Modifier
-                                .background(
-                                    color = AnkaraLightBlue.copy(alpha = 0.15f),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                .padding(horizontal = 10.dp, vertical = 4.dp)
+                                    .background(
+                                            color =
+                                                    AnkaraLightBlue
+                                                            .copy(
+                                                                    alpha =
+                                                                            0.15f
+                                                            ),
+                                            shape =
+                                                    RoundedCornerShape(
+                                                            8.dp
+                                                    )
+                                    )
+                                    .padding(
+                                            horizontal = 10.dp,
+                                            vertical = 4.dp
+                                    )
                     )
                 }
             }
 
-            // Chevron
-            Box(
-                modifier =
-                    Modifier
-                        .size(32.dp)
-                        .background(
-                            color = AnkaraLightBlue.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        ),
-                contentAlignment = Alignment.Center
+            // Right actions: Chevron + Delete
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = null,
-                    tint = AnkaraLightBlue
-                )
+                Box(
+                    modifier =
+                        Modifier
+                                .size(32.dp)
+                                .background(
+                                        color =
+                                                AnkaraLightBlue.copy(
+                                                        alpha = 0.1f
+                                                ),
+                                        shape = RoundedCornerShape(8.dp)
+                                ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ChevronRight,
+                        contentDescription = null,
+                        tint = AnkaraLightBlue
+                    )
+                }
+
+                if (onDelete != null) {
+                    Box(
+                        modifier =
+                            Modifier
+                                    .size(32.dp)
+                                    .background(
+                                            color =
+                                                    AnkaraDanger.copy(
+                                                            alpha = 0.1f
+                                                    ),
+                                            shape =
+                                                    RoundedCornerShape(
+                                                            8.dp
+                                                    )
+                                    )
+                                    .clickable { onDelete() },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Sil",
+                            tint = AnkaraDanger.copy(alpha = 0.7f),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
             }
         }
     }

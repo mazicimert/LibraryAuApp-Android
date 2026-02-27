@@ -11,13 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.mehmetmertmazici.libraryauapp.data.model.BookTemplate
 import com.mehmetmertmazici.libraryauapp.ui.components.LoadingOverlay
 import com.mehmetmertmazici.libraryauapp.ui.theme.*
 
@@ -71,9 +70,7 @@ fun BookEditScreen(
                 Button(
                     onClick = { viewModel.dismissAlert() },
                     modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Tamam", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Tamam", fontWeight = FontWeight.Bold) }
             },
             shape = RoundedCornerShape(24.dp)
         )
@@ -84,17 +81,11 @@ fun BookEditScreen(
             TopAppBar(
                 title = { Text("Kitabı Düzenle") },
                 navigationIcon = {
-                    TextButton(onClick = onBack) {
-                        Text("İptal", color = AnkaraLightBlue)
-                    }
+                    TextButton(onClick = onBack) { Text("İptal", color = AnkaraLightBlue) }
                 },
                 actions = {
                     TextButton(
-                        onClick = {
-                            viewModel.updateBook { _ ->
-                                onBookUpdated()
-                            }
-                        },
+                        onClick = { viewModel.updateBook { _ -> onBookUpdated() } },
                         enabled = uiState.isFormValid && !uiState.isLoading
                     ) {
                         Text(
@@ -113,13 +104,9 @@ fun BookEditScreen(
         }
     ) { paddingValues ->
         AnkaraBackground {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
+            LoadingOverlay(isLoading = uiState.isLoading, message = "Güncelleniyor...") {
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(paddingValues),
                     contentPadding = PaddingValues(16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
@@ -237,11 +224,6 @@ fun BookEditScreen(
                     }
 
                     item { Spacer(modifier = Modifier.height(32.dp)) }
-                }
-
-                // Loading overlay
-                if (uiState.isLoading) {
-                    LoadingOverlay(message = "Güncelleniyor...")
                 }
             }
         }
